@@ -53,19 +53,13 @@
             id="org.graysky.eclipse.logwatcher.preferences.PrefsPage">
       </page>
    </extension>
-   <extension
-         point="org.eclipse.help.toc">
-      <toc
-            file="book.xml"
-            primary="true">
-      </toc>
+      
+   <extension point="org.eclipse.help.toc">
+      <toc file="book.xml" primary="true" />
    </extension>
-   <extension
-         point="org.eclipse.help.toc">
-      <toc
-            file="toc_LogWatcher.xml"
-            primary="false">
-      </toc>
+   
+   <extension point="org.eclipse.help.toc">
+      <toc file="toc_LogWatcher.xml" />
    </extension>
 
 </plugin>
