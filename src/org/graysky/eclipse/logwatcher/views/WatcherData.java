@@ -4,48 +4,46 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.Vector;
-
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.swt.custom.CTabItem;
 import org.graysky.eclipse.logwatcher.LogwatcherPlugin;
 import org.graysky.eclipse.logwatcher.filters.Filter;
 import org.graysky.eclipse.logwatcher.watchers.TextFileWatcher;
+import org.graysky.eclipse.util.XmlUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
- * Tracks the objects that make up a Watcher.
- */	
-public class WatcherEntry
+ * Manages the objects that make up the UI for a Watcher in the LogWatcher view.
+ */
+public class WatcherData
 {
-	private TextViewer 		m_viewer 	= null;
-	private TextFileWatcher 	m_watcher 	= null;
-	private CTabItem 			m_tab 		= null;
-	private Vector				m_filters	= null;
-	private boolean 			m_scroll	= true;
-	
-	public WatcherEntry(TextViewer v, TextFileWatcher w, CTabItem t, Vector f)
+	private TextViewer m_viewer = null;
+	private TextFileWatcher m_watcher = null;
+	private CTabItem m_tab = null;
+	private Vector m_filters = null;
+	private boolean m_scroll = true;
+
+	public WatcherData(TextViewer v, TextFileWatcher w, CTabItem t, Vector f)
 	{
-		setViewer(v);	
+		setViewer(v);
 		setWatcher(w);
 		setTab(t);
 		setFilters(f);
 	}
-	
-	/**
-	 * Serialize the Watcher to XML
-	 * TODO: Use the DOM API to write the XML.
-	 */
-	public void toXML(Writer w) throws IOException
+
+	public void toXML(Document doc, Node node)
 	{
-		w.write("<watcher>\n");
-		w.write("<file>" + getWatcher().getFilename() + "</file>");
-		w.write("<numLines>" + getWatcher().getNumLines() + "</numLines>");
-		w.write("<interval>" + getWatcher().getInterval() + "</interval>");
-		for (Iterator iter = getFilters().iterator(); iter.hasNext();) {
-            Filter filter = (Filter) iter.next();
-            filter.toXML(w);
-        }
-		w.write("\n</watcher>");
-		
+	    Element watcher = doc.createElement("watcher");
+	    watcher.appendChild(XmlUtils.createElementWithText(doc, "file", getWatcher().getFilename()));
+	    watcher.appendChild(XmlUtils.createElementWithText(doc, "numLines", Integer.toString(getWatcher().getNumLines())));
+	    watcher.appendChild(XmlUtils.createElementWithText(doc, "interval", Integer.toString(getWatcher().getInterval())));
+	    for (Iterator iter = getFilters().iterator(); iter.hasNext();) {
+			Filter filter = (Filter) iter.next();
+			filter.toXML(doc, watcher);
+		}
+	    node.appendChild(watcher);
 	}
 	
 	public void dispose()
@@ -57,12 +55,12 @@ public class WatcherEntry
 			}
 			getTab().dispose();
 			for (Iterator iterator = getFilters().iterator(); iterator.hasNext();) {
-                Filter element = (Filter) iterator.next();
-                element.dispose();
-            }	
+				Filter element = (Filter) iterator.next();
+				element.dispose();
+			}
 		}
 		catch (Throwable t) {
-			LogwatcherPlugin.getDefault().logError("Error disposing of the entry", null);	
+			LogwatcherPlugin.getDefault().logError("Error disposing of the entry", null);
 		}
 	}
 

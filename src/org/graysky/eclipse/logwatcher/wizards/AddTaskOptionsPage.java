@@ -1,4 +1,4 @@
-package org.graysky.eclipse.logwatcher;
+package org.graysky.eclipse.logwatcher.wizards;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;

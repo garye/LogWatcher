@@ -1,4 +1,4 @@
-package org.graysky.eclipse.logwatcher;
+package org.graysky.eclipse.logwatcher.wizards;
 
 import org.apache.oro.text.regex.MalformedPatternException;
 import org.apache.oro.text.regex.Perl5Compiler;

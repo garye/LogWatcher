@@ -4,7 +4,13 @@ import java.io.IOException;
 import java.io.Writer;
 
 import org.eclipse.swt.custom.LineStyleEvent;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
+/**
+ * Ignores (skips) a line in the LogWatcher editor view.
+ */
 public class IgnoreAction implements FilterAction
 {
     public IgnoreAction()
@@ -31,8 +37,10 @@ public class IgnoreAction implements FilterAction
     	return null;	
     }
     
-    public void toXML(Writer writer) throws IOException
+    public void toXML(Document doc, Node node)
     {
-    	writer.write("<action type=\"ignore\"/>");
+        Element action = doc.createElement("action");
+        action.setAttribute("type", "ignore");
+        node.appendChild(action);
     }
 }

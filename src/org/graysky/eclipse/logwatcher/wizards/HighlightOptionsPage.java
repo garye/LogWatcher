@@ -1,4 +1,4 @@
-package org.graysky.eclipse.logwatcher;
+package org.graysky.eclipse.logwatcher.wizards;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -17,6 +17,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * The UI for the "Highlight" filter options page.
+ */
 public class HighlightOptionsPage extends WizardPage
 {
 	private Text		m_filterText;
@@ -36,9 +39,6 @@ public class HighlightOptionsPage extends WizardPage
 
 	/**
 	 * Constructor for HighlightOptionsPage.
-	 * @param pageName
-	 * @param title
-	 * @param titleImage
 	 */
 	public HighlightOptionsPage(String pageName, String title, ImageDescriptor titleImage)
 	{

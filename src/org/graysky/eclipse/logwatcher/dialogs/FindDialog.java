@@ -1,4 +1,4 @@
-package org.graysky.eclipse.logwatcher;
+package org.graysky.eclipse.logwatcher.dialogs;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.text.IFindReplaceTarget;
@@ -17,6 +17,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * A limited clone of the normal Eclipse "Find" dialog, used for searching
+ * through an open watcher's text window.
+ */
 public class FindDialog extends Dialog
 {
 	private Text				m_findText 		= null;
@@ -27,7 +31,7 @@ public class FindDialog extends Dialog
 	private Button				m_incremental	= null;
 	private Button				m_findButton	= null;
 	private Label				m_statusLabel	= null;
-	private int				m_offset		= 0;
+	private int					m_offset		= 0;
 	
 	public FindDialog(Shell parentShell, IFindReplaceTarget target)
 	{

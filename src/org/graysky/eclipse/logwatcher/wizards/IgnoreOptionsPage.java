@@ -1,4 +1,4 @@
-package org.graysky.eclipse.logwatcher;
+package org.graysky.eclipse.logwatcher.wizards;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -9,6 +9,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+/**
+ * The options page for the "Ignore" filter action.
+ */
 public class IgnoreOptionsPage extends WizardPage
 {
 	/**

@@ -1,7 +1,8 @@
-package org.graysky.eclipse.logwatcher;
+package org.graysky.eclipse.logwatcher.wizards;
 
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.Color;
+import org.graysky.eclipse.logwatcher.LogwatcherPlugin;
 import org.graysky.eclipse.logwatcher.filters.AddTaskAction;
 import org.graysky.eclipse.logwatcher.filters.Filter;
 import org.graysky.eclipse.logwatcher.filters.FilterAction;
@@ -10,6 +11,7 @@ import org.graysky.eclipse.logwatcher.filters.IgnoreAction;
 
 public class NewFilterWizard extends Wizard
 {
+    private boolean	m_editMode = false;
 	private Filter					m_filter;
 	private boolean				m_canFinish 	= false;
 	private NewFilterWizardStart	m_startPage		= new NewFilterWizardStart("start");
@@ -20,9 +22,10 @@ public class NewFilterWizard extends Wizard
 	/**
 	 * Constructor for NewFilterWizard.
 	 */
-	public NewFilterWizard()
+	public NewFilterWizard(boolean editMode)
 	{
 		super();
+		m_editMode = editMode;
 		setWindowTitle("New Filter Wizard");
 		initPages();
 	}
@@ -113,4 +116,12 @@ public class NewFilterWizard extends Wizard
         m_canFinish = canFinish;
     }
 
+    public boolean isEditMode()
+    {
+        return m_editMode;
+    }
+    public void setEditMode(boolean editMode)
+    {
+        m_editMode = editMode;
+    }
 }

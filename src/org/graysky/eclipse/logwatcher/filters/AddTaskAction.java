@@ -7,6 +7,10 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.custom.LineStyleEvent;
+import org.graysky.eclipse.util.XmlUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 public class AddTaskAction implements FilterAction
 {
@@ -81,11 +85,12 @@ public class AddTaskAction implements FilterAction
     	return line;	
     }
     
-    public void toXML(Writer writer) throws IOException
+    public void toXML(Document doc, Node node)
     {
-    	writer.write("<action type=\"task\">");
-    	writer.write("<taskDescription>" + getTaskDescription() + "</taskDescription>");
-    	writer.write("<priority>" + getPriority() + "</priority>");
-    	writer.write("</action>");
+        Element action = doc.createElement("action");
+        action.setAttribute("type", "task");
+        action.appendChild(XmlUtils.createElementWithText(doc, "taskDescription", getTaskDescription()));
+        action.appendChild(XmlUtils.createElementWithText(doc, "priority", Integer.toString(getPriority())));
+        node.appendChild(action);
     }
 }

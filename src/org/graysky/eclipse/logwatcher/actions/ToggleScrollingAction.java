@@ -3,7 +3,7 @@ package org.graysky.eclipse.logwatcher.actions;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.graysky.eclipse.logwatcher.views.LogWatcherView;
-import org.graysky.eclipse.logwatcher.views.WatcherEntry;
+import org.graysky.eclipse.logwatcher.views.WatcherData;
 import org.graysky.eclipse.util.ImageUtils;
 
 /**
@@ -18,13 +18,13 @@ public class ToggleScrollingAction extends Action
 	{
 		m_view = p;
 		
-		setText("Toggle Automatic Scrolling");
-		setToolTipText("Toggle Automatic Scrolling");
+		setText("Scroll Lock");
+		setToolTipText("Scroll Lock");
 		setImageDescriptor(IMAGE_DESC);
 	}
 	
 	public void run() {
-		WatcherEntry entry = m_view.getSelectedEntry();
+		WatcherData entry = m_view.getSelectedEntry();
 		if (entry != null) {
 			entry.setScroll(!isChecked());
 		}

@@ -2,9 +2,9 @@ package org.graysky.eclipse.logwatcher.actions;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.graysky.eclipse.logwatcher.FindDialog;
+import org.graysky.eclipse.logwatcher.dialogs.FindDialog;
 import org.graysky.eclipse.logwatcher.views.LogWatcherView;
-import org.graysky.eclipse.logwatcher.views.WatcherEntry;
+import org.graysky.eclipse.logwatcher.views.WatcherData;
 import org.graysky.eclipse.util.ImageUtils;
 
 /**
@@ -25,7 +25,7 @@ public class FindAction extends Action
 	}
 	
 	public void run() {
-		WatcherEntry entry = m_view.getSelectedEntry();
+		WatcherData entry = m_view.getSelectedEntry();
 		if (entry != null) {
 
 			FindDialog d = new FindDialog(m_view.getFolder().getShell(), entry.getViewer().getFindReplaceTarget());
