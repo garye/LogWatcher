@@ -3,6 +3,8 @@ package org.graysky.eclipse.logwatcher;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -23,6 +25,7 @@ public class FindDialog extends Dialog
 	private Button				m_wrap			= null;
 	private Button				m_wholeWord		= null;
 	private Button				m_incremental	= null;
+	private Button				m_findButton	= null;
 	private Label				m_statusLabel	= null;
 	private int				m_offset		= 0;
 	
@@ -65,7 +68,21 @@ public class FindDialog extends Dialog
 		gridData = new GridData();
 		gridData.widthHint = 160;
 		m_findText.setLayoutData(gridData);
-		
+		m_findText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e)
+			{
+				if (m_findText.getText().length() > 0) {
+					m_findButton.setEnabled(true);
+					
+					if (m_incremental.getSelection()) {
+						m_offset = search(m_findText.getText());	
+					}
+				}
+				else {
+					m_findButton.setEnabled(false);
+				}
+			}
+		});	
 		
 		//
 		// Options 1
@@ -92,9 +109,6 @@ public class FindDialog extends Dialog
 		m_incremental = new Button(optionsGroup, SWT.CHECK);
 		m_incremental.setText("Incremental");
 		
-		
-		
-		
 		return composite;
 	}
 
@@ -103,28 +117,30 @@ public class FindDialog extends Dialog
 		//
 		// Find button
 		//
-		Button findButton = new Button(parent, SWT.PUSH);
-		findButton.setText("Find");
-		findButton.setFocus();
-		findButton.addSelectionListener(new SelectionAdapter() {
+		m_findButton = new Button(parent, SWT.PUSH);
+		m_findButton.setText("Find");
+		m_findButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt)
 			{
-				m_offset = m_target.findAndSelect(m_offset, m_findText.getText(), true, 
-										m_caseSensitive.getSelection(), m_wholeWord.getSelection());
-				if (m_offset == -1) {
-					m_statusLabel.setText("String not found");
-					m_statusLabel.redraw();
+				int offset = search(m_findText.getText());
+				if (offset == -1) {
+					if (m_wrap.getSelection()) {
+						m_offset = 0;
+					}
+					// Else, leave m_offset alone
 				}
-				
-				m_offset++;
-				
+				else {
+					m_offset = offset + 1;
+				}
 			}
 		});
+		m_findButton.setEnabled(false);
+		getShell().setDefaultButton(m_findButton);
 		
 		GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gridData.horizontalSpan = 2;
 		gridData.grabExcessHorizontalSpace = true;
-		findButton.setLayoutData(gridData);
+		m_findButton.setLayoutData(gridData);
 		
 		// Status label
 		m_statusLabel = new Label(parent, SWT.NONE);
@@ -163,4 +179,17 @@ public class FindDialog extends Dialog
 		return composite;
 	}
 
+	protected int  search(String text)
+	{
+		int offset = m_target.findAndSelect(m_offset, text, true, 
+										  m_caseSensitive.getSelection(), 
+										  m_wholeWord.getSelection());
+		if (offset == -1) {
+			m_statusLabel.setText("String not found");
+			m_statusLabel.redraw();
+		}
+		
+		return offset;
+	}
+	
 }
