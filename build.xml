@@ -40,7 +40,7 @@
 		<delete dir="${temp.folder}/logwatcher.jar.bin"/>
 		<mkdir dir="${temp.folder}/logwatcher.jar.bin"/>
 		<!-- compile the source code -->
-		<javac destdir="${temp.folder}/logwatcher.jar.bin" failonerror="false" verbose="true" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="C:/apps/eclipse/plugins/org.eclipse.ui.win32_2.0.0/workbench.jar;C:/apps/eclipse/plugins/org.eclipse.core.resources_2.0.1/resources.jar;C:/apps/eclipse/plugins/org.eclipse.ui_2.0.1/bin;C:/apps/eclipse/plugins/org.eclipse.swt_2.0.1/ws/${ws}/swt.jar;C:/apps/eclipse/plugins/org.eclipse.core.boot_2.0.1/bin;C:/apps/eclipse/plugins/org.eclipse.core.boot_2.0.1/boot.jar;C:/apps/eclipse/plugins/org.eclipse.swt_2.0.1/bin;C:/apps/eclipse/plugins/org.eclipse.ui.win32_2.0.0/workbenchwin32.jar;C:/apps/eclipse/plugins/org.eclipse.core.resources.win32_2.0.1/resources.jar;C:/apps/eclipse/plugins/org.eclipse.core.resources_2.0.1/bin;C:/apps/eclipse/plugins/org.eclipse.core.runtime_2.0.1/runtime.jar;C:/apps/eclipse/plugins/org.eclipse.ui_2.0.1/workbench.jar;C:/apps/eclipse/plugins/org.eclipse.swt.win32_2.0.1/ws/${ws}/swt.jar;C:/apps/eclipse/plugins/org.eclipse.core.runtime_2.0.1/bin">
+		<javac destdir="${temp.folder}/logwatcher.jar.bin" failonerror="true" verbose="true" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="C:/apps/eclipse/plugins/org.eclipse.ui.workbench_2.1.0/workbench.jar;C:/apps/eclipse/plugins/org.eclipse.core.resources_2.1.0/resources.jar;org.eclipse.ui_2.1.0/ui.jar;C:/apps/eclipse/plugins/org.eclipse.swt_2.1.0/ws/${ws}/swt.jar;C:/apps/eclipse/plugins/org.eclipse.core.boot_2.1.0/bin;C:/apps/eclipse/plugins/org.eclipse.core.boot_2.1.0/boot.jar;C:/apps/eclipse/plugins/org.eclipse.swt_2.1.0/bin;C:/apps/eclipse/plugins/org.eclipse.ui.win32_2.1.0/workbenchwin32.jar;C:/apps/eclipse/plugins/org.eclipse.core.resources.win32_2.1.0/resources.jar;C:/apps/eclipse/plugins/org.eclipse.core.resources_2.1.0/bin;C:/apps/eclipse/plugins/org.eclipse.core.runtime_2.1.0/runtime.jar;C:/apps/eclipse/plugins/org.eclipse.ui_2.1.0/workbench.jar;C:/apps/eclipse/plugins/org.eclipse.swt.win32_2.1.0/ws/${ws}/swt.jar;C:/apps/eclipse/plugins/org.eclipse.core.runtime_2.1.0/bin;C:/apps/eclipse/plugins/org.eclipse.jface_2.1.0/jface.jar;C:/apps/eclipse/plugins/org.eclipse.jface.text_2.1.0/jfacetext.jar;C:/apps/eclipse/plugins/org.eclipse.text_2.1.0/text.jar;lib/jakarta-oro-2.0.6.jar">
 			<src path="src/"/>
 		</javac>
 		<!-- copy necessary resources -->
@@ -102,13 +102,14 @@
 			<fileset dir="${plugin.destination}/icons"/>
 		</copy>
 	</target>
-	
-	<target name="gather.libs" depends="init" if="destination.temp.folder">
+
+	<target name="gather.lib" depends="init" if="destination.temp.folder">
 		<mkdir dir="${destination.temp.folder}/${full.name}"/>
 		<copy todir="${destination.temp.folder}/${full.name}/lib">
 			<fileset dir="${plugin.destination}/lib"/>
 		</copy>
 	</target>
+
 
 	<target name="gather.logs" depends="init" if="destination.temp.folder">
 		<mkdir dir="${destination.temp.folder}/${full.name}"/>
@@ -150,9 +151,11 @@
 		<antcall target="gather.icons">
 			<param name="destination.temp.folder" value="${temp.folder}/"/>
 		</antcall>
-		<antcall target="gather.libs">
+
+		<antcall target="gather.lib">
 			<param name="destination.temp.folder" value="${temp.folder}/"/>
 		</antcall>
+
 		<delete>
 			<fileset dir="${temp.folder}" includes="**/*.bin.log"/>
 		</delete>
