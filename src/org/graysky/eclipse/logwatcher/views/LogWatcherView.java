@@ -66,8 +66,8 @@ public class LogWatcherView extends ViewPart
 	private Action 		m_newAction = null;
 	private Action			m_clearAction = null;
 	private Action			m_findAction = null;
-	private Action		m_scrollAction = null;
-	private Action		m_editAction = null;
+	private Action			m_scrollAction = null;
+	private Action			m_editAction = null;
 	private CTabFolder 	m_folder = null;
 	private Action			m_copyAction = null;
 	private Vector 		m_watchers = new Vector();
@@ -105,35 +105,15 @@ public class LogWatcherView extends ViewPart
  	static {
 	    URL url = null;
 	    try {
-		    url = new URL(LogwatcherPlugin.getDefault().getDescriptor().getInstallURL(),
-		                  "icons/clear.gif");
-		    eraseImage = ImageDescriptor.createFromURL(url);
-		    
-		    url = new URL(LogwatcherPlugin.getDefault().getDescriptor().getInstallURL(),
-		                  "icons/close.gif");
-		    closeImage = ImageDescriptor.createFromURL(url);  
-		    
-		    url = new URL(LogwatcherPlugin.getDefault().getDescriptor().getInstallURL(),
-		                  "icons/new.gif");
-		    newImage = ImageDescriptor.createFromURL(url);  
-		    
-			url = new URL(LogwatcherPlugin.getDefault().getDescriptor().getInstallURL(),
-						  "icons/search.gif");
-			findImage = ImageDescriptor.createFromURL(url); 
-			
-			url = new URL(LogwatcherPlugin.getDefault().getDescriptor().getInstallURL(),
-						  "icons/toggle_scroll.gif");
-			scrollImage = ImageDescriptor.createFromURL(url); 
-			
-			url = new URL(LogwatcherPlugin.getDefault().getDescriptor().getInstallURL(),
-						  "icons/copy_edit.gif");
-			copyImage = ImageDescriptor.createFromURL(url); 
-			
-			url = new URL(LogwatcherPlugin.getDefault().getDescriptor().getInstallURL(),
-									  "icons/edit.gif");
-			editImage = ImageDescriptor.createFromURL(url); 
+		    eraseImage = createImageDescriptor("icons/clear.gif");
+		    closeImage = createImageDescriptor("icons/close.gif");
+		    newImage = createImageDescriptor("icons/new.gif");
+			findImage = createImageDescriptor("icons/search.gif");
+			scrollImage = createImageDescriptor("icons/toggle_scroll.gif");
+			copyImage = createImageDescriptor("icons/copy_edit.gif");
+			editImage = createImageDescriptor("icons/edit.gif");
 	    } 
-	    catch (MalformedURLException e) {
+	    catch (Exception e) {
 	    	e.printStackTrace();
 	    }
 	}
@@ -151,6 +131,16 @@ public class LogWatcherView extends ViewPart
 		
 		// Register a property change listener for the preferences page.
 		LogwatcherPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(m_propListener);
+	}
+
+	/**
+	 * Create an image descriptor for the given filename (relative to the
+	 * plugin install directory)
+	 */
+	private static ImageDescriptor createImageDescriptor(String filename) throws Exception
+	{
+		URL url = new URL(LogwatcherPlugin.getDefault().getDescriptor().getInstallURL(), filename);
+		return ImageDescriptor.createFromURL(url);
 	}
 
 	/**
