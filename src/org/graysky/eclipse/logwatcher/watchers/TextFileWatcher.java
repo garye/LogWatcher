@@ -229,19 +229,12 @@ public class TextFileWatcher extends Thread
 	}
 
     /**
-     * Gets the number of lines to show for this watcher,
-     * if showing the whole file, returns 0.
+     * Gets the number of lines to show for this watcher
      * 
      * @return number of lines.
      */
     public int getNumLines()
     {
-        if (m_numLines == Integer.MAX_VALUE)
-        {
-            // Return 0 for whole file.
-            return 0;
-        }
-        
         return m_numLines;
     }
 

@@ -473,7 +473,7 @@ public class NewWatcherDialog extends Dialog
             if (m_wholeFileButton.getSelection())
             {
                 // They want whole file.
-                m_numLines = 0;
+                m_numLines = Integer.MAX_VALUE;
             }
             else
             {

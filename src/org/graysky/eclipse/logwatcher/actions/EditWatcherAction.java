@@ -1,6 +1,7 @@
 package org.graysky.eclipse.logwatcher.actions;
 
 import java.io.File;
+import java.util.Vector;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -33,7 +34,11 @@ public class EditWatcherAction extends Action
 			 int topIndex = entry.getViewer().getTopIndex();
 			 int caret = entry.getViewer().getTextWidget().getCaretOffset();
              NewWatcherDialog d = new NewWatcherDialog(m_view.getFolder().getShell(), true);
-             d.setFilters(entry.getFilters());
+             
+             Vector tempFilters = new Vector();
+             tempFilters.addAll(entry.getFilters());
+             
+             d.setFilters(tempFilters);
              d.setInterval(entry.getWatcher().getInterval());
              d.setNumLines(entry.getWatcher().getNumLines());
              d.setFile(new File(entry.getWatcher().getFilename()));

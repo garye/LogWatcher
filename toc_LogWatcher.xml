@@ -7,6 +7,8 @@
 
    	<topic label="Creating a Watcher" href="html/lw_create_watcher.html"/>
    	
+   	<topic label="Editing a Watcher" href="html/lw_edit_watcher.html"/>
+   	
    	<topic label="Defining a Filter" href="html/lw_create_filter.html"/>
    	
    	<topic label="Using the LogWatcher View" href="html/lw_view.html"/>

@@ -1,11 +1,19 @@
 /////////////////////////////////////////////////////////////////////
-// LogWatcher 1.2.1
+// LogWatcher 1.3
 // http://graysky.sourceforge.net
 /////////////////////////////////////////////////////////////////////
 
 Changes since 1.2:
 ----------------------------------
 - Existing watchers can now be edited.
+- Better update performance on large files.
+- The number of lines to show when the file is first opened is now specified
+  when a watcher is created, and the log window will show every new line added
+  to the file until "Clear" is used.
+- When "Toggle automatic scrolling" is activated, the scroll bar no longer 
+  continues to move.
+- Several other bugs fixed.
+- Online Help updated.
 
 Changes since 1.1:
 ----------------------------------
