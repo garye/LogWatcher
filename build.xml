@@ -8,7 +8,8 @@
 
 	<target name="init" depends="properties">
 		<property name="plugin" value="org.graysky.eclipse.logwatcher"/>
-		<property name="version.suffix" value="_1.3.2"/>
+		<property name="version.suffix" value="_1.4"/>
+
 		<property name="full.name" value="${plugin}${version.suffix}"/>
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
 		<property name="plugin.destination" value="${basedir}"/>

@@ -3,7 +3,7 @@
 <plugin
    id="org.graysky.eclipse.logwatcher"
    name="LogWatcher"
-   version="1.3.2"
+   version="1.4"
    provider-name="Graysky.org"
    class="org.graysky.eclipse.logwatcher.LogwatcherPlugin">
 
