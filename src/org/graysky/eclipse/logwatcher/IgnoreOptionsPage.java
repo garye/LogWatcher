@@ -1,6 +1,7 @@
 package org.graysky.eclipse.logwatcher;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -48,6 +49,10 @@ public class IgnoreOptionsPage extends WizardPage
 		setPageComplete(true);
 	}
 
+    public IWizardPage getNextPage()
+    {
+        return null;
+    }
 
 	/**
 	 * @see org.eclipse.jface.dialogs.IDialogPage#getTitle()
