@@ -32,6 +32,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.graysky.eclipse.logwatcher.FindDialog;
 import org.graysky.eclipse.logwatcher.LogwatcherPlugin;
 import org.graysky.eclipse.logwatcher.NewWatcherDialog;
 import org.graysky.eclipse.logwatcher.filters.Filter;
@@ -47,13 +48,15 @@ public class LogWatcherView extends ViewPart {
 	
 	private Action 		m_closeAction = null;
 	private Action 		m_newAction = null;
-	private Action		m_clearAction = null;
+	private Action			m_clearAction = null;
+	private Action			m_findAction = null;
 	private CTabFolder 	m_folder = null;
 	private Vector 		m_watchers = new Vector();
 
 	private static ImageDescriptor eraseImage;
 	private static ImageDescriptor closeImage;
 	private static ImageDescriptor newImage;
+	private static ImageDescriptor findImage;
 	
  	static {
 	    URL url = null;
@@ -69,6 +72,10 @@ public class LogWatcherView extends ViewPart {
 		    url = new URL(LogwatcherPlugin.getDefault().getDescriptor().getInstallURL(),
 		                  "icons/new.gif");
 		    newImage = ImageDescriptor.createFromURL(url);  
+		    
+			url = new URL(LogwatcherPlugin.getDefault().getDescriptor().getInstallURL(),
+						  "icons/search.gif");
+			findImage = ImageDescriptor.createFromURL(url);  
 	    } catch (MalformedURLException e) {
 	    	e.printStackTrace();
 	    }
@@ -149,6 +156,7 @@ public class LogWatcherView extends ViewPart {
 		manager.add(m_closeAction);
 		manager.add(m_newAction);
 		manager.add(m_clearAction);
+		manager.add(m_findAction);
 	}
 
 	private void makeActions() 
@@ -200,6 +208,22 @@ public class LogWatcherView extends ViewPart {
 		m_clearAction.setToolTipText("Clear log watcher display");
 		m_clearAction.setImageDescriptor(eraseImage);
 		m_clearAction.setEnabled(false);	
+		
+		// Find in log file
+		m_findAction = new Action() {
+			public void run() {
+				WatcherEntry entry = findEntry(m_folder.getSelection());
+				if (entry != null) {
+
+					FindDialog d = new FindDialog(m_folder.getShell(), entry.viewer.getFindReplaceTarget());
+					d.open();
+				}
+				
+			}
+		};
+		m_findAction.setText("Find...");
+		m_findAction.setToolTipText("Find in log file");
+		m_findAction.setImageDescriptor(findImage);
 	}
 	
 	private void addWatcher(File file, int interval, int numLines, Vector filters)
