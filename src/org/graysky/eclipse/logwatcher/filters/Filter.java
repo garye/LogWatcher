@@ -1,7 +1,5 @@
 package org.graysky.eclipse.logwatcher.filters;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -9,8 +7,6 @@ import org.apache.oro.text.regex.MalformedPatternException;
 import org.apache.oro.text.regex.Pattern;
 import org.apache.oro.text.regex.Perl5Compiler;
 import org.apache.oro.text.regex.Perl5Matcher;
-import org.apache.oro.text.regex.Perl5Substitution;
-import org.apache.oro.text.regex.Util;
 import org.eclipse.swt.custom.LineStyleEvent;
 import org.graysky.eclipse.util.XmlUtils;
 import org.w3c.dom.Document;
@@ -135,6 +131,7 @@ public class Filter
 	    filter.appendChild(XmlUtils.createElementWithText(doc, "pattern", getPattern()));
 	    filter.appendChild(XmlUtils.createElementWithText(doc, "caseSensitive", Boolean.toString(isCaseSensitive())));
 	    filter.appendChild(XmlUtils.createElementWithText(doc, "contains", Boolean.toString(getContains())));
+        filter.appendChild(XmlUtils.createElementWithText(doc, "description", getDescription()));
 	    for (Iterator iter = m_actions.iterator(); iter.hasNext();) {
 			FilterAction action = (FilterAction) iter.next();
 			action.toXML(doc, filter);

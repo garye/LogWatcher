@@ -6,7 +6,7 @@
 Changes since 1.3:
 ----------------------------------
 - Added drop-down containing recently opened files when creating a new watcher.
-- Added ability to save filters and apply them to watchers in the future.
+- Added ability to save filters and apply them to future watchers.
 - Renamed "Toggle Automatic Scrolling" to "Scroll Lock" and updated the icon
   for consistency.
 - Added tooltip for each tab in the view containing the absolute filename

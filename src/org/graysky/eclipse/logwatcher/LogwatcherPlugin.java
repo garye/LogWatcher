@@ -36,7 +36,6 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.graysky.eclipse.logwatcher.filters.Filter;
 import org.graysky.eclipse.logwatcher.filters.FilterLoader;
-import org.graysky.eclipse.logwatcher.views.WatcherData;
 import org.graysky.eclipse.util.BoundedList;
 import org.graysky.eclipse.util.XmlUtils;
 import org.w3c.dom.Element;

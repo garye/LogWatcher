@@ -1,10 +1,11 @@
 package org.graysky.eclipse.logwatcher.filters;
 
-import java.io.FileReader;
 import java.io.Reader;
 import java.util.Vector;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.apache.oro.text.regex.MalformedPatternException;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
@@ -53,6 +54,9 @@ public class FilterLoader
 			else if (name.equals("caseSensitive")) {
 				caseSensitive = new Boolean(node.getFirstChild().getNodeValue()).booleanValue();
 			}
+            else if (name.equals("description")) {
+                f.setDescription(node.getFirstChild().getNodeValue());
+            }
 			else if (name.equals("contains")) {
 				f.setContains(new Boolean(node.getFirstChild().getNodeValue()).booleanValue());
 			}

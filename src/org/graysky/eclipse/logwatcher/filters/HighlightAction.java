@@ -1,7 +1,5 @@
 package org.graysky.eclipse.logwatcher.filters;
 
-import java.io.IOException;
-import java.io.Writer;
 import org.eclipse.swt.custom.LineStyleEvent;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;

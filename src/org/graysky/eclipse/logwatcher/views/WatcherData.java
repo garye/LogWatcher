@@ -1,9 +1,8 @@
 package org.graysky.eclipse.logwatcher.views;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.Iterator;
 import java.util.Vector;
+
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.swt.custom.CTabItem;
 import org.graysky.eclipse.logwatcher.LogwatcherPlugin;

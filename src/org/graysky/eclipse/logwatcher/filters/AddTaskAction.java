@@ -1,8 +1,5 @@
 package org.graysky.eclipse.logwatcher.filters;
 
-import java.io.IOException;
-import java.io.Writer;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
