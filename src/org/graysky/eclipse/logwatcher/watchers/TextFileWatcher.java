@@ -22,6 +22,10 @@ public class TextFileWatcher extends Thread
 	private File			m_file		= null;
 	private BufferedReader	m_reader	= null;
 	private int				m_interval	= 1; // Seconds
+    /**
+     * Number of lines to show. Zero indicates
+     * showing the entire file.
+     */
 	private int				m_numLines	= 100;
 	private boolean			m_active	= false;
 	private Vector			m_listeners	= new Vector();
@@ -42,6 +46,9 @@ public class TextFileWatcher extends Thread
 		m_file = file;
 		m_interval = interval;
 		m_numLines = numLines;
+        
+        if (numLines == 0)
+            m_numLines = Integer.MAX_VALUE;
 		
 		m_reader = new BufferedReader(new FileReader(m_file));
 	}
@@ -113,7 +120,6 @@ public class TextFileWatcher extends Thread
                         //
                         m_changedNumLines = false;
                         m_reader.close();
-                        //m_list.clear(); // clear whatever was already stored
                         m_reader = new BufferedReader(new FileReader(m_file));
                     }
                     
@@ -201,19 +207,45 @@ public class TextFileWatcher extends Thread
 
     /**
      * Sets the number of lines to show.
+     * Showing whole file is indicated with
+     * 0.
+     * 
+     * @param numLines The number of lines to show.
+     * Zero indicates whole file.
      */
 	public void setNumLines(int numLines)
 	{
         // Number has changed.
         if (m_numLines != numLines)
             m_changedNumLines = true;
-            
-	    m_numLines = numLines;
-	    m_list.setMaxItems(numLines);
+        
+        if (numLines == 0)
+        {
+            // Transform to biggest possible int.
+            m_numLines = Integer.MAX_VALUE;    
+        }
+        else 
+        {
+            m_numLines = numLines;
+        }
+
+	    m_list.setMaxItems(m_numLines);
 	}
 
+    /**
+     * Gets the number of lines to show for this watcher,
+     * if showing the whole file, returns 0.
+     * 
+     * @return number of lines.
+     */
     public int getNumLines()
     {
+        if (m_numLines == Integer.MAX_VALUE)
+        {
+            // Return 0 for whole file.
+            return 0;
+        }
+        
         return m_numLines;
     }
 

@@ -41,11 +41,14 @@ public class NewWatcherDialog extends Dialog
 	private IDialogSettings		m_settings;
 	private List				m_filterList;
 	private Vector				m_filters		= new Vector();
-	
+    private Button              m_wholeFileButton;
+    private Label               m_numLinesLabel;
+    
 	private static int		DEFAULT_INTERVAL	= 1;
 	private static int		DEFAULT_NUMLINES	= 100;
 	
-	/**
+	
+    /**
 	 * Constructor for NewWatcherDialog.
 	 * @param shell
 	 */
@@ -109,28 +112,22 @@ public class NewWatcherDialog extends Dialog
 		    chooserButton.setEnabled(false);
 		}
 		
-		//
-		// Number of lines row
-		//
-		new Label(composite, SWT.NONE).setText("Number of lines to show:");
-		m_numLinesText = new Text(composite, SWT.BORDER);
-		m_numLinesText.setTextLimit(4);
-		gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gridData.horizontalSpan = 2;
-		gridData.widthHint = 40;
-	    m_numLinesText.setLayoutData(gridData);
-
-		//
-		// Refresh interval row
-		//
-		new Label(composite, SWT.NONE).setText("Refresh interval (in seconds):");
-		m_intervalText = new Text(composite, SWT.BORDER);
-		m_intervalText.setTextLimit(4);
-		gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gridData.horizontalSpan = 2;
+        //
+        // Refresh interval row
+        //
+        new Label(composite, SWT.NONE).setText("Refresh interval (in seconds):");
+        m_intervalText = new Text(composite, SWT.BORDER);
+        m_intervalText.setTextLimit(4);
+        gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+        gridData.horizontalSpan = 2;
         gridData.widthHint = 40;
-		m_intervalText.setLayoutData(gridData);
-		
+        m_intervalText.setLayoutData(gridData);
+        
+        
+        // Number of lines to show
+        //
+        createNumLinesGUI(composite);
+        
 		// Register the browse button callback, now that all widgets have been created.
 		chooserButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt)
@@ -156,8 +153,25 @@ public class NewWatcherDialog extends Dialog
 			
 					m_intervalText.setText(Integer.toString(defaultInterval));
 					m_intervalText.setSelection(0);
-					m_numLinesText.setText(Integer.toString(defaultNumLines));
-					m_numLinesText.setSelection(0);
+					
+                    if (defaultNumLines == 0)
+                    {
+                        m_wholeFileButton.setSelection(true);
+                        m_numLinesText.setText(Integer.toString(DEFAULT_NUMLINES));
+                        // Disable the fields
+                        m_numLinesLabel.setEnabled(false);
+                        m_numLinesText.setEnabled(false);
+                    }
+                    else
+                    {
+                        m_wholeFileButton.setSelection(false);
+                        // Enable fields
+                        m_numLinesLabel.setEnabled(true);
+                        m_numLinesText.setEnabled(true);
+                        // Set text
+                        m_numLinesText.setText(Integer.toString(defaultNumLines));
+                        m_numLinesText.setSelection(0);
+                    }
 				}
 			}
 		});
@@ -167,16 +181,109 @@ public class NewWatcherDialog extends Dialog
 		//
 		createFilterGUI(composite);
 		
-		
+		// Edit mode handling
+        //
 		if (m_editMode) {
+            m_fileText.setText(m_file.getAbsolutePath());
             m_intervalText.setText(Integer.toString(m_interval));
-            m_numLinesText.setText(Integer.toString(m_numLines));
-            m_fileText.setText(m_file.getAbsolutePath());  
+            
+            if (m_numLines == 0)
+            {
+                m_wholeFileButton.setSelection(true);
+                m_numLinesText.setText(Integer.toString(DEFAULT_NUMLINES));
+                // Disable fields
+                m_numLinesLabel.setEnabled(false);
+                m_numLinesText.setEnabled(false);
+            }
+            else
+            {
+                m_wholeFileButton.setSelection(false);
+                m_numLinesText.setText(Integer.toString(m_numLines));
+                // Enable fields
+                m_numLinesLabel.setEnabled(true);
+                m_numLinesText.setEnabled(true);
+            }
+              
 		}
 		
 		return composite;
 	}
+    
+    /**
+     * Creates the UI elements to configure the 
+     * filters.
+     * 
+     * @param parent The parent composite.
+     */
+    protected void createNumLinesGUI(Composite parent)
+    {
+        //
+        // Number of lines grouping
+        //
+        GridData gridData;
+    
+        // Grouping control
+        Group numLinesGroup = new Group(parent, SWT.NONE);
+        numLinesGroup.setText("Amount to show");
+        GridLayout glayout = new GridLayout(2, false);
+        numLinesGroup.setLayout(glayout);
+        gridData = new GridData();
+        gridData.horizontalSpan = 3;
+        numLinesGroup.setLayoutData(gridData);
+        
+        // Button to show entire file
+        m_wholeFileButton = new Button(numLinesGroup, SWT.CHECK);
+        m_wholeFileButton.setText(("Show entire file"));
+        gridData = new GridData(GridData.GRAB_HORIZONTAL);
+        gridData.horizontalSpan = 2;
+        m_wholeFileButton.setLayoutData(gridData);
+        
+        // Label show num of lines
+        m_numLinesLabel = new Label(numLinesGroup, SWT.NONE);
+        m_numLinesLabel.setText("Number of lines to show:");
+        gridData = new GridData(GridData.GRAB_HORIZONTAL);
+        gridData.horizontalSpan = 1;
+        gridData.widthHint = 140;
+        m_numLinesLabel.setLayoutData(gridData);
+        
+        // Text field show num of lines
+        m_numLinesText = new Text(numLinesGroup, SWT.BORDER);
+        m_numLinesText.setTextLimit(4);
+        gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+        gridData.horizontalSpan = 1;
+        gridData.widthHint = 40;
+        m_numLinesText.setLayoutData(gridData);
+        
+        // Add button listener
+        //
+        m_wholeFileButton.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent evt)
+            {
+                if (m_wholeFileButton.getSelection())
+                {
+                    // Button is selected, disable number of lines.
+                    //
+                    m_numLinesLabel.setEnabled(false);
+                    m_numLinesText.setEnabled(false);
+                }
+                else 
+                {
+                    // Button is disabled, enable number of lines.
+                    //
+                    m_numLinesLabel.setEnabled(true);
+                    m_numLinesText.setEnabled(true);
+                }
+            }       
+        });
+        
+    }
 
+    /**
+     * Creates the UI elements to configure the 
+     * filters.
+     * 
+     * @param parent The parent composite.
+     */
 	protected void createFilterGUI(Composite parent)
 	{
 		GridData gridData;
@@ -319,12 +426,22 @@ public class NewWatcherDialog extends Dialog
 		}
 		
 		try {
-			Integer i = new Integer(m_numLinesText.getText());
-			if (i.intValue() <= 0) {
-				throw new NumberFormatException();
-			}
+            
+            if (m_wholeFileButton.getSelection())
+            {
+                // They want whole file.
+                m_numLines = 0;
+            }
+            else
+            {
+                        
+			    Integer i = new Integer(m_numLinesText.getText());
+                if (i.intValue() < 0) {
+				    throw new NumberFormatException();
+                }
 			
-			m_numLines = i.intValue();
+			    m_numLines = i.intValue();
+            }
 		}
 		catch (NumberFormatException e) {
 			m_errorMsg = "Number of lines to show must be a positive integer.";
