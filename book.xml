@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="Graysky.org Plug-ins Guide">
+    
+    <topic label="Overview" href="html/overview.html"/>
+    
+    <topic label="LogWatcher Guide">
+        <link toc="toc_LogWatcher.xml"/>
+    </topic>
+    
+    <!-- Add new Help pages/TOCs here -->
+    <!-- For new TOCs, you must create extensions too -->
+    
+</toc>
