@@ -45,17 +45,19 @@ public class AddTaskAction implements FilterAction
         return "Add a Todo Task";
     }
     
-    public String doWatcherAction(String line)
+    public String doWatcherAction(String line, boolean firstMatch)
     {
     	
-    	try {
-            IMarker marker = m_resource.createMarker(IMarker.TASK);
-            marker.setAttribute(IMarker.SEVERITY, IMarker.PRIORITY_LOW);
-            marker.setAttribute(IMarker.MESSAGE, m_taskDescription);
-        }
-        catch (CoreException e) {
-        	e.printStackTrace();
-        }
+    	if (firstMatch) {
+	    	try {
+	            IMarker marker = m_resource.createMarker(IMarker.TASK);
+	            marker.setAttribute(IMarker.SEVERITY, IMarker.PRIORITY_LOW);
+	            marker.setAttribute(IMarker.MESSAGE, m_taskDescription);
+	        }
+	        catch (CoreException e) {
+	        	e.printStackTrace();
+	        }
+    	}
        
     	return line;	
     }

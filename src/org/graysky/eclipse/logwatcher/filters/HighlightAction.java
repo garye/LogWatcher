@@ -44,7 +44,7 @@ public class HighlightAction implements FilterAction
 		m_color.dispose();	
 	}
 
-    public String doWatcherAction(String line)
+    public String doWatcherAction(String line, boolean firstMatch)
     {
         return line;
     }

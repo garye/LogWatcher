@@ -48,12 +48,12 @@ public class Filter
         }
 	}
 	
-	public String handleWatcherMatch(String line)
+	public String handleWatcherMatch(String line, boolean firstUpdate)
 	{
 		// @@@ For now there's only one action... this needs to change.
 		for (Iterator iter = m_actions.iterator(); iter.hasNext();) {
             FilterAction action = (FilterAction) iter.next();
-            return action.doWatcherAction(line);
+            return action.doWatcherAction(line, firstUpdate);
         }
         
         return line;

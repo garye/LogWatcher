@@ -27,7 +27,7 @@ public class IgnoreAction implements FilterAction
         return "Don't show the line";
     }
     
-    public String doWatcherAction(String line)
+    public String doWatcherAction(String line, boolean firstMatch)
     {
     	return null;	
     }

@@ -13,7 +13,7 @@ public interface FilterAction
 	
 	public void dispose();
 	
-	public String doWatcherAction(String line);
+	public String doWatcherAction(String line, boolean firstMatch);
 	
 	public void toXML(Writer writer) throws IOException;
 }

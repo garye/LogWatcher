@@ -73,6 +73,7 @@ public class TextFileWatcher extends Thread
 		m_list = new BoundedList(m_numLines);
 		String line = null;
 		long size = 0;
+		boolean firstUpdate = false;
 		
 		while (m_active) {
 			// Keep checking for new lines in the file
@@ -108,7 +109,7 @@ public class TextFileWatcher extends Thread
 							for (Iterator iter = m_filters.iterator(); iter.hasNext();) {
 	                            Filter f = (Filter) iter.next();
 	                            if (f.matches(line)) {
-	                    			line = f.handleWatcherMatch(line);	
+	                    			line = f.handleWatcherMatch(line, firstUpdate);	
 	                    		}   
 	                        }
 							
@@ -124,6 +125,8 @@ public class TextFileWatcher extends Thread
 							}
 						}
 					}
+					
+					firstUpdate = true;
 				}
 				
 				if (updated) {
