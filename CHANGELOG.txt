@@ -8,13 +8,14 @@ Changes since 1.1:
 - Filters now support regular expressions (Using Jakarta's ORO regexp library).
 - Added LogWatcher preferences page.
 - Preference: Restore previously open watchers on restart.
-- Preference: Choose font for LogWatcher views.
+- Preference: Choose font/size/color for LogWatcher views.
 - New filter action: Add a Todo task to the workbench.
 - New Edit actions: Use Find (Ctrl + F) and Copy (Ctrl + C) in the
   LogWatcher view.
 - New action: Toggle automatic view scrolling when new lines are
   added to a log file.
-- Re-organized menus/icons.
+- Re-organized menus/icons. Added LogWatcher view icon.
+- Added LogWatcher Help topics.
 
 Changes since 1.0:
 ----------------------------------
