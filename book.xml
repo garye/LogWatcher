@@ -5,7 +5,7 @@
     
     <topic label="Overview" href="html/overview.html"/>
     
-    <topic label="LogWatcher Guide">
+    <topic label="LogWatcher Guide" href="html/logwatcher.html">
         <link toc="toc_LogWatcher.xml"/>
     </topic>
     

@@ -5,12 +5,12 @@
 
     <topic label="Introduction to LogWatcher" href="html/logwatcher_intro.html"/>
 
-   	<topic label="Creating a new Watcher" href="html/logwatcher.html"/>
+   	<topic label="Creating a Watcher" href="html/lw_create_watcher.html"/>
    	
-   	<topic label="Defining a Filter" href="html/logwatcher.html"/>
+   	<topic label="Defining a Filter" href="html/lw_create_filter.html"/>
    	
-   	<topic label="Using the LogWatcher View" href="html/logwatcher.html"/>
+   	<topic label="Using the LogWatcher View" href="html/lw_view.html"/>
    	
-   	<topic label="LogWatcher Preferences" href="html/logwatcher.html"/>
+   	<topic label="LogWatcher Preferences" href="html/lw_preferences.html"/>
 
 </toc>
