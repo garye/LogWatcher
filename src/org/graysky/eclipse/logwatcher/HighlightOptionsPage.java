@@ -17,14 +17,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.graysky.eclipse.logwatcher.filters.Filter;
+import org.graysky.eclipse.logwatcher.filters.HighlightAction;
 
 public class HighlightOptionsPage extends WizardPage
 {
 	private Text		m_filterText;
 	private Composite	m_actionOptions;
-	private Color		m_color;
+	private Color		m_color 			= null;
+	private Color		m_startingColor		= null;
 	private Combo		m_actionsCombo;
-	private Filter		m_filter;
 
 	/**
 	 * Constructor for HighlightOptionsPage.
@@ -50,6 +51,8 @@ public class HighlightOptionsPage extends WizardPage
 	{
 		Composite composite = new Composite(parent, SWT.NONE);
 		setControl(composite);
+	
+		m_startingColor = new Color(getShell().getDisplay(), 0, 0, 0);
 		
 		GridData gridData;
 		
@@ -66,7 +69,7 @@ public class HighlightOptionsPage extends WizardPage
 		gridData.heightHint = 20;
 		gridData.widthHint = 20;
 		c.setLayoutData(gridData);
-		c.setBackground(new Color(getShell().getDisplay(), 0,0,0));
+		c.setBackground(m_startingColor);
 		
 		Button colorButton = new Button(composite, SWT.PUSH);
 		colorButton.setText("Select...");
@@ -77,6 +80,10 @@ public class HighlightOptionsPage extends WizardPage
 				dialog.open();
 				
 				if (dialog.getRGB() != null) {
+					if (m_color != null) {
+						m_color.dispose();	
+					}
+					
 					m_color = new Color(getShell().getDisplay(), dialog.getRGB());
 					c.setBackground(m_color);
 				}
@@ -86,12 +93,23 @@ public class HighlightOptionsPage extends WizardPage
 
 	public String getTitle()
 	{
-		return "Set the highlight color";
+		return "Set the highlight color.";
 	}
 
 	public IWizardPage getNextPage()
 	{
 		return null;
 	}
+
+    public void dispose()
+    {
+        super.dispose();
+        m_startingColor.dispose();
+    }
+
+    public Color getColor()
+    {
+        return m_color;
+    }
 
 }

@@ -11,14 +11,21 @@ public class Filter
 	
 	// Today, only one action is supported per filter by the GUI.
 	private Vector		m_actions	= new Vector();
-	private boolean	m_contains	= true;
+	private boolean		m_contains	= true;
 	
 	/**
 	 * Test if the given string is matched by this filter.
 	 */
 	public boolean matches(String str)
 	{
-		return (str.matches(m_pattern));	
+		int index = str.toLowerCase().indexOf(m_pattern.toLowerCase());	
+		
+		if (m_contains) {
+			return (index > -1);	
+		}
+		else {
+			return (index == -1);	
+		}
 	}
 
 	/**
@@ -43,7 +50,7 @@ public class Filter
 		FilterAction a = (FilterAction) m_actions.get(0);
 		String contains = (m_contains ? "contains" : "does not contain");
 		if (a != null) {
-			return a.getDescription() + " when text "  + contains + " " + m_pattern;
+			return a.getDescription() + " when text "  + contains + " \"" + m_pattern + "\"";
 		}
 		else {
 			return "No action specified for filter";
@@ -59,5 +66,23 @@ public class Filter
 	{
 		m_pattern = pattern;
 	}
+
+    public boolean getContains()
+    {
+        return m_contains;
+    }
+
+	public void dispose()
+	{
+		for (Iterator iter = m_actions.iterator(); iter.hasNext();) {
+            FilterAction element = (FilterAction) iter.next();
+            element.dispose();
+        }	
+	}
+
+    public void setContains(boolean contains)
+    {
+        m_contains = contains;
+    }
 
 }

@@ -6,6 +6,7 @@ import java.util.Vector;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -31,14 +32,14 @@ public class NewWatcherDialog extends Dialog
 	private Text				m_intervalText;
 	private String				m_errorMsg;
 	private File				m_file;
-	private int				m_interval;
-	private int				m_numLines;
-	private IDialogSettings	m_settings;
+	private int					m_interval;
+	private int					m_numLines;
+	private IDialogSettings		m_settings;
 	private List				m_filterList;
 	private Vector				m_filters		= new Vector();
 	
 	private static int		DEFAULT_INTERVAL	= 1;
-	private static int		DEFAULT_NUMLINES	= 10;
+	private static int		DEFAULT_NUMLINES	= 100;
 	
 	/**
 	 * Constructor for NewWatcherDialog.
@@ -177,12 +178,14 @@ public class NewWatcherDialog extends Dialog
 		newButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt)
 			{
-				NewFilterDialog dialog = new NewFilterDialog(getShell());
-				dialog.open();
-				
-				if (dialog.getFilter() != null) {
-					m_filters.add(dialog.getFilter());
-					m_filterList.add(dialog.getFilter().getDescription());
+				// Launch the wizard
+                NewFilterWizard wizard = new NewFilterWizard();
+                WizardDialog dialog = new WizardDialog(m_filterList.getShell(), wizard);
+                dialog.open();
+                
+				if (wizard.getFilter() != null) {
+					m_filters.add(wizard.getFilter());
+					m_filterList.add(wizard.getFilter().getDescription());
 				}
 			}
 		});

@@ -7,4 +7,6 @@ public interface FilterAction
 	public void doAction(LineStyleEvent event);
 	
 	public String getDescription();
+	
+	public void dispose();
 }

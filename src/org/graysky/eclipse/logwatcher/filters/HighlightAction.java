@@ -35,4 +35,9 @@ public class HighlightAction implements FilterAction
 	{
 		m_color = color;
 	}
+	
+	public void dispose()
+	{
+		m_color.dispose();	
+	}
 }

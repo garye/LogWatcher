@@ -67,7 +67,7 @@ public class IgnoreOptionsPage extends WizardPage
 	 */
 	public String getTitle()
 	{
-		return "";
+		return "There are no options for this action.";
 	}
 
 }

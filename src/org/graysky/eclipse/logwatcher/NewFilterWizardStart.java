@@ -4,6 +4,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -20,7 +22,7 @@ public class NewFilterWizardStart extends WizardPage
 	private Composite	m_actionOptions;
 	private Color		m_color;
 	private Combo		m_actionsCombo;
-	private Filter		m_filter;
+	private Combo		m_containsCombo;
 
 	/**
 	 * Constructor for FilterWizardStartPage.
@@ -63,16 +65,22 @@ public class NewFilterWizardStart extends WizardPage
 		//
 		new Label(composite, SWT.NONE).setText("Where text ");
 		
-		Combo containsCombo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
-		containsCombo.add("contains");
-		containsCombo.add("does not contain");
-		containsCombo.select(0);
+		m_containsCombo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
+		m_containsCombo.add("contains");
+		m_containsCombo.add("does not contain");
+		m_containsCombo.select(0);
 		
 		m_filterText = new Text(composite, SWT.BORDER);
 		m_filterText.setTextLimit(200);
 		gridData = new GridData();
 		gridData.widthHint = 200;
 		m_filterText.setLayoutData(gridData);
+		m_filterText.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent e)
+            {
+            	setPageComplete(validatePage());
+            }
+        });
 		
 		//
 		// Second row
@@ -86,6 +94,8 @@ public class NewFilterWizardStart extends WizardPage
 		gridData = new GridData();
 		gridData.horizontalSpan = 2;
 		m_actionsCombo.setLayoutData(gridData);
+		
+		setPageComplete(validatePage());
 	}
 
 
@@ -94,19 +104,24 @@ public class NewFilterWizardStart extends WizardPage
 	 */
 	public String getTitle()
 	{
-		return "Define the filter.";
+		return "Define the filter. Text is case-insensitive.";
 	}
 
-	/**
-	 * @see org.eclipse.jface.wizard.IWizardPage#canFlipToNextPage()
-	 */
-	public boolean canFlipToNextPage()
+	public int getActionType()
 	{
-		return (m_filterText.getText().length() > 0);
+		return m_actionsCombo.getSelectionIndex();	
 	}
 
 	public IWizardPage getNextPage()
 	{
+		// Set the options in the wizard
+		NewFilterWizard wiz = (NewFilterWizard) getWizard();
+		Filter f = new Filter();
+		f.setPattern(m_filterText.getText());
+		f.setContains(m_containsCombo.getSelectionIndex() == 0 ? true : false);
+		wiz.setFilter(f);
+		wiz.setCanFinish(true);
+		
 		switch (m_actionsCombo.getSelectionIndex()) {
 			case 0:
 				return getWizard().getPage("highlight_options");
@@ -117,6 +132,11 @@ public class NewFilterWizardStart extends WizardPage
 			default:
 				return null;
 		}
+	}
+
+	protected boolean validatePage()
+	{
+		return (m_filterText.getText().length() > 0);
 	}
 
 }

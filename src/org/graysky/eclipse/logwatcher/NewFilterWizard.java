@@ -1,16 +1,17 @@
 package org.graysky.eclipse.logwatcher;
 
 import org.eclipse.jface.wizard.Wizard;
+import org.graysky.eclipse.logwatcher.filters.Filter;
+import org.graysky.eclipse.logwatcher.filters.FilterAction;
+import org.graysky.eclipse.logwatcher.filters.HighlightAction;
 
-/**
- * @author gelliott
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
- */
 public class NewFilterWizard extends Wizard {
+	
+	private Filter					m_filter;
+	private boolean					m_canFinish 	= false;
+	private NewFilterWizardStart	m_startPage		= new NewFilterWizardStart("start");
+	private HighlightOptionsPage	m_highlightPage	= new HighlightOptionsPage("highlight_options");
+	private IgnoreOptionsPage		m_ignorePage	= new IgnoreOptionsPage("ignore_options");
 
 	/**
 	 * Constructor for NewFilterWizard.
@@ -18,19 +19,56 @@ public class NewFilterWizard extends Wizard {
 	public NewFilterWizard()
 	{
 		super();
-		setWindowTitle("Window Title");
-		addPage(new NewFilterWizardStart("start"));
-		addPage(new HighlightOptionsPage("highlight_options"));
-		addPage(new IgnoreOptionsPage("ignore_options"));
-		System.out.println("done constructing");
+		setWindowTitle("New Filter Wizard");
+		initPages();
 	}
 
-	/**
-	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
-	 */
 	public boolean performFinish()
 	{
-		return false;
+		switch (m_startPage.getActionType()) {
+			case 0:
+				HighlightAction a = new HighlightAction(m_highlightPage.getColor());
+				addFilterAction(a);
+				break;
+				
+			case 1:
+				// coming soon
+				break;
+					
+		}
+		return true;
 	}
+
+	protected void initPages()
+	{
+		addPage(m_startPage);
+		addPage(m_highlightPage);
+		addPage(m_ignorePage);
+	}
+
+    public void setFilter(Filter f)
+    {
+    	m_filter = f;
+    }
+	
+	public void addFilterAction(FilterAction a)
+	{
+		m_filter.addAction(a);	
+	}
+
+    public Filter getFilter()
+    {
+        return m_filter;
+    }
+
+    public boolean canFinish()
+    {
+        return m_canFinish;
+    }
+    
+    public void setCanFinish(boolean canFinish)
+    {
+        m_canFinish = canFinish;
+    }
 
 }

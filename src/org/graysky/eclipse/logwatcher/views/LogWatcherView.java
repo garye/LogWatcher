@@ -12,16 +12,18 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.LineStyleEvent;
+import org.eclipse.swt.custom.LineStyleListener;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
@@ -30,6 +32,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.graysky.eclipse.logwatcher.NewWatcherDialog;
+import org.graysky.eclipse.logwatcher.filters.Filter;
 import org.graysky.eclipse.logwatcher.watchers.TextFileWatcher;
 import org.graysky.eclipse.logwatcher.watchers.WatcherUpdateListener;
 import org.graysky.eclipse.util.BoundedList;
@@ -145,7 +148,7 @@ public class LogWatcherView extends ViewPart {
 			public void run() {
 				NewWatcherDialog d = new NewWatcherDialog(m_folder.getShell());
 				if (d.open() == Window.OK) {
-					addWatcher(d.getFile(),d.getInterval(), d.getNumLines());
+					addWatcher(d.getFile(),d.getInterval(), d.getNumLines(), d.getFilters());
 				}
 			}
 		};
@@ -155,7 +158,7 @@ public class LogWatcherView extends ViewPart {
 			getImageDescriptor(ISharedImages.IMG_OBJS_TASK_TSK));
 	}
 	
-	private void addWatcher(File file, int interval, int numLines)
+	private void addWatcher(File file, int interval, int numLines, Vector filters)
 	{	
 		// Add the new tab
 		CTabItem newItem = new CTabItem(m_folder, 0);
@@ -194,6 +197,9 @@ public class LogWatcherView extends ViewPart {
 			return;
 		}
 		
+		final WatcherEntry entry = new WatcherEntry(viewer,  watcher, newItem, filters);
+		m_watchers.add(entry);
+			
 		// Add a listener
 		final Display display = Display.getCurrent();
 		watcher.addListener(new WatcherUpdateListener() {
@@ -213,13 +219,22 @@ public class LogWatcherView extends ViewPart {
 			}
 		});
 		
-		watcher.start();
-		m_watchers.add(new WatcherEntry(viewer,  watcher, newItem));
+		viewer.getTextWidget().addLineStyleListener(new LineStyleListener() {
+            public void lineGetStyle(LineStyleEvent event)
+            {
+            	for (Iterator iter = entry.filters.iterator(); iter.hasNext();) {
+                    Filter f = (Filter) iter.next();
+                    if (f.matches(event.lineText)) {
+                    	f.handleMatch(event);	
+                    }
+                }
+            }
+        });
 		
+		watcher.start();
+	
 		m_closeAction.setEnabled(true);
 	}
-
-	
 
 	private void showMessage(String message)
 	{
@@ -240,7 +255,7 @@ public class LogWatcherView extends ViewPart {
 		
 		for (Iterator iter = m_watchers.iterator(); iter.hasNext();) {
 			WatcherEntry entry = (WatcherEntry) iter.next();
-			entry.watcher.halt();	
+			entry.dispose();
 		} 
 	}
 	
@@ -259,15 +274,17 @@ public class LogWatcherView extends ViewPart {
 	
 	class WatcherEntry
 	{
-		TextViewer viewer = null;
-		TextFileWatcher watcher = null;
-		CTabItem tab = null;
+		TextViewer 		viewer 		= null;
+		TextFileWatcher watcher 	= null;
+		CTabItem 		tab 		= null;
+		Vector			filters		= null;
 		
-		public WatcherEntry(TextViewer v, TextFileWatcher w, CTabItem t)
+		public WatcherEntry(TextViewer v, TextFileWatcher w, CTabItem t, Vector f)
 		{
 			viewer = v;	
 			watcher = w;
 			tab = t;
+			filters = f;
 		}
 		
 		public void dispose()
@@ -275,6 +292,10 @@ public class LogWatcherView extends ViewPart {
 			watcher.halt();
 			viewer.getControl().dispose();
 			tab.dispose();
+			for (Iterator iterator = filters.iterator(); iterator.hasNext();) {
+                Filter element = (Filter) iterator.next();
+                element.dispose();
+            }	
 		}
 	}
 
