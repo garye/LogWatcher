@@ -235,7 +235,7 @@ public class NewWatcherDialog extends Dialog
     
         // Grouping control
         Group numLinesGroup = new Group(parent, SWT.NONE);
-        numLinesGroup.setText("What to show at start");
+        numLinesGroup.setText("Number of lines to show at start");
         GridLayout glayout = new GridLayout(2, false);
         numLinesGroup.setLayout(glayout);
         gridData = new GridData();

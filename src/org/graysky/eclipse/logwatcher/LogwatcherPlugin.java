@@ -9,6 +9,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.FontRegistry;
@@ -24,6 +25,7 @@ public class LogwatcherPlugin extends AbstractUIPlugin
 {
 	//The shared instance.
 	private static LogwatcherPlugin plugin;
+	
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
 	
@@ -86,6 +88,16 @@ public class LogwatcherPlugin extends AbstractUIPlugin
 		super.initializeDefaultPreferences(store);
 		store.setDefault("saveWatchers", false);
 	}
+
+	/**
+	 * Log an error to this plugin's log
+	 */
+	public void logError(String msg, Exception e)
+	{
+		Status s = new Status(Status.ERROR, "logwatcher", 1, msg, e);
+		getLog().log(s);
+	}
+	
 
 	/**
 	 * Get a font from the plugin's font registry.

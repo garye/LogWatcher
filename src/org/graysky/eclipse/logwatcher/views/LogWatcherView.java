@@ -5,9 +5,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.Writer;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -15,6 +12,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -23,11 +21,9 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -44,9 +40,14 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
-import org.graysky.eclipse.logwatcher.FindDialog;
 import org.graysky.eclipse.logwatcher.LogwatcherPlugin;
-import org.graysky.eclipse.logwatcher.NewWatcherDialog;
+import org.graysky.eclipse.logwatcher.actions.ClearDisplayAction;
+import org.graysky.eclipse.logwatcher.actions.CloseWatcherAction;
+import org.graysky.eclipse.logwatcher.actions.CopyAction;
+import org.graysky.eclipse.logwatcher.actions.EditWatcherAction;
+import org.graysky.eclipse.logwatcher.actions.FindAction;
+import org.graysky.eclipse.logwatcher.actions.NewWatcherAction;
+import org.graysky.eclipse.logwatcher.actions.ToggleScrollingAction;
 import org.graysky.eclipse.logwatcher.filters.Filter;
 import org.graysky.eclipse.logwatcher.filters.FilterLoader;
 import org.graysky.eclipse.logwatcher.watchers.TextFileWatcher;
@@ -73,13 +74,6 @@ public class LogWatcherView extends ViewPart
 	private Vector 		m_watchers = new Vector();
 
 	private static final String WATCHER_STATE_FILENAME	= "watcherState.xml";
-	private static ImageDescriptor eraseImage;
-	private static ImageDescriptor closeImage;
-	private static ImageDescriptor newImage;
-	private static ImageDescriptor findImage;
-	private static ImageDescriptor scrollImage;
-	private static ImageDescriptor copyImage;
-	private static ImageDescriptor editImage;
 	
 	/**
 	 * Listen for changes to Logwatcher preferences. Currently, only changes to
@@ -96,51 +90,19 @@ public class LogWatcherView extends ViewPart
 
 				for (Iterator iter = m_watchers.iterator(); iter.hasNext();) {
 					WatcherEntry entry = (WatcherEntry) iter.next();
-					entry.viewer.getTextWidget().setFont(plugin.getFont("logwatcherFont"));	
+					entry.getViewer().getTextWidget().setFont(plugin.getFont("logwatcherFont"));	
 				}		
 			}
 		}
 	};
 	
- 	static {
-	    URL url = null;
-	    try {
-		    eraseImage = createImageDescriptor("icons/clear.gif");
-		    closeImage = createImageDescriptor("icons/close.gif");
-		    newImage = createImageDescriptor("icons/new.gif");
-			findImage = createImageDescriptor("icons/search.gif");
-			scrollImage = createImageDescriptor("icons/toggle_scroll.gif");
-			copyImage = createImageDescriptor("icons/copy_edit.gif");
-			editImage = createImageDescriptor("icons/edit.gif");
-	    } 
-	    catch (Exception e) {
-	    	e.printStackTrace();
-	    }
-	}
   			
-	/**
-	 * The constructor.
-	 */
-	public LogWatcherView() 
-	{
-	}
-
 	public void init(IViewSite site) throws PartInitException
 	{
 		super.init(site);
 		
 		// Register a property change listener for the preferences page.
 		LogwatcherPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(m_propListener);
-	}
-
-	/**
-	 * Create an image descriptor for the given filename (relative to the
-	 * plugin install directory)
-	 */
-	private static ImageDescriptor createImageDescriptor(String filename) throws Exception
-	{
-		URL url = new URL(LogwatcherPlugin.getDefault().getDescriptor().getInstallURL(), filename);
-		return ImageDescriptor.createFromURL(url);
 	}
 
 	/**
@@ -174,6 +136,9 @@ public class LogWatcherView extends ViewPart
 		loadWatcherState();
 	}
 
+	/**
+	 * Load the watcher state from a previous instance. 
+	 */
 	private void loadWatcherState()
 	{
 		if (LogwatcherPlugin.getDefault().getPreferenceStore().getBoolean("saveWatchers")) {
@@ -185,8 +150,7 @@ public class LogWatcherView extends ViewPart
 				loader.loadWatchers(new FileReader(path.toFile()));
 			}
 			catch (Exception e) {
-				System.out.println(e.getMessage());
-				e.printStackTrace();
+				LogwatcherPlugin.getDefault().logError("Error loading watcher state", e);
 			}
 		}
 	}
@@ -240,134 +204,63 @@ public class LogWatcherView extends ViewPart
 		manager.add(m_closeAction);
 	}
 
+	/**
+	 * Close and dispose of the currently selected watcher
+	 */
+	public void closeSelectedWatcher()
+	{
+		WatcherEntry entry = getSelectedEntry();
+		if (entry != null) {
+			entry.dispose();	
+			m_watchers.remove(entry);
+			if (m_folder.getItemCount() == 0) {
+				setViewTitle(null);
+				m_closeAction.setEnabled(false);
+				m_clearAction.setEnabled(false);
+				m_scrollAction.setEnabled(false);
+				m_editAction.setEnabled(false);
+			}
+			
+			saveWatcherState();
+		}
+	}
+
+	/**
+	 * Create the actions and set their default states.
+	 */
 	private void makeActions() 
 	{
 		// Close the currently selected watcher
-		m_closeAction = new Action() {
-			public void run() {
-				WatcherEntry entry = findEntry(m_folder.getSelection());
-				if (entry != null) {
-					entry.dispose();	
-					m_watchers.remove(entry);
-					if (m_folder.getItemCount() == 0) {
-						setViewTitle(null);
-						m_closeAction.setEnabled(false);
-						m_clearAction.setEnabled(false);
-						m_scrollAction.setEnabled(false);
-						m_editAction.setEnabled(false);
-					}
-					
-					saveWatcherState();
-				}
-			}
-		};
-		m_closeAction.setText("Close");
-		m_closeAction.setToolTipText("Close this watcher");
-		m_closeAction.setImageDescriptor(closeImage);
+		m_closeAction = new CloseWatcherAction(this);
 		m_closeAction.setEnabled(false);
 		
-		// Create a new watcher
-		m_newAction = new Action() {
-			public void run() {
-				NewWatcherDialog d = new NewWatcherDialog(m_folder.getShell(), false);
-				if (d.open() == Window.OK) {
-					addWatcher(d.getFile(),d.getInterval(), d.getNumLines(), d.getFilters(), true);
-				}
-			}
-		};
-		m_newAction.setText("New Watcher");
-		m_newAction.setToolTipText("Create a new watcher");
-		m_newAction.setImageDescriptor(newImage);
+		m_newAction = new NewWatcherAction(this);
 		
-		 // Edit a watcher
-         m_editAction = new Action() {
-             public void run() {
-                 WatcherEntry entry = findEntry(m_folder.getSelection());
-                 if (entry != null) {
-					 int topIndex = entry.viewer.getTopIndex();
-					 int caret = entry.viewer.getTextWidget().getCaretOffset();
-	                 NewWatcherDialog d = new NewWatcherDialog(m_folder.getShell(), true);
-	                 d.setFilters(entry.filters);
-	                 d.setInterval(entry.watcher.getInterval());
-	                 d.setNumLines(entry.watcher.getNumLines());
-	                 d.setFile(new File(entry.watcher.getFilename()));
-	                 if (d.open() == Window.OK) {
-	                     editWatcher(entry,d.getInterval(), d.getNumLines(), d.getFilters());
-	                     entry.viewer.refresh();
-						 entry.viewer.setTopIndex(topIndex);
-						 entry.viewer.getTextWidget().setCaretOffset(caret);	
-	                 }
-                 }
-             }
-         };
-         m_editAction.setText("Edit Watcher");
-         m_editAction.setToolTipText("Edit this watcher");
-         m_editAction.setImageDescriptor(editImage);
-		 m_editAction.setEnabled(false);
-		
+		// Edit a watcher
+		m_editAction = new EditWatcherAction(this);
+		m_editAction.setEnabled(false);
+
 		// Clear the display	
-		m_clearAction = new Action() {
-			
-			public void run() {
-				WatcherEntry entry = findEntry(m_folder.getSelection());
-				if (entry != null) {
-					entry.watcher.clear();
-                    entry.viewer.setDocument(new Document(""));
-				}	
-			}
-		};
-		m_clearAction.setText("Clear");
-		m_clearAction.setToolTipText("Clear logwatcher display");
-		m_clearAction.setImageDescriptor(eraseImage);
+		m_clearAction = new ClearDisplayAction(this);
 		m_clearAction.setEnabled(false);	
 		
 		// Find in log file
-		m_findAction = new Action() {
-			public void run() {
-				WatcherEntry entry = findEntry(m_folder.getSelection());
-				if (entry != null) {
-
-					FindDialog d = new FindDialog(m_folder.getShell(), entry.viewer.getFindReplaceTarget());
-					d.open();
-				}
-				
-			}
-		};
-		m_findAction.setText("Find...");
-		m_findAction.setToolTipText("Find in log file");
-		m_findAction.setImageDescriptor(findImage);
+		m_findAction = new FindAction(this);
 		
 		// Copy
-		m_copyAction =  new Action() {
-			public void run() {
-				WatcherEntry entry = findEntry(m_folder.getSelection());
-				if (entry != null) {
-					entry.viewer.getTextWidget().copy();
-				}
-			}
-		};
-		m_copyAction.setText("Copy");
-		m_copyAction.setToolTipText("Copy selected text to the clipboard");
-		m_copyAction.setImageDescriptor(copyImage);
-		
+		m_copyAction = new CopyAction(this);
 		
 		// Toggle scrolling
-		m_scrollAction = new Action() {
-			public void run() {
-				WatcherEntry entry = findEntry(m_folder.getSelection());
-				if (entry != null) {
-					entry.scroll = !isChecked();
-				}
-			}
-		};
-		m_scrollAction.setText("Toggle Automatic Scrolling");
-		m_scrollAction.setToolTipText("Toggle automatic scrolling");
-		m_scrollAction.setImageDescriptor(scrollImage);
+		m_scrollAction = new ToggleScrollingAction(this);
 		m_scrollAction.setChecked(false);
 		m_scrollAction.setEnabled(false);
 	}
 	
-	private void addWatcher(File file, int interval, int numLines, Vector filters, boolean saveState)
+	/**
+	 * Add a Watcher for the specified File. Will set up the UI
+	 * components as well as the actual TextFileWatcher.
+	 */
+	public void addWatcher(File file, int interval, int numLines, Vector filters, boolean saveState)
 	{	
 		// Add the new tab
 		CTabItem newItem = new CTabItem(m_folder, 0);
@@ -410,7 +303,7 @@ public class LogWatcherView extends ViewPart
 		final WatcherEntry entry = new WatcherEntry(viewer,  watcher, newItem, filters);
 		m_watchers.add(entry);
 			
-		// Add a listener
+		// Add a Watcher listener
 		final Display display = Display.getCurrent();
 		watcher.addListener(new WatcherUpdateListener() {
 			public void update(BoundedList list)
@@ -420,9 +313,9 @@ public class LogWatcherView extends ViewPart
 				display.asyncExec(new Runnable() {
 					public void run()
 					{
-						entry.viewer.getTextWidget().append(flist.getFormattedText());
+						entry.getViewer().getTextWidget().append(flist.getFormattedText());
 		
-						if (entry.scroll) {
+						if (entry.isScroll()) {
 							// Scroll to the bottom
 							viewer.setTopIndex(newDoc.getNumberOfLines());
 						}
@@ -431,10 +324,11 @@ public class LogWatcherView extends ViewPart
 			}
 		});
 		
+		// Allow filters to set line styles.
 		viewer.getTextWidget().addLineStyleListener(new LineStyleListener() {
             public void lineGetStyle(LineStyleEvent event)
             {
-            	for (Iterator iter = entry.filters.iterator(); iter.hasNext();) {
+            	for (Iterator iter = entry.getFilters().iterator(); iter.hasNext();) {
                     Filter f = (Filter) iter.next();
                     if (f.matches(event.lineText)) {
                     	f.handleViewerMatch(event);	
@@ -468,12 +362,12 @@ public class LogWatcherView extends ViewPart
 	 * @param numLines
 	 * @param filters
 	 */
-	private void editWatcher(WatcherEntry entry, int interval, int numLines, Vector filters)
+	public void editWatcher(WatcherEntry entry, int interval, int numLines, Vector filters)
 	{
-	    entry.watcher.setInterval(interval);
-	    entry.watcher.setNumLines(numLines);
-	    entry.watcher.setFilters(filters);
-	    entry.filters = filters;
+	    entry.getWatcher().setInterval(interval);
+	    entry.getWatcher().setNumLines(numLines);
+	    entry.getWatcher().setFilters(filters);
+	    entry.setFilters(filters);
 	    
 	    saveWatcherState();
 	}
@@ -497,10 +391,19 @@ public class LogWatcherView extends ViewPart
             writer.flush();
         }
         catch (IOException e) {
-        	// TODO: Log an error
-        	System.out.println(e.getMessage());
+        	LogwatcherPlugin.getDefault().logError("Error saving watcher state", e);
         }
 		
+	}
+
+	public CTabFolder getFolder()
+	{
+		return m_folder;
+	}
+
+	public void setFolder(CTabFolder folder)
+	{
+		m_folder = folder;
 	}
 
 	private void showMessage(String message)
@@ -528,11 +431,14 @@ public class LogWatcherView extends ViewPart
 		LogwatcherPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(m_propListener);
 	}
 	
-	public WatcherEntry findEntry(CTabItem item)
+	/**
+	 * Find the WatcherEntry associated with the given CTabItem.
+	 */
+	private WatcherEntry findEntry(CTabItem item)
 	{
 		for (Iterator iter = m_watchers.iterator(); iter.hasNext();) {
 			WatcherEntry entry = (WatcherEntry) iter.next();
-			if (entry.tab == item) {
+			if (entry.getTab() == item) {
 				return entry;	
 			}
 		}	
@@ -541,57 +447,13 @@ public class LogWatcherView extends ViewPart
 		return null;
 	}
 	
+	
 	/**
-	 * In-memory representation of one log file being watched.
+	 * Returns the WatcherEntry for the currently selected watcher
 	 */
-	class WatcherEntry
+	public WatcherEntry getSelectedEntry()
 	{
-		TextViewer 		viewer 		= null;
-		TextFileWatcher watcher 	= null;
-		CTabItem 		tab 		= null;
-		Vector			filters		= null;
-		boolean 		scroll		= true;
-		
-		public WatcherEntry(TextViewer v, TextFileWatcher w, CTabItem t, Vector f)
-		{
-			viewer = v;	
-			watcher = w;
-			tab = t;
-			filters = f;
-		}
-		
-		public void toXML(Writer w) throws IOException
-		{
-			w.write("<watcher>\n");
-			w.write("<file>" + watcher.getFilename() + "</file>");
-			w.write("<numLines>" + watcher.getNumLines() + "</numLines>");
-			w.write("<interval>" + watcher.getInterval() + "</interval>");
-			for (Iterator iter = filters.iterator(); iter.hasNext();) {
-                Filter filter = (Filter) iter.next();
-                filter.toXML(w);
-            }
-			w.write("\n</watcher>");
-			
-		}
-		
-		public void dispose()
-		{
-			try {
-				watcher.halt();
-				if (viewer.getControl() != null) {
-					viewer.getControl().dispose();
-				}
-				tab.dispose();
-				for (Iterator iterator = filters.iterator(); iterator.hasNext();) {
-	                Filter element = (Filter) iterator.next();
-	                element.dispose();
-	            }	
-			}
-			catch (Throwable t) {
-				System.out.println("error: " + t.getMessage());
-				t.printStackTrace();	
-			}
-		}
+		return findEntry(m_folder.getSelection());
 	}
 
 	/**
@@ -657,7 +519,6 @@ public class LogWatcherView extends ViewPart
 	            return document;
 	        }
 	        catch (Exception e) {
-	        	e.printStackTrace();
 	        	throw e;
 	        }
 		}

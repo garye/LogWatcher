@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Vector;
 
+import org.graysky.eclipse.logwatcher.LogwatcherPlugin;
 import org.graysky.eclipse.logwatcher.filters.Filter;
 import org.graysky.eclipse.util.BoundedList;
 
@@ -157,8 +158,7 @@ public class TextFileWatcher extends Thread
                 m_list.clear();
 			}
 			catch (IOException e) {
-                // TODO: Should we handle this differently?
-				e.printStackTrace();
+                LogwatcherPlugin.getDefault().logError("Error reading from log file", e);
 			}
 			catch (InterruptedException e) {
 				// Ignore. If we have been stopped, the while condition will fail.	
@@ -169,10 +169,13 @@ public class TextFileWatcher extends Thread
 			m_reader.close();
 		}
 		catch (Exception e) {
-			// ignore	
+			LogwatcherPlugin.getDefault().logError("Error closing log file reader", e);	
 		}
 	}
 
+	/**
+	 * Notify the listeners that an update has been made to the log file beign watched.
+	 */
 	protected synchronized void notifyListeners()
 	{
 		for (Iterator i = m_listeners.iterator(); i.hasNext();) {
