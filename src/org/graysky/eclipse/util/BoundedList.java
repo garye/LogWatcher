@@ -1,7 +1,6 @@
 package org.graysky.eclipse.util;
 
 import java.util.LinkedList;
-import java.util.Vector;
 
 /**
  * A fixed-size list of Objects. If an item is inserted into a full list the oldest
