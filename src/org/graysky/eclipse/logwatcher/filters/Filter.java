@@ -79,9 +79,10 @@ public class Filter
 		return m_pattern;
 	}
 
-	public void setPattern(String pattern) throws MalformedPatternException
+	public void setPattern(String pattern, boolean caseSensitive) throws MalformedPatternException
 	{
 		m_pattern = pattern;
+		m_caseSensitive = caseSensitive;
 		Perl5Compiler compiler = new Perl5Compiler();
 		if (!m_caseSensitive) {
 			m_regexp = compiler.compile(m_pattern, Perl5Compiler.CASE_INSENSITIVE_MASK);
@@ -113,10 +114,4 @@ public class Filter
 	{
 		return m_caseSensitive;
 	}
-
-	public void setCaseSensitive(boolean caseSensitive)
-	{
-		m_caseSensitive = caseSensitive;
-	}
-
 }

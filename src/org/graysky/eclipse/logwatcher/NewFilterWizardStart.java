@@ -11,6 +11,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
@@ -26,6 +27,7 @@ public class NewFilterWizardStart extends WizardPage
 	private Color			m_color;
 	private Combo			m_actionsCombo;
 	private Combo			m_containsCombo;
+	private Button			m_caseSensitiveBox;
 	private Perl5Compiler	m_regExpCompiler = new Perl5Compiler();
 
 	/**
@@ -85,7 +87,7 @@ public class NewFilterWizardStart extends WizardPage
             	setPageComplete(validatePage());
             }
         });
-		
+	
 		//
 		// Second row
 		//
@@ -105,6 +107,15 @@ public class NewFilterWizardStart extends WizardPage
             }
         });
         
+        //
+		// Third row
+		//
+		m_caseSensitiveBox = new Button(composite, SWT.CHECK);
+		m_caseSensitiveBox.setText("Case sensitive");
+		gridData = new GridData();
+		gridData.horizontalSpan = 3;
+		m_caseSensitiveBox.setLayoutData(gridData);
+	
 		setDescription("Text must be a valid regular expression.");
 		
 		setPageComplete(validatePage());
@@ -129,7 +140,7 @@ public class NewFilterWizardStart extends WizardPage
 		try {
 		
 			Filter f = new Filter();
-			f.setPattern(m_filterText.getText());
+			f.setPattern(m_filterText.getText(), m_caseSensitiveBox.getSelection());
 			f.setContains(m_containsCombo.getSelectionIndex() == 0 ? true : false);
 			return f;
 		}
