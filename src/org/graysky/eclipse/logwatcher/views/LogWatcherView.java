@@ -23,6 +23,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.TextViewer;
@@ -135,16 +136,18 @@ public class LogWatcherView extends ViewPart
 
 	private void loadWatcherState()
 	{
-		WatcherLoader loader = new WatcherLoader();
-		IPath path = LogwatcherPlugin.getDefault().getStateLocation();
-		path = path.addTrailingSeparator();
-		path = path.append(WATCHER_STATE_FILENAME);
-		try {
-			loader.loadWatchers(new FileReader(path.toFile()));
-		}
-		catch (Exception e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
+		if (LogwatcherPlugin.getDefault().getPreferenceStore().getBoolean("saveWatchers")) {
+			WatcherLoader loader = new WatcherLoader();
+			IPath path = LogwatcherPlugin.getDefault().getStateLocation();
+			path = path.addTrailingSeparator();
+			path = path.append(WATCHER_STATE_FILENAME);
+			try {
+				loader.loadWatchers(new FileReader(path.toFile()));
+			}
+			catch (Exception e) {
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+			}
 		}
 	}
 
