@@ -38,6 +38,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.ViewPart;
 import org.graysky.eclipse.logwatcher.LogwatcherPlugin;
 import org.graysky.eclipse.logwatcher.actions.ClearDisplayAction;
@@ -157,10 +158,10 @@ public class LogWatcherView extends ViewPart
 	private void setGlobalActionHandlers()
 	{
 		getViewSite().getActionBars().setGlobalActionHandler(
-			IWorkbenchActionConstants.FIND, m_findAction);
+			ActionFactory.FIND.getId(), m_findAction);
 			
 		getViewSite().getActionBars().setGlobalActionHandler(
-			IWorkbenchActionConstants.COPY, m_copyAction);
+                ActionFactory.COPY.getId(), m_copyAction);
 	}
 
 	private void setViewTitle(String name)
@@ -170,7 +171,7 @@ public class LogWatcherView extends ViewPart
 			title += " - " + name;
 		}
 		
-		setTitle(title);
+		setPartName(title);
 	}
 
 	private void contributeToActionBars()
