@@ -52,7 +52,10 @@ public class HighlightOptionsPage extends WizardPage
 		Composite composite = new Composite(parent, SWT.NONE);
 		setControl(composite);
 	
-		m_startingColor = new Color(getShell().getDisplay(), 0, 0, 0);
+		// Get red as default starting color. 
+		// Note: We didn't allocate this color, so don't dispose it.
+		//
+		m_startingColor = getShell().getDisplay().getSystemColor(SWT.COLOR_RED);
 		
 		GridData gridData;
 		
@@ -86,12 +89,11 @@ public class HighlightOptionsPage extends WizardPage
 					
 					m_color = new Color(getShell().getDisplay(), dialog.getRGB());
 					c.setBackground(m_color);
-					setPageComplete(true);
 				}
 			}
 		});
 		
-		setPageComplete(false);
+		setPageComplete(true);
 	}
 
 	public String getTitle()
@@ -107,7 +109,6 @@ public class HighlightOptionsPage extends WizardPage
     public void dispose()
     {
         super.dispose();
-        m_startingColor.dispose();
     }
 
     public Color getColor()
