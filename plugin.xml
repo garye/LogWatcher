@@ -13,6 +13,7 @@
    <requires>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.help"/>
    </requires>
 
 
@@ -41,6 +42,19 @@
                id="org.graysky.eclipse.logwatcher.views.LogWatcherView">
          </view>
       </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.help.toc">
+      <toc
+            file="book.xml"
+            primary="true">
+      </toc>
+   </extension>
+   <extension point="org.eclipse.help.toc">
+      <toc
+            file="toc_LogWatcher.xml"
+            primary="false">
+      </toc>
    </extension>
 
 </plugin>
