@@ -57,6 +57,9 @@ public class HighlightOptionsPage extends WizardPage
 		//
 		m_startingColor = getShell().getDisplay().getSystemColor(SWT.COLOR_RED);
 		
+        // Initialize choice to the default
+        m_color = new Color(getShell().getDisplay(), m_startingColor.getRGB() );
+        
 		GridData gridData;
 		
 		GridLayout layout = new GridLayout();
@@ -84,6 +87,7 @@ public class HighlightOptionsPage extends WizardPage
 				
 				if (dialog.getRGB() != null) {
 					if (m_color != null) {
+                        // Clean up any previous choice
 						m_color.dispose();	
 					}
 					
