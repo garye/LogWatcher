@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.graysky.eclipse.logwatcher.FindDialog;
@@ -51,6 +52,7 @@ public class LogWatcherView extends ViewPart {
 	private Action			m_clearAction = null;
 	private Action			m_findAction = null;
 	private CTabFolder 	m_folder = null;
+	private Action			m_copyAction = null;
 	private Vector 		m_watchers = new Vector();
 
 	private static ImageDescriptor eraseImage;
@@ -116,6 +118,18 @@ public class LogWatcherView extends ViewPart {
 
 		makeActions();
 		contributeToActionBars();
+		
+		setGlobalActionHandlers();
+	}
+
+	private void setGlobalActionHandlers()
+	{
+		getViewSite().getActionBars().setGlobalActionHandler(
+			IWorkbenchActionConstants.FIND, m_findAction);
+			
+		getViewSite().getActionBars().setGlobalActionHandler(
+			IWorkbenchActionConstants.COPY, m_copyAction);
+
 	}
 
 	private void setViewTitle(String name)
@@ -224,6 +238,16 @@ public class LogWatcherView extends ViewPart {
 		m_findAction.setText("Find...");
 		m_findAction.setToolTipText("Find in log file");
 		m_findAction.setImageDescriptor(findImage);
+		
+		// Copy
+		m_copyAction =  new Action() {
+			public void run() {
+				WatcherEntry entry = findEntry(m_folder.getSelection());
+				if (entry != null) {
+					entry.viewer.getTextWidget().copy();
+				}
+			}
+		};
 	}
 	
 	private void addWatcher(File file, int interval, int numLines, Vector filters)

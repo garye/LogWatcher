@@ -17,14 +17,16 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.graysky.eclipse.logwatcher.filters.Filter;
+import org.apache.oro.text.regex.*;
 
 public class NewFilterWizardStart extends WizardPage
 {
-	private Text		m_filterText;
-	private Composite	m_actionOptions;
-	private Color		m_color;
-	private Combo		m_actionsCombo;
-	private Combo		m_containsCombo;
+	private Text			m_filterText;
+	private Composite		m_actionOptions;
+	private Color			m_color;
+	private Combo			m_actionsCombo;
+	private Combo			m_containsCombo;
+	private Perl5Compiler	m_regExpCompiler = new Perl5Compiler();
 
 	/**
 	 * Constructor for FilterWizardStartPage.
@@ -103,7 +105,7 @@ public class NewFilterWizardStart extends WizardPage
             }
         });
         
-		setDescription("Text is case-insensitive.");
+		setDescription("Text must be a valid regular expression.");
 		
 		setPageComplete(validatePage());
 	}
@@ -117,8 +119,6 @@ public class NewFilterWizardStart extends WizardPage
 		return "Define the filter.";
 	}
 
-	
-
 	public int getActionType()
 	{
 		return m_actionsCombo.getSelectionIndex();	
@@ -126,10 +126,17 @@ public class NewFilterWizardStart extends WizardPage
 
 	public Filter getFilter()
 	{
-		Filter f = new Filter();
-		f.setPattern(m_filterText.getText());
-		f.setContains(m_containsCombo.getSelectionIndex() == 0 ? true : false);
-		return f;
+		try {
+		
+			Filter f = new Filter();
+			f.setPattern(m_filterText.getText());
+			f.setContains(m_containsCombo.getSelectionIndex() == 0 ? true : false);
+			return f;
+		}
+		catch (MalformedPatternException e) {
+			// Shouldn't happen - we have already compiled the pattern.
+			return null;
+		}
 	}
 
 	public IWizardPage getNextPage()
@@ -148,7 +155,21 @@ public class NewFilterWizardStart extends WizardPage
 
 	protected boolean validatePage()
 	{
-		return (m_filterText.getText().length() > 0);
+		if (m_filterText.getText().length() > 0) {
+		
+			try {
+				m_regExpCompiler.compile(m_filterText.getText());
+				setErrorMessage(null);
+				return true;
+			}
+			catch (MalformedPatternException e) {
+				setErrorMessage("Invalid regular expression: " + e.getMessage());
+				return false;
+			}
+		}
+		else {
+			return false;
+		}
 	}
 
 }

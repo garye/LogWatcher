@@ -3,28 +3,34 @@ package org.graysky.eclipse.logwatcher.filters;
 import java.util.Iterator;
 import java.util.Vector;
 
+import org.apache.oro.text.regex.MalformedPatternException;
+import org.apache.oro.text.regex.Pattern;
+import org.apache.oro.text.regex.Perl5Compiler;
+import org.apache.oro.text.regex.Perl5Matcher;
 import org.eclipse.swt.custom.LineStyleEvent;
 
 public class Filter 
 {
-	private String		m_pattern	= null;
+	private String			m_pattern		= null;
+	private boolean		m_caseSensitive	= false;
 	
 	// Today, only one action is supported per filter by the GUI.
-	private Vector		m_actions	= new Vector();
-	private boolean		m_contains	= true;
+	private Vector			m_actions		= new Vector();
+	private boolean		m_contains		= true;
+	private Pattern		m_regexp		= null;
+	private Perl5Matcher	m_matcher		= new Perl5Matcher();
 	
 	/**
 	 * Test if the given string is matched by this filter.
 	 */
 	public boolean matches(String str)
 	{
-		int index = str.toLowerCase().indexOf(m_pattern.toLowerCase());	
-		
+		boolean match = m_matcher.contains(str, m_regexp);
 		if (m_contains) {
-			return (index > -1);	
+			return match;
 		}
 		else {
-			return (index == -1);	
+			return !match;
 		}
 	}
 
@@ -73,9 +79,16 @@ public class Filter
 		return m_pattern;
 	}
 
-	public void setPattern(String pattern)
+	public void setPattern(String pattern) throws MalformedPatternException
 	{
 		m_pattern = pattern;
+		Perl5Compiler compiler = new Perl5Compiler();
+		if (!m_caseSensitive) {
+			m_regexp = compiler.compile(m_pattern, Perl5Compiler.CASE_INSENSITIVE_MASK);
+		}
+		else {
+			m_regexp = compiler.compile(m_pattern);
+		}
 	}
 
     public boolean getContains()
@@ -95,5 +108,15 @@ public class Filter
     {
         m_contains = contains;
     }
+
+	public boolean isCaseSensitive()
+	{
+		return m_caseSensitive;
+	}
+
+	public void setCaseSensitive(boolean caseSensitive)
+	{
+		m_caseSensitive = caseSensitive;
+	}
 
 }
