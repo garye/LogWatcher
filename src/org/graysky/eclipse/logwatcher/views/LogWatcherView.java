@@ -165,8 +165,10 @@ public class LogWatcherView extends ViewPart
 		if (name != null) {
 			title += " - " + name;
 		}
-		setTitle(title);
+        // Set the inner title name.
+		setContentDescription(title);
 		
+        // Set the title of the entire view.
 		setPartName(title);
 	}
 
