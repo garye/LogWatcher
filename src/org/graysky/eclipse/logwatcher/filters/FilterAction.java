@@ -1,6 +1,8 @@
 package org.graysky.eclipse.logwatcher.filters;
 
+import org.eclipse.swt.custom.LineStyleEvent;
+
 public interface FilterAction
 {
-	public void doAction(String str, int offset);
+	public void doAction(LineStyleEvent event);
 }

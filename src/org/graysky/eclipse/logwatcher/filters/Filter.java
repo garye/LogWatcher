@@ -3,6 +3,8 @@ package org.graysky.eclipse.logwatcher.filters;
 import java.util.Iterator;
 import java.util.Vector;
 
+import org.eclipse.swt.custom.LineStyleEvent;
+
 public class Filter 
 {
 	private String	m_pattern	= null;
@@ -20,11 +22,11 @@ public class Filter
 	 * Take the specified actions for the given string, which is assumed to have
 	 * matched the filter.
 	 */
-	public void handleMatch(String str, int offset)
+	public void handleMatch(LineStyleEvent event)
 	{
 		for (Iterator iter = m_actions.iterator(); iter.hasNext();) {
             FilterAction action = (FilterAction) iter.next();
-            action.doAction(str, offset);
+            action.doAction(event);
         }
 	}
 	
