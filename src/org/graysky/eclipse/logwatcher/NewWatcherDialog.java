@@ -6,6 +6,7 @@ import java.util.Vector;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -181,9 +182,9 @@ public class NewWatcherDialog extends Dialog
 				// Launch the wizard
                 NewFilterWizard wizard = new NewFilterWizard();
                 WizardDialog dialog = new WizardDialog(m_filterList.getShell(), wizard);
-                dialog.open();
+                int status = dialog.open();
                 
-				if (wizard.getFilter() != null) {
+				if (status ==  Window.OK && wizard.getFilter() != null) {
 					m_filters.add(wizard.getFilter());
 					m_filterList.add(wizard.getFilter().getDescription());
 				}

@@ -1,15 +1,16 @@
 package org.graysky.eclipse.logwatcher;
 
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.graphics.Color;
 import org.graysky.eclipse.logwatcher.filters.Filter;
 import org.graysky.eclipse.logwatcher.filters.FilterAction;
 import org.graysky.eclipse.logwatcher.filters.HighlightAction;
 import org.graysky.eclipse.logwatcher.filters.IgnoreAction;
 
-public class NewFilterWizard extends Wizard {
-	
+public class NewFilterWizard extends Wizard
+{
 	private Filter					m_filter;
-	private boolean					m_canFinish 	= false;
+	private boolean				m_canFinish 	= false;
 	private NewFilterWizardStart	m_startPage		= new NewFilterWizardStart("start");
 	private HighlightOptionsPage	m_highlightPage	= new HighlightOptionsPage("highlight_options");
 	private IgnoreOptionsPage		m_ignorePage	= new IgnoreOptionsPage("ignore_options");
@@ -26,6 +27,7 @@ public class NewFilterWizard extends Wizard {
 
 	public boolean performFinish()
 	{
+		m_filter = m_startPage.getFilter();
 		switch (m_startPage.getActionType()) {
 			case 0:
 				HighlightAction a = new HighlightAction(m_highlightPage.getColor());
@@ -39,7 +41,17 @@ public class NewFilterWizard extends Wizard {
 		}
 		return true;
 	}
-
+	
+	public boolean performCancel()
+	{
+		Color c = m_highlightPage.getColor();
+		if (c != null) {
+			c.dispose();
+		}
+			
+		return super.performCancel();
+	}
+		
 	protected void initPages()
 	{
 		addPage(m_startPage);
@@ -64,7 +76,20 @@ public class NewFilterWizard extends Wizard {
 
     public boolean canFinish()
     {
-        return m_canFinish;
+        if (m_startPage.isPageComplete()) {
+			switch (m_startPage.getActionType()) {
+				case 0:
+					if (m_highlightPage.isPageComplete()) {
+						return true;
+					}
+					break;
+		
+				case 1:
+					return true;
+			}
+        }
+        
+        return false;
     }
     
     public void setCanFinish(boolean canFinish)

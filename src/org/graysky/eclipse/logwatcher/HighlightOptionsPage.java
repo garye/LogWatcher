@@ -86,9 +86,12 @@ public class HighlightOptionsPage extends WizardPage
 					
 					m_color = new Color(getShell().getDisplay(), dialog.getRGB());
 					c.setBackground(m_color);
+					setPageComplete(true);
 				}
 			}
 		});
+		
+		setPageComplete(false);
 	}
 
 	public String getTitle()

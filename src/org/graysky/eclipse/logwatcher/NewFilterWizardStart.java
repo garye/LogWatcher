@@ -112,16 +112,16 @@ public class NewFilterWizardStart extends WizardPage
 		return m_actionsCombo.getSelectionIndex();	
 	}
 
-	public IWizardPage getNextPage()
+	public Filter getFilter()
 	{
-		// Set the options in the wizard
-		NewFilterWizard wiz = (NewFilterWizard) getWizard();
 		Filter f = new Filter();
 		f.setPattern(m_filterText.getText());
 		f.setContains(m_containsCombo.getSelectionIndex() == 0 ? true : false);
-		wiz.setFilter(f);
-		wiz.setCanFinish(true);
-		
+		return f;
+	}
+
+	public IWizardPage getNextPage()
+	{	
 		switch (m_actionsCombo.getSelectionIndex()) {
 			case 0:
 				return getWizard().getPage("highlight_options");

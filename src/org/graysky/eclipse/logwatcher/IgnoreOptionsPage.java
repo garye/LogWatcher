@@ -59,6 +59,8 @@ public class IgnoreOptionsPage extends WizardPage
 		composite.setLayout(layout);
 	
 		new Label(composite, SWT.NONE).setText("No options available");
+		
+		setPageComplete(true);
 	}
 
 
