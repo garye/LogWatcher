@@ -14,6 +14,11 @@ public class BoundedList
 	private int			m_count		= 0;
 	private int 		m_index		= 0;
 	
+    /**
+     * Used to allocate string buffer.
+     */
+    private static final int LINE_WIDTH = 80;
+    
 	public boolean isFull()
 	{
 		return (m_count >= m_maxItems);
@@ -78,7 +83,7 @@ public class BoundedList
 	 */
 	public String getFormattedText()
 	{
-		StringBuffer sb = new StringBuffer();
+		StringBuffer sb = new StringBuffer(m_count * LINE_WIDTH);
 		for (int i = 0; i < m_count; i++) {
 			sb.append(m_list.get(i) + "\n");	
 		}	
