@@ -17,7 +17,7 @@ public class BoundedList
 	
 	public boolean isFull()
 	{
-		return (m_count == m_maxItems);
+		return (m_count >= m_maxItems);
 	}
 	
 	public boolean isEmpty()
@@ -28,6 +28,11 @@ public class BoundedList
 	public BoundedList(int maxItems)
 	{
 		m_maxItems = maxItems;
+	}
+	
+	public synchronized void setMaxItems(int max)
+	{
+	    m_maxItems = max;
 	}
 	
 	public synchronized Object get(int i)
@@ -48,8 +53,12 @@ public class BoundedList
 	public synchronized void put(Object o)
 	{	
 		if (isFull()) {
-			m_list.removeFirst();
+		    while (isFull()) {
+				m_list.removeFirst();
+				m_count--;
+		    }
 			m_list.addLast(o);
+			m_count++;
 		}
 		else {
 			m_list.add(o);

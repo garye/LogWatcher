@@ -69,6 +69,7 @@ public class LogWatcherView extends ViewPart
 	private Action			m_clearAction = null;
 	private Action			m_findAction = null;
 	private Action		m_scrollAction = null;
+	private Action		m_editAction = null;
 	private CTabFolder 	m_folder = null;
 	private Action			m_copyAction = null;
 	private Vector 		m_watchers = new Vector();
@@ -246,6 +247,7 @@ public class LogWatcherView extends ViewPart
 	private void fillLocalToolBar(IToolBarManager manager)
 	{
 		manager.add(m_newAction);
+        manager.add(m_editAction);
 		manager.add(m_clearAction);
 		manager.add(m_scrollAction);
 		manager.add(m_closeAction);
@@ -279,7 +281,7 @@ public class LogWatcherView extends ViewPart
 		// Create a new watcher
 		m_newAction = new Action() {
 			public void run() {
-				NewWatcherDialog d = new NewWatcherDialog(m_folder.getShell());
+				NewWatcherDialog d = new NewWatcherDialog(m_folder.getShell(), false);
 				if (d.open() == Window.OK) {
 					addWatcher(d.getFile(),d.getInterval(), d.getNumLines(), d.getFilters(), true);
 				}
@@ -289,6 +291,26 @@ public class LogWatcherView extends ViewPart
 		m_newAction.setToolTipText("Create a new watcher");
 		m_newAction.setImageDescriptor(newImage);
 		
+		 // Edit a watcher
+         m_editAction = new Action() {
+             public void run() {
+                 WatcherEntry entry = findEntry(m_folder.getSelection());
+                 if (entry != null) {
+	                 NewWatcherDialog d = new NewWatcherDialog(m_folder.getShell(), true);
+	                 d.setFilters(entry.filters);
+	                 d.setInterval(entry.watcher.getInterval());
+	                 d.setNumLines(entry.watcher.getNumLines());
+	                 d.setFile(new File(entry.watcher.getFilename()));
+	                 if (d.open() == Window.OK) {
+	                     editWatcher(entry,d.getInterval(), d.getNumLines(), d.getFilters());
+	                 }
+                 }
+             }
+         };
+         m_editAction.setText("Edit Watcher");
+         m_editAction.setToolTipText("Edit a watcher");
+         m_editAction.setImageDescriptor(newImage);
+	
 		// Clear the display	
 		m_clearAction = new Action() {
 			
@@ -446,6 +468,24 @@ public class LogWatcherView extends ViewPart
 		if (saveState) {
 			saveWatcherState();
 		}
+	}
+
+	/**
+	 * Change the properties of a currently active watcher.
+	 * 
+	 * @param entry
+	 * @param interval
+	 * @param numLines
+	 * @param filters
+	 */
+	private void editWatcher(WatcherEntry entry, int interval, int numLines, Vector filters)
+	{
+	    entry.watcher.setInterval(interval);
+	    entry.watcher.setNumLines(numLines);
+	    entry.watcher.setFilters(filters);
+	    entry.filters = filters;
+	    
+	    saveWatcherState();
 	}
 
 	/**

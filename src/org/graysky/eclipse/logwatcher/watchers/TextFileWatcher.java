@@ -106,13 +106,16 @@ public class TextFileWatcher extends Thread
 					while ((line = m_reader.readLine()) != null) {
 						
 						if (line.length() > 0) {
-							for (Iterator iter = m_filters.iterator(); iter.hasNext();) {
-	                            Filter f = (Filter) iter.next();
-	                            if (f.matches(line)) {
-	                    			line = f.handleWatcherMatch(line, firstUpdate);	
-	                    		}   
-	                        }
-							
+						    synchronized (m_filters) {
+						        // Apply each filter
+								for (Iterator iter = m_filters.iterator(); iter.hasNext();) {
+		                            Filter f = (Filter) iter.next();
+		                            if (f.matches(line)) {
+		                    			line = f.handleWatcherMatch(line, firstUpdate);	
+		                    		}   
+		                        }
+						    }
+						    
 							// Make sure the filter didn't set the line to null...
 							if (line != null) {
 								updated = true;
@@ -168,11 +171,22 @@ public class TextFileWatcher extends Thread
 	{
 		return m_interval;	
 	}
+	
+	public void setInterval(int interval)
+	{
+	    m_interval = interval;
+	}
 
 	public void clear()
 	{
 		m_list.clear();
 		notifyListeners();
+	}
+
+	public void setNumLines(int numLines)
+	{
+	    m_numLines = numLines;
+	    m_list.setMaxItems(numLines);
 	}
 
     public int getNumLines()
@@ -182,7 +196,9 @@ public class TextFileWatcher extends Thread
 
     public void setFilters(Vector filters)
     {
-        m_filters = filters;
+        synchronized (m_filters) {
+        	m_filters = filters;
+        }
     }
 
 }

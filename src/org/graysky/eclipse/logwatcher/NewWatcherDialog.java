@@ -1,6 +1,7 @@
 package org.graysky.eclipse.logwatcher;
 
 import java.io.File;
+import java.util.Iterator;
 import java.util.Vector;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -22,12 +23,14 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.graysky.eclipse.logwatcher.filters.Filter;
 
 /**
  * The dialog that contains options for creating a new watcher.
  */
 public class NewWatcherDialog extends Dialog
 {
+    private boolean				m_editMode 		= false;
 	private Text				m_fileText;
 	private Text				m_numLinesText;
 	private Text				m_intervalText;
@@ -46,10 +49,11 @@ public class NewWatcherDialog extends Dialog
 	 * Constructor for NewWatcherDialog.
 	 * @param shell
 	 */
-	public NewWatcherDialog(Shell shell)
+	public NewWatcherDialog(Shell shell, boolean editMode)
 	{
 		super(shell);
 		m_settings = LogwatcherPlugin.getDefault().getDialogSettings();
+		m_editMode = editMode;
 	}
 
 	/**
@@ -58,7 +62,12 @@ public class NewWatcherDialog extends Dialog
 	protected void configureShell(Shell shell)
 	{
 		super.configureShell(shell);
-		shell.setText("Create New Watcher");
+		if (m_editMode) {
+            shell.setText("Edit Watcher");
+		}
+		else {
+			shell.setText("Create New Watcher");
+		}
 	}
 
 	/**
@@ -68,7 +77,7 @@ public class NewWatcherDialog extends Dialog
 	public Vector getFilters()
 	{
 		return m_filters;
-		}
+	}
 
 
 	/**
@@ -95,6 +104,10 @@ public class NewWatcherDialog extends Dialog
 		m_fileText.setLayoutData(gridData);
 		Button chooserButton = new Button(composite, SWT.PUSH);
 		chooserButton.setText("Browse...");
+		if (m_editMode) {
+		    m_fileText.setEnabled(false);
+		    chooserButton.setEnabled(false);
+		}
 		
 		//
 		// Number of lines row
@@ -104,6 +117,7 @@ public class NewWatcherDialog extends Dialog
 		m_numLinesText.setTextLimit(4);
 		gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gridData.horizontalSpan = 2;
+		gridData.widthHint = 40;
 	    m_numLinesText.setLayoutData(gridData);
 
 		//
@@ -114,6 +128,7 @@ public class NewWatcherDialog extends Dialog
 		m_intervalText.setTextLimit(4);
 		gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gridData.horizontalSpan = 2;
+        gridData.widthHint = 40;
 		m_intervalText.setLayoutData(gridData);
 		
 		// Register the browse button callback, now that all widgets have been created.
@@ -126,10 +141,10 @@ public class NewWatcherDialog extends Dialog
 				if (dialog.getFileName().length() > 0) {
 					m_fileText.setText(dialog.getFilterPath() + java.io.File.separator + dialog.getFileName());
 			
+                    int defaultInterval = DEFAULT_INTERVAL;
+                    int defaultNumLines = DEFAULT_NUMLINES;
+					
 					// Pre-fill the interval and num lines
-					int defaultInterval = DEFAULT_INTERVAL;
-					int defaultNumLines = DEFAULT_NUMLINES;
-			
 					try {
 						defaultInterval = m_settings.getInt("interval-" + dialog.getFileName());
 						defaultNumLines = m_settings.getInt("numLines-" + dialog.getFileName());
@@ -137,6 +152,7 @@ public class NewWatcherDialog extends Dialog
 					catch (NumberFormatException ignore) {
 						// There are no settings for this file. Use the defaults.
 					}
+					
 			
 					m_intervalText.setText(Integer.toString(defaultInterval));
 					m_intervalText.setSelection(0);
@@ -150,6 +166,19 @@ public class NewWatcherDialog extends Dialog
 		// Filters
 		//
 		createFilterGUI(composite);
+		
+		
+		if (m_editMode) {
+		    Label changes = new Label(composite, SWT.NONE);
+		    changes.setText("Changes will take effect after the next watcher update.");
+            gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+            gridData.horizontalSpan = 3;
+            changes.setLayoutData(gridData);
+            
+            m_intervalText.setText(Integer.toString(m_interval));
+            m_numLinesText.setText(Integer.toString(m_numLines));
+            m_fileText.setText(m_file.getAbsolutePath());  
+		}
 		
 		return composite;
 	}
@@ -166,12 +195,12 @@ public class NewWatcherDialog extends Dialog
 		gridData.horizontalSpan = 3;
 		filterGroup.setLayoutData(gridData);
 		
-		m_filterList = new List(filterGroup, SWT.MULTI | SWT.BORDER);
+		m_filterList = new List(filterGroup, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		gridData = new GridData(GridData.GRAB_HORIZONTAL);
 		gridData.widthHint = 300;
+		gridData.heightHint = 60;
 		gridData.verticalSpan = 2;
 		m_filterList.setLayoutData(gridData);
-		
 		
 		Button newButton = new Button(filterGroup, SWT.PUSH);
 		newButton.setText("New Filter...");
@@ -222,6 +251,13 @@ public class NewWatcherDialog extends Dialog
 				}
 			}
 		});
+		
+		if (m_editMode) {
+            for (Iterator iter = m_filters.iterator(); iter.hasNext();) {
+                Filter element = (Filter) iter.next();
+                m_filterList.add(element.getDescription());
+            }
+		}
 	}
 
 	/**
@@ -231,6 +267,11 @@ public class NewWatcherDialog extends Dialog
 	public File getFile()
 	{
 		return m_file;
+	}
+	
+	public void setFile(File f)
+	{
+	    m_file = f;
 	}
 	
 	/**
@@ -265,6 +306,11 @@ public class NewWatcherDialog extends Dialog
 	 */
 	public void setNumLines(int numLines) {
 		m_numLines = numLines;
+	}
+
+	public void setFilters(Vector filters)
+	{
+	    m_filters = filters;
 	}
 
 	/**
