@@ -320,7 +320,7 @@ public class LogWatcherView extends ViewPart
              }
          };
          m_editAction.setText("Edit Watcher");
-         m_editAction.setToolTipText("Edit a watcher");
+         m_editAction.setToolTipText("Edit this watcher");
          m_editAction.setImageDescriptor(editImage);
 		 m_editAction.setEnabled(false);
 		
