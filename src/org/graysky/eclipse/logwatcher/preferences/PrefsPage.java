@@ -52,6 +52,9 @@ public class PrefsPage extends FieldEditorPreferencePage implements IWorkbenchPr
 	{
 		addField(new BooleanFieldEditor(SAVE_WATCHERS, 
 				 "&Restore previously open watchers on restart", getFieldEditorParent()));
+		
+		addField(new FontFieldEditor("logwatcherFont", "Log Font:", getFieldEditorParent()));
+		
 	}
 	
 	public void init(IWorkbench workbench)
