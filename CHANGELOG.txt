@@ -1,6 +1,23 @@
-LogWatcher 1.1 changes since 1.0:
-----------------------------------
+/////////////////////////////////////////////////////////////////////
+// LogWatcher 1.2
+// http://graysky.sourceforge.net
+/////////////////////////////////////////////////////////////////////
 
+Changes since 1.1:
+----------------------------------
+- Filters now support regular expressions (Using Jakarta's ORO regexp library).
+- Added LogWatcher preferences page.
+- Preference: Restore previously open watchers on restart.
+- Preference: Choose font for LogWatcher views.
+- New filter action: Add a Todo task to the workbench.
+- New Edit actions: Use Find (Ctrl + F) and Copy (Ctrl + C) in the
+  LogWatcher view.
+- New action: Toggle automatic view scrolling when new lines are
+  added to a log file.
+- Re-organized menus/icons.
+
+Changes since 1.0:
+----------------------------------
 - Filters: Highlight a line or skip a line when a pattern is matched.
 - New action: Erase display (like the regular console viewer, RFE #667659)
 - New icons (stolen from elsewhere in Eclipse)
