@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Vector;
 
+import org.graysky.eclipse.logwatcher.filters.Filter;
 import org.graysky.eclipse.util.BoundedList;
 
 /**
@@ -26,6 +27,7 @@ public class TextFileWatcher extends Thread
 	private boolean			m_active	= false;
 	private Vector			m_listeners	= new Vector();
 	private boolean			m_console	= false;
+	private Vector			m_filters	= new Vector();
 
 	
 	public TextFileWatcher(String filename, int interval, int numLines) 
@@ -76,12 +78,23 @@ public class TextFileWatcher extends Thread
 			try {
 				while ((line = m_reader.readLine()) != null) {
 					if (line.length() > 0) {
-						updated = true;
-						list.put(line);
 						
-						if (m_console) {
-							// Dump the latest line to the console
-							System.out.println(line);
+						for (Iterator iter = m_filters.iterator(); iter.hasNext();) {
+                            Filter f = (Filter) iter.next();
+                            if (f.matches(line)) {
+                    			line = f.handleWatcherMatch(line);	
+                    		}   
+                        }
+						
+						// Make sure the filter didn't set the line to null...
+						if (line != null) {
+							updated = true;
+							list.put(line);
+							
+							if (m_console) {
+								// Dump the latest line to the console
+								System.out.println(line);
+							}
 						}
 					}
 				}
@@ -104,5 +117,15 @@ public class TextFileWatcher extends Thread
 			}
 		}
 	}
+
+    public int getNumLines()
+    {
+        return m_numLines;
+    }
+
+    public void setFilters(Vector filters)
+    {
+        m_filters = filters;
+    }
 
 }

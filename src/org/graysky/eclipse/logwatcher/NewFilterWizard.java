@@ -4,6 +4,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.graysky.eclipse.logwatcher.filters.Filter;
 import org.graysky.eclipse.logwatcher.filters.FilterAction;
 import org.graysky.eclipse.logwatcher.filters.HighlightAction;
+import org.graysky.eclipse.logwatcher.filters.IgnoreAction;
 
 public class NewFilterWizard extends Wizard {
 	
@@ -32,7 +33,7 @@ public class NewFilterWizard extends Wizard {
 				break;
 				
 			case 1:
-				// coming soon
+				addFilterAction(new IgnoreAction());
 				break;
 					
 		}

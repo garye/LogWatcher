@@ -32,12 +32,23 @@ public class Filter
 	 * Take the specified actions for the given string, which is assumed to have
 	 * matched the filter.
 	 */
-	public void handleMatch(LineStyleEvent event)
+	public void handleViewerMatch(LineStyleEvent event)
 	{
 		for (Iterator iter = m_actions.iterator(); iter.hasNext();) {
             FilterAction action = (FilterAction) iter.next();
-            action.doAction(event);
+            action.doViewerAction(event);
         }
+	}
+	
+	public String handleWatcherMatch(String line)
+	{
+		// @@@ For now there's only one action... this needs to change.
+		for (Iterator iter = m_actions.iterator(); iter.hasNext();) {
+            FilterAction action = (FilterAction) iter.next();
+            return action.doWatcherAction(line);
+        }
+        
+        return line;
 	}
 	
 	public void addAction(FilterAction action)

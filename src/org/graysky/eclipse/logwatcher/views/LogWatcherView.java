@@ -190,6 +190,7 @@ public class LogWatcherView extends ViewPart {
 		TextFileWatcher watcher;
 		try {
 			watcher = new TextFileWatcher(file, interval, numLines);
+			watcher.setFilters(filters);
 		}
 		catch (FileNotFoundException e) {
 			// Shouldn't happen!
@@ -225,7 +226,7 @@ public class LogWatcherView extends ViewPart {
             	for (Iterator iter = entry.filters.iterator(); iter.hasNext();) {
                     Filter f = (Filter) iter.next();
                     if (f.matches(event.lineText)) {
-                    	f.handleMatch(event);	
+                    	f.handleViewerMatch(event);	
                     }
                 }
             }
@@ -289,13 +290,21 @@ public class LogWatcherView extends ViewPart {
 		
 		public void dispose()
 		{
-			watcher.halt();
-			viewer.getControl().dispose();
-			tab.dispose();
-			for (Iterator iterator = filters.iterator(); iterator.hasNext();) {
-                Filter element = (Filter) iterator.next();
-                element.dispose();
-            }	
+			try {
+				watcher.halt();
+				if (viewer.getControl() != null) {
+					viewer.getControl().dispose();
+				}
+				tab.dispose();
+				for (Iterator iterator = filters.iterator(); iterator.hasNext();) {
+	                Filter element = (Filter) iterator.next();
+	                element.dispose();
+	            }	
+			}
+			catch (Throwable t) {
+				System.out.println("error: " + t.getMessage());
+				t.printStackTrace();	
+			}
 		}
 	}
 

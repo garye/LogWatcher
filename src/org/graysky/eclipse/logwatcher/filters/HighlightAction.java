@@ -14,7 +14,7 @@ public class HighlightAction implements FilterAction
 		m_color = c;
 	}
 	
-    public void doAction(LineStyleEvent event)
+    public void doViewerAction(LineStyleEvent event)
     {
 		StyleRange range = new StyleRange(event.lineOffset, event.lineText.length(), m_color, null);
 		event.styles = new StyleRange[1];
@@ -40,4 +40,10 @@ public class HighlightAction implements FilterAction
 	{
 		m_color.dispose();	
 	}
+
+    public String doWatcherAction(String line)
+    {
+        return line;
+    }
+
 }
