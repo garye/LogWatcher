@@ -23,7 +23,7 @@ public class TextFileWatcher extends Thread
 	private BufferedReader	m_reader	= null;
 	private int				m_interval	= 1; // Seconds
     /**
-     * Number of lines to show. Zero indicates
+     * Number of lines to show at start. Zero indicates
      * showing the entire file.
      */
 	private int				m_numLines	= 100;
@@ -47,9 +47,6 @@ public class TextFileWatcher extends Thread
 		m_interval = interval;
 		m_numLines = numLines;
         
-        if (numLines == 0)
-            m_numLines = Integer.MAX_VALUE;
-		
 		m_reader = new BufferedReader(new FileReader(m_file));
 	}
 	
@@ -80,7 +77,7 @@ public class TextFileWatcher extends Thread
 	{
 		m_active = true;
 		
-		m_list = new BoundedList(m_numLines);
+		m_list = new BoundedList(Integer.MAX_VALUE);
 		String line = null;
 		long size = 0;
 		boolean firstUpdate = false;
@@ -158,6 +155,7 @@ public class TextFileWatcher extends Thread
 				}
 				
 				sleep(m_interval * 1000);
+                m_list.clear();
 			}
 			catch (IOException e) {
                 // TODO: Should we handle this differently?

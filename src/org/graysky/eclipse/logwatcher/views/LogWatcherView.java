@@ -331,6 +331,7 @@ public class LogWatcherView extends ViewPart
 				WatcherEntry entry = findEntry(m_folder.getSelection());
 				if (entry != null) {
 					entry.watcher.clear();
+                    entry.viewer.setDocument(new Document(""));
 				}	
 			}
 		};
@@ -440,7 +441,8 @@ public class LogWatcherView extends ViewPart
 					{
 						int topIndex = viewer.getTopIndex();
 						int caret = viewer.getTextWidget().getCaretOffset();
-						newDoc.set(flist.getFormattedText());
+                        
+						entry.viewer.getTextWidget().append(flist.getFormattedText());
 		
 						if (entry.scroll) {
 							// Scroll to the bottom
