@@ -15,7 +15,6 @@
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.help"/>
-
    </requires>
 
 
@@ -27,7 +26,7 @@
       </category>
       <view
             name="LogWatcher"
-            icon="icons/sample.gif"
+            icon="icons/lw_icon.gif"
             category="org.graysky.eclipse.logwatcher"
             class="org.graysky.eclipse.logwatcher.views.LogWatcherView"
             id="org.graysky.eclipse.logwatcher.views.LogWatcherView">
@@ -53,13 +52,18 @@
             id="org.graysky.eclipse.logwatcher.preferences.PrefsPage">
       </page>
    </extension>
-      
-   <extension point="org.eclipse.help.toc">
-      <toc file="book.xml" primary="true" />
+   <extension
+         point="org.eclipse.help.toc">
+      <toc
+            file="book.xml"
+            primary="true">
+      </toc>
    </extension>
-   
-   <extension point="org.eclipse.help.toc">
-      <toc file="toc_LogWatcher.xml" />
+   <extension
+         point="org.eclipse.help.toc">
+      <toc
+            file="toc_LogWatcher.xml">
+      </toc>
    </extension>
 
 </plugin>
