@@ -41,7 +41,6 @@ public class NewFilterWizard extends Wizard
 				break;
 				
 			case 2:
-				System.out.println(m_taskPage.getPriority());
 				AddTaskAction ta = new AddTaskAction(m_taskPage.getDescription(), 
 													 m_taskPage.getPriority(), 
 													 LogwatcherPlugin.getWorkspace().getRoot());
