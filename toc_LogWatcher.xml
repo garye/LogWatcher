@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="LogWatcher Guide" topic="html/logwatcher.html>
+
+    <topic label="Introduction to LogWatcher" href="html/logwatcher_intro.html">
+    	<!-- Sub topics would go here -->
+    </topic>
+    
+    <!-- Add new Help pages/TOCs here -->
+    <!-- For new TOCs, you must create extensions too -->
+    
+</toc>
