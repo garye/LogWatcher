@@ -343,7 +343,7 @@ public class LogWatcherView extends ViewPart
 				}
 			}
 		};
-		m_scrollAction.setText("Toggle Scrolling");
+		m_scrollAction.setText("Toggle Automatic Scrolling");
 		m_scrollAction.setToolTipText("Toggle automatic scrolling");
 		m_scrollAction.setImageDescriptor(scrollImage);
 		m_scrollAction.setChecked(false);
