@@ -156,12 +156,13 @@ public class NewFilterWizardStart extends WizardPage
 		switch (m_actionsCombo.getSelectionIndex()) {
 			case 0:
 				return getWizard().getPage("highlight_options");
-				
+			
+            case 2:
+                return getWizard().getPage("addTask_options");
+            	
 			case 1:
-				return getWizard().getPage("ignore_options");
-				
-			case 2:
-				return getWizard().getPage("addTask_options");
+                // Don't present Next page
+				return null;
 				
 			default:
 				return null;
