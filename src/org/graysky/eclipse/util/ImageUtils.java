@@ -11,6 +11,8 @@ import org.graysky.eclipse.logwatcher.LogwatcherPlugin;
  */
 public class ImageUtils
 {
+    private int foo;
+    private int bar;
 	/**
 	 * Create an image descriptor for the given filename (relative to the
 	 * plugin install directory)
