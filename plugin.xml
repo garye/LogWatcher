@@ -8,6 +8,7 @@
 
    <runtime>
       <library name="logwatcher.jar"/>
+      <library name="lib/jakarta-oro-2.0.6.jar"/>
    </runtime>
    <requires>
       <import plugin="org.eclipse.core.resources"/>
