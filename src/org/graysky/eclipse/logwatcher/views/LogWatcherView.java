@@ -81,6 +81,7 @@ public class LogWatcherView extends ViewPart
 	private static ImageDescriptor findImage;
 	private static ImageDescriptor scrollImage;
 	private static ImageDescriptor copyImage;
+	private static ImageDescriptor editImage;
 	
 	/**
 	 * Listen for changes to Logwatcher preferences. Currently, only changes to
@@ -129,7 +130,12 @@ public class LogWatcherView extends ViewPart
 			url = new URL(LogwatcherPlugin.getDefault().getDescriptor().getInstallURL(),
 						  "icons/copy_edit.gif");
 			copyImage = ImageDescriptor.createFromURL(url); 
-	    } catch (MalformedURLException e) {
+			
+			url = new URL(LogwatcherPlugin.getDefault().getDescriptor().getInstallURL(),
+									  "icons/edit.gif");
+			editImage = ImageDescriptor.createFromURL(url); 
+	    } 
+	    catch (MalformedURLException e) {
 	    	e.printStackTrace();
 	    }
 	}
@@ -239,6 +245,7 @@ public class LogWatcherView extends ViewPart
 		manager.add(m_findAction);
 		manager.add(m_clearAction);
 		manager.add(new Separator("other"));
+		manager.add(m_editAction);
 		manager.add(m_scrollAction);
 		manager.add(m_closeAction);
 		manager.add(new Separator("Additions"));
@@ -296,6 +303,8 @@ public class LogWatcherView extends ViewPart
              public void run() {
                  WatcherEntry entry = findEntry(m_folder.getSelection());
                  if (entry != null) {
+					 int topIndex = entry.viewer.getTopIndex();
+					 int caret = entry.viewer.getTextWidget().getCaretOffset();
 	                 NewWatcherDialog d = new NewWatcherDialog(m_folder.getShell(), true);
 	                 d.setFilters(entry.filters);
 	                 d.setInterval(entry.watcher.getInterval());
@@ -303,14 +312,18 @@ public class LogWatcherView extends ViewPart
 	                 d.setFile(new File(entry.watcher.getFilename()));
 	                 if (d.open() == Window.OK) {
 	                     editWatcher(entry,d.getInterval(), d.getNumLines(), d.getFilters());
+	                     entry.viewer.refresh();
+						 entry.viewer.setTopIndex(topIndex);
+						 entry.viewer.getTextWidget().setCaretOffset(caret);	
 	                 }
                  }
              }
          };
          m_editAction.setText("Edit Watcher");
          m_editAction.setToolTipText("Edit a watcher");
-         m_editAction.setImageDescriptor(newImage);
-	
+         m_editAction.setImageDescriptor(editImage);
+		 m_editAction.setEnabled(false);
+		
 		// Clear the display	
 		m_clearAction = new Action() {
 			
@@ -464,6 +477,7 @@ public class LogWatcherView extends ViewPart
 		m_closeAction.setEnabled(true);
 		m_clearAction.setEnabled(true);
 		m_scrollAction.setEnabled(true);
+		m_editAction.setEnabled(true);
 		
 		if (saveState) {
 			saveWatcherState();

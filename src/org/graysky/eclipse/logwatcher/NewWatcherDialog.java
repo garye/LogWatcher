@@ -169,12 +169,6 @@ public class NewWatcherDialog extends Dialog
 		
 		
 		if (m_editMode) {
-		    Label changes = new Label(composite, SWT.NONE);
-		    changes.setText("Changes will take effect after the next watcher update.");
-            gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-            gridData.horizontalSpan = 3;
-            changes.setLayoutData(gridData);
-            
             m_intervalText.setText(Integer.toString(m_interval));
             m_numLinesText.setText(Integer.toString(m_numLines));
             m_fileText.setText(m_file.getAbsolutePath());  
