@@ -21,6 +21,10 @@ public class HighlightAction implements FilterAction
 		event.styles[0] = range;
     }
 
+	public String getDescription()
+	{
+		return "Highlight line";	
+	}
 	
 	public Color getColor()
 	{

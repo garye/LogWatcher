@@ -9,6 +9,7 @@ public class Filter
 {
 	private String	m_pattern	= null;
 	private Vector	m_actions	= new Vector();
+	private	boolean	m_contains	= true;
 	
 	/**
 	 * Test if the given string is matched by this filter.
@@ -34,5 +35,9 @@ public class Filter
 	{
 		m_actions.add(action);	
 	}
-	
+
+	public String getDescription()
+	{
+		return "";
+	}	
 }

@@ -14,26 +14,29 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 /**
  * The dialog that contains options for creating a new watcher.
  */
-public class NewWatcherDialog extends Dialog {
-
+public class NewWatcherDialog extends Dialog
+{
 	private Text				m_fileText;
 	private Text				m_numLinesText;
 	private Text				m_intervalText;
 	private String				m_errorMsg;
 	private File				m_file;
-	private int				m_interval;
-	private int				m_numLines;
-	private IDialogSettings	m_settings;
+	private int					m_interval;
+	private int					m_numLines;
+	private IDialogSettings		m_settings;
+	private List				m_filterList;
 	
-	private static int		DEFAULT_INTERVAL	= 1;
-	private static int		DEFAULT_NUMLINES	= 10;
+	private static int			DEFAULT_INTERVAL	= 1;
+	private static int			DEFAULT_NUMLINES	= 10;
 	
 	/**
 	 * Constructor for NewWatcherDialog.
@@ -122,6 +125,35 @@ public class NewWatcherDialog extends Dialog {
 				}
 			}
 		});
+		
+		Group filterGroup = new Group(composite, SWT.NONE);
+		filterGroup.setText("Filters");
+		GridLayout glayout = new GridLayout(2, false);
+		filterGroup.setLayout(glayout);
+		gridData = new GridData();
+		gridData.horizontalSpan = 3;
+		filterGroup.setLayoutData(gridData);
+		
+		m_filterList = new List(filterGroup, SWT.MULTI | SWT.BORDER);
+		gridData = new GridData(GridData.GRAB_HORIZONTAL);
+		gridData.widthHint = 300;
+		gridData.verticalSpan = 2;
+		m_filterList.setLayoutData(gridData);
+		
+		Button newButton = new Button(filterGroup, SWT.PUSH);
+		newButton.setText("New Filter...");
+		newButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+		newButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt)
+			{
+				NewFilterDialog dialog = new NewFilterDialog(getShell());
+				dialog.open();
+			}
+		});
+		
+		Button removeButton = new Button(filterGroup, SWT.PUSH);
+		removeButton.setText("Remove Filter");
+		removeButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		
 		return composite;
 	}

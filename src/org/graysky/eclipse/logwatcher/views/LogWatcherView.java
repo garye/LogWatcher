@@ -219,11 +219,12 @@ public class LogWatcherView extends ViewPart {
 		m_closeAction.setEnabled(true);
 	}
 
-	private void showMessage(String message) {
+	
+
+	private void showMessage(String message)
+	{
 		MessageDialog.openInformation(
-			m_folder.getShell(),
-			"LogWatcher",
-			message);
+			m_folder.getShell(), "LogWatcher", message);
 	}
 	
 	public void setFocus()
