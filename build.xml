@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="org.graysky.eclipse.logwatcher" default="build.jars" basedir=".">
+
+	<property name="bootclasspath" value=""/>
+	<property name="ws" value="win32"/>
+	<property name="os" value="win32"/>
+	<property name="arch" value="x86"/>
+
+	<target name="init" depends="properties">
+		<property name="plugin" value="org.graysky.eclipse.logwatcher"/>
+		<property name="version.suffix" value="_1.0.0"/>
+		<property name="full.name" value="${plugin}${version.suffix}"/>
+		<property name="temp.folder" value="${basedir}/temp.folder"/>
+		<property name="plugin.destination" value="${basedir}"/>
+		<property name="build.result.folder" value="${basedir}"/>
+	</target>
+
+	<target name="properties" if="eclipse.running">
+		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+	</target>
+
+	<target name="build.update.jar" depends="init">
+		<delete dir="${temp.folder}"/>
+		<mkdir dir="${temp.folder}"/>
+		<antcall target="build.jars"/>
+		<antcall target="gather.bin.parts">
+			<param name="destination.temp.folder" value="${temp.folder}/"/>
+		</antcall>
+		<zip zipfile="${plugin.destination}/${full.name}.jar" basedir="${temp.folder}/${full.name}" filesonly="false"/>
+		<delete dir="${temp.folder}"/>
+	</target>
+
+	<target name="gather.bin.parts" depends="init" if="destination.temp.folder">
+		<mkdir dir="${destination.temp.folder}/${full.name}"/>
+		<copy file="${build.result.folder}/logwatcher.jar" todir="${destination.temp.folder}/${full.name}"/>
+	</target>
+
+	<target name="logwatcher.jar" depends="init" unless="logwatcher.jar">
+		<property name="destdir" value="${temp.folder}/logwatcher.jar.bin"/>
+		<delete dir="${temp.folder}/logwatcher.jar.bin"/>
+		<mkdir dir="${temp.folder}/logwatcher.jar.bin"/>
+		<!-- compile the source code -->
+		<javac destdir="${temp.folder}/logwatcher.jar.bin" failonerror="false" verbose="true" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="../../plugins/org.eclipse.ui_2.1.0/ui.jar;../../plugins/org.eclipse.core.resources_2.1.0/bin;../../plugins/org.eclipse.ui.editors_2.1.0/editors.jar;../../plugins/org.eclipse.core.resources_2.1.0/resources.jar;../../plugins/org.eclipse.text_2.1.0/bin;../../plugins/org.eclipse.swt_2.1.0/bin;../../plugins/org.eclipse.ui.win32_2.1.0/workbenchwin32.jar;../../plugins/org.eclipse.core.boot_2.1.0/boot.jar;../../plugins/org.eclipse.core.runtime_2.1.0/bin;../../plugins/org.eclipse.ui.views_2.1.0/views.jar;../../plugins/org.eclipse.ui.views_2.1.0/bin;../../plugins/org.eclipse.jface_2.1.0/jface.jar;../../plugins/org.eclipse.ui.workbench_2.1.0/workbench.jar;../../plugins/org.eclipse.swt_2.1.0/ws/${ws}/swt.jar;../../plugins/org.eclipse.core.boot_2.1.0/bin;../../plugins/org.eclipse.ui.workbench_2.1.0/bin;../../plugins/org.eclipse.ui_2.1.0/bin;../../plugins/org.eclipse.jface_2.1.0/bin;../../plugins/org.eclipse.ui.workbench.texteditor_2.1.0/bin;../../plugins/org.eclipse.core.resources.win32_2.1.0/resources.jar;../../plugins/org.eclipse.ui.workbench.texteditor_2.1.0/texteditor.jar;../../plugins/org.eclipse.swt.win32_2.1.0/ws/${ws}/swt.jar;../../plugins/org.eclipse.text_2.1.0/text.jar;../../plugins/org.eclipse.jface.text_2.1.0/bin;../../plugins/org.eclipse.ui.win32_2.1.0/workbench.jar;../../plugins/org.eclipse.ui.editors_2.1.0/bin;../../plugins/org.eclipse.core.runtime_2.1.0/runtime.jar;../../plugins/org.eclipse.jface.text_2.1.0/jfacetext.jar">
+			<src path="src/"/>
+		</javac>
+		<!-- copy necessary resources -->
+		<copy todir="${temp.folder}/logwatcher.jar.bin">
+			<fileset dir="src/" excludes="**/*.java"/>
+		</copy>
+		<mkdir dir="${build.result.folder}"/>
+		<jar jarfile="${build.result.folder}/logwatcher.jar" basedir="${temp.folder}/logwatcher.jar.bin"/>
+		<delete dir="${temp.folder}/logwatcher.jar.bin"/>
+	</target>
+
+	<target name="logwatchersrc.zip" depends="init" unless="logwatchersrc.zip">
+		<mkdir dir="${build.result.folder}"/>
+		<zip zipfile="${build.result.folder}/logwatchersrc.zip" filesonly="false">
+			<fileset dir="src/" includes="**/*.java"/>
+		</zip>
+	</target>
+
+	<target name="build.jars" depends="init">
+		<available property="logwatcher.jar" file="${build.result.folder}/logwatcher.jar"/>
+		<antcall target="logwatcher.jar"/>
+	</target>
+
+	<target name="build.sources" depends="init">
+		<available property="logwatchersrc.zip" file="${build.result.folder}/logwatchersrc.zip"/>
+		<antcall target="logwatchersrc.zip"/>
+	</target>
+
+		<target name="build.zips" depends="init">
+		</target>
+
+	<target name="gather.sources" depends="init" if="destination.temp.folder">
+		<mkdir dir="${destination.temp.folder}/${full.name}"/>
+		<copy file="${build.result.folder}/logwatchersrc.zip" todir="${destination.temp.folder}/${full.name}"/>
+	</target>
+
+	<target name="gather.logs" depends="init" if="destination.temp.folder">
+		<mkdir dir="${destination.temp.folder}/${full.name}"/>
+		<copy file="${temp.folder}/logwatcher.jar.bin.log" todir="${destination.temp.folder}/${full.name}"/>
+	</target>
+
+	<target name="clean" depends="init">
+		<delete file="${build.result.folder}/logwatcher.jar"/>
+		<delete file="${build.result.folder}/logwatchersrc.zip"/>
+		<delete file="${plugin.destination}/${full.name}.jar"/>
+		<delete file="${plugin.destination}/${full.name}.zip"/>
+		<delete dir="${temp.folder}"/>
+	</target>
+
+	<target name="refresh" depends="init" if="eclipse.running">
+		<eclipse.refreshLocal resource="${plugin}" depth="infinite"/>
+	</target>
+
+	<target name="zip.plugin" depends="init">
+		<delete dir="${temp.folder}"/>
+		<mkdir dir="${temp.folder}"/>
+		<antcall target="build.jars"/>
+		<antcall target="build.sources"/>
+		<antcall target="gather.bin.parts">
+			<param name="destination.temp.folder" value="${temp.folder}/"/>
+		</antcall>
+		<antcall target="gather.sources">
+			<param name="destination.temp.folder" value="${temp.folder}/"/>
+		</antcall>
+		<delete>
+			<fileset dir="${temp.folder}" includes="**/*.bin.log"/>
+		</delete>
+		<zip zipfile="${plugin.destination}/${full.name}.zip" basedir="${temp.folder}" filesonly="true"/>
+		<delete dir="${temp.folder}"/>
+	</target>
+
+</project>

@@ -1,0 +1,101 @@
+package org.graysky.eclipse.logwatcher.watchers;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Vector;
+
+import org.graysky.eclipse.util.BoundedList;
+
+
+public class TextFileWatcher extends Thread 
+{
+
+	private File			m_file		= null;
+	private BufferedReader	m_reader	= null;
+	private int				m_interval	= 1; // Seconds
+	private int				m_numLines	= 10;
+	private boolean			m_active	= false;
+	private Vector			m_listeners	= new Vector();
+	private boolean			m_console	= false;
+
+	
+	public TextFileWatcher(String filename, int interval, int numLines) 
+			throws FileNotFoundException
+	{
+		this(new File(filename), interval, numLines);	
+	}
+	
+	public TextFileWatcher(File file, int interval, int numLines) 
+		throws FileNotFoundException
+	{
+		m_file = file;
+		m_interval = interval;
+		m_numLines = numLines;
+		
+		m_reader = new BufferedReader(new FileReader(m_file));
+	}
+	
+	public void halt()
+	{
+		m_active = false;
+		interrupt();
+	}
+	
+	public void setConsole(boolean b)
+	{
+		m_console = b;
+	}
+	
+	public void addListener(WatcherUpdateListener listener)
+	{
+		m_listeners.add(listener);
+	}
+	
+	public void run()
+	{
+		m_active = true;
+		
+		BoundedList list = new BoundedList(m_numLines);
+		String line = null;
+		
+		while (m_active) {
+			// Keep checking for new lines in the file
+			boolean updated = false;
+			try {
+				while ((line = m_reader.readLine()) != null) {
+					if (line.length() > 0) {
+						updated = true;
+						list.put(line);
+						
+						if (m_console) {
+							// Dump the latest line to the console
+							System.out.println(line);
+						}
+					}
+				}
+				
+				if (updated) {
+					// Notify listeners
+					for (Iterator i = m_listeners.iterator(); i.hasNext();) {
+						WatcherUpdateListener l = (WatcherUpdateListener) i.next();
+						l.update(list);
+					}
+				}
+				
+				sleep(m_interval * 1000);
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+			catch (InterruptedException e) {
+				// Ignore. If we have been stopped, the while condition will fail.	
+			}
+		}
+	}
+
+}
