@@ -3,7 +3,6 @@ package org.graysky.eclipse.logwatcher.actions;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
-import org.graysky.eclipse.logwatcher.LogwatcherPlugin;
 import org.graysky.eclipse.logwatcher.NewWatcherDialog;
 import org.graysky.eclipse.logwatcher.views.LogWatcherView;
 import org.graysky.eclipse.util.ImageUtils;

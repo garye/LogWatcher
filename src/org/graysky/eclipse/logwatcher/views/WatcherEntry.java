@@ -7,6 +7,7 @@ import java.util.Vector;
 
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.swt.custom.CTabItem;
+import org.graysky.eclipse.logwatcher.LogwatcherPlugin;
 import org.graysky.eclipse.logwatcher.filters.Filter;
 import org.graysky.eclipse.logwatcher.watchers.TextFileWatcher;
 
@@ -61,8 +62,7 @@ public class WatcherEntry
             }	
 		}
 		catch (Throwable t) {
-			System.out.println("error: " + t.getMessage());
-			t.printStackTrace();	
+			LogwatcherPlugin.getDefault().logError("Error disposing of the entry", null);	
 		}
 	}
 

@@ -16,8 +16,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.graysky.eclipse.logwatcher.filters.Filter;
-import org.graysky.eclipse.logwatcher.filters.HighlightAction;
 
 public class HighlightOptionsPage extends WizardPage
 {

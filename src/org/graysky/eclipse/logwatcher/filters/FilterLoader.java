@@ -1,25 +1,21 @@
 package org.graysky.eclipse.logwatcher.filters;
 
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.Reader;
 import java.util.Vector;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.oro.text.regex.MalformedPatternException;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 import org.graysky.eclipse.logwatcher.LogwatcherPlugin;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 
 public class FilterLoader
@@ -136,7 +132,7 @@ public class FilterLoader
 	   		return new AddTaskAction(desc, priority, LogwatcherPlugin.getWorkspace().getRoot());
    		}
    		else {
-   			System.out.println("Invalid action type: " + type.getNodeValue());	
+   			LogwatcherPlugin.getDefault().logError("Invalid action type: " + type, null);
    			return null;
    		}
    	}
@@ -152,7 +148,6 @@ public class FilterLoader
             return document;
         }
         catch (Exception e) {
-        	e.printStackTrace();
         	throw e;
         }
 	}
