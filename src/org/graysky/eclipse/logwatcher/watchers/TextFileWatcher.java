@@ -71,29 +71,55 @@ public class TextFileWatcher extends Thread
 		
 		BoundedList list = new BoundedList(m_numLines);
 		String line = null;
+		long size = 0;
 		
 		while (m_active) {
 			// Keep checking for new lines in the file
 			boolean updated = false;
+			boolean truncated = false;
+			
+			// See if the file was truncated...
+			truncated = false;
+			if (m_file.length() < size) {
+				truncated = true;
+			}
+			size = m_file.length();
+			
 			try {
-				while ((line = m_reader.readLine()) != null) {
-					if (line.length() > 0) {
+				if (truncated) {
+					list.put("*** File truncated ***");
+					updated = true;
+					m_reader.close();
+					m_reader = new BufferedReader(new FileReader(m_file));
+					
+					// Reset the stream
+					while ((line = m_reader.readLine()) != null) {}	
+				}
+				else if (!m_file.exists()) {
+					list.put("*** File deleted ***");
+					updated = true;
+					m_active = false;
+				}
+				else {
+					while ((line = m_reader.readLine()) != null) {
 						
-						for (Iterator iter = m_filters.iterator(); iter.hasNext();) {
-                            Filter f = (Filter) iter.next();
-                            if (f.matches(line)) {
-                    			line = f.handleWatcherMatch(line);	
-                    		}   
-                        }
-						
-						// Make sure the filter didn't set the line to null...
-						if (line != null) {
-							updated = true;
-							list.put(line);
+						if (line.length() > 0) {
+							for (Iterator iter = m_filters.iterator(); iter.hasNext();) {
+	                            Filter f = (Filter) iter.next();
+	                            if (f.matches(line)) {
+	                    			line = f.handleWatcherMatch(line);	
+	                    		}   
+	                        }
 							
-							if (m_console) {
-								// Dump the latest line to the console
-								System.out.println(line);
+							// Make sure the filter didn't set the line to null...
+							if (line != null) {
+								updated = true;
+								list.put(line);
+								
+								if (m_console) {
+									// Dump the latest line to the console
+									System.out.println(line);
+								}
 							}
 						}
 					}
@@ -115,6 +141,13 @@ public class TextFileWatcher extends Thread
 			catch (InterruptedException e) {
 				// Ignore. If we have been stopped, the while condition will fail.	
 			}
+		}
+		
+		try {
+			m_reader.close();
+		}
+		catch (Exception e) {
+			// ignore	
 		}
 	}
 

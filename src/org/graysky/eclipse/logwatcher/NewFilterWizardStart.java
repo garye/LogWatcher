@@ -6,6 +6,8 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -94,6 +96,14 @@ public class NewFilterWizardStart extends WizardPage
 		gridData = new GridData();
 		gridData.horizontalSpan = 2;
 		m_actionsCombo.setLayoutData(gridData);
+		m_actionsCombo.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e)
+            {
+            	setPageComplete(validatePage()); 
+            }
+        });
+        
+		setDescription("Text is case-insensitive.");
 		
 		setPageComplete(validatePage());
 	}
@@ -104,8 +114,10 @@ public class NewFilterWizardStart extends WizardPage
 	 */
 	public String getTitle()
 	{
-		return "Define the filter. Text is case-insensitive.";
+		return "Define the filter.";
 	}
+
+	
 
 	public int getActionType()
 	{
