@@ -3,28 +3,13 @@ package org.graysky.eclipse.logwatcher;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.ColorDialog;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-import org.graysky.eclipse.logwatcher.filters.Filter;
 
 public class IgnoreOptionsPage extends WizardPage
 {
-	private Text		m_filterText;
-	private Composite	m_actionOptions;
-	private Color		m_color;
-	private Combo		m_actionsCombo;
-	private Filter		m_filter;
-
 	/**
 	 * Constructor for IgnoreOptionsPage.
 	 * @param pageName

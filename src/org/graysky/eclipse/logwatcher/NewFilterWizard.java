@@ -14,6 +14,7 @@ public class NewFilterWizard extends Wizard
 	private NewFilterWizardStart	m_startPage		= new NewFilterWizardStart("start");
 	private HighlightOptionsPage	m_highlightPage	= new HighlightOptionsPage("highlight_options");
 	private IgnoreOptionsPage		m_ignorePage	= new IgnoreOptionsPage("ignore_options");
+	private AddTaskOptionsPage		m_taskPage		= new AddTaskOptionsPage("addTask_options");
 
 	/**
 	 * Constructor for NewFilterWizard.
@@ -57,6 +58,7 @@ public class NewFilterWizard extends Wizard
 		addPage(m_startPage);
 		addPage(m_highlightPage);
 		addPage(m_ignorePage);
+		addPage(m_taskPage);
 	}
 
     public void setFilter(Filter f)
@@ -86,6 +88,12 @@ public class NewFilterWizard extends Wizard
 		
 				case 1:
 					return true;
+				
+				case 2:
+					if (m_taskPage.isPageComplete()) {
+						return true;
+					}
+					break;
 			}
         }
         

@@ -28,6 +28,11 @@ public class LogwatcherPlugin extends AbstractUIPlugin
 	private ResourceBundle resourceBundle;
 	
 	private FontRegistry	m_fontRegistry = new FontRegistry();
+	
+	// Preferences constants
+	private static final String	LOG_FONT		= "logwatcherFont";
+	private static final String	SAVE_WATCHERS	= "saveWatchers";
+	
    
 	/**
 	 * The constructor.

@@ -96,6 +96,7 @@ public class NewFilterWizardStart extends WizardPage
 		m_actionsCombo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
 		m_actionsCombo.add("Highlight Line");
 		m_actionsCombo.add("Skip Line");
+		m_actionsCombo.add("Add Todo Task");
 		m_actionsCombo.select(0);
 		gridData = new GridData();
 		gridData.horizontalSpan = 2;
@@ -158,6 +159,9 @@ public class NewFilterWizardStart extends WizardPage
 				
 			case 1:
 				return getWizard().getPage("ignore_options");
+				
+			case 2:
+				return getWizard().getPage("addTask_options");
 				
 			default:
 				return null;
