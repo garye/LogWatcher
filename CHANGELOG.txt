@@ -1,0 +1,7 @@
+LogWatcher 1.1 changes since 1.0:
+----------------------------------
+
+- Filters: Highlight a line or skip a line when a pattern is matched.
+- New action: Erase display (like the regular console viewer, RFE #667659)
+- New icons (stolen from elsewhere in Eclipse)
+- Bugfix: Notice truncated and delete files (also part of RFE #667659)
