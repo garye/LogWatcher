@@ -9,6 +9,9 @@ import org.apache.oro.text.regex.MalformedPatternException;
 import org.apache.oro.text.regex.Pattern;
 import org.apache.oro.text.regex.Perl5Compiler;
 import org.apache.oro.text.regex.Perl5Matcher;
+import org.apache.oro.text.regex.Perl5Pattern;
+import org.apache.oro.text.regex.Perl5Substitution;
+import org.apache.oro.text.regex.Util;
 import org.eclipse.swt.custom.LineStyleEvent;
 
 public class Filter 
@@ -120,7 +123,8 @@ public class Filter
 	public void toXML(Writer w) throws IOException
 	{
 		w.write("<filter>");
-		w.write("<pattern>" + getPattern() + "</pattern>");
+		String pattern = convertXML(getPattern());
+		w.write("<pattern>" + pattern + "</pattern>");
 		w.write("<caseSensitive>" + isCaseSensitive() + "</caseSensitive>");
 		w.write("<contains>" + getContains() + "</contains>");
 		for (Iterator iter = m_actions.iterator(); iter.hasNext();) {
@@ -129,4 +133,22 @@ public class Filter
         }	
         w.write("</filter>");
 	}
+	
+	// TODO: Should be using XML APIs that take care of all of this for us.
+	private String convertXML(String src)
+	{
+	   try {
+            Perl5Compiler compiler = new Perl5Compiler();
+            StringBuffer xml = new StringBuffer();
+            Util.substitute(xml, new Perl5Matcher(), compiler.compile("&"), new Perl5Substitution("&amp;"), src, Util.SUBSTITUTE_ALL);
+            StringBuffer xml2 = new StringBuffer();
+            Util.substitute(xml2, new Perl5Matcher(), compiler.compile("<"), new Perl5Substitution("&lt;"), xml.toString(), Util.SUBSTITUTE_ALL);
+            return xml2.toString();
+        }
+        catch (MalformedPatternException e) {
+            e.printStackTrace();
+            return src;
+        }
+	}
+	
 }

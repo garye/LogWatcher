@@ -39,7 +39,7 @@ public class PrefsPage extends FieldEditorPreferencePage implements IWorkbenchPr
 	private void initializeDefaults()
 	{
 		IPreferenceStore store = getPreferenceStore();
-		store.setDefault(SAVE_WATCHERS, true);
+		store.setDefault(SAVE_WATCHERS, false);
 	}
 	
 	/**

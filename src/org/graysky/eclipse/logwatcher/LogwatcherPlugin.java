@@ -84,7 +84,7 @@ public class LogwatcherPlugin extends AbstractUIPlugin
 	
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
 		super.initializeDefaultPreferences(store);
-		store.setDefault("saveWatchers", true);
+		store.setDefault("saveWatchers", false);
 	}
 
 	/**
