@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Vector;
@@ -26,10 +25,10 @@ public class TextFileWatcher extends Thread
 	private int				m_numLines	= 100;
 	private boolean			m_active	= false;
 	private Vector			m_listeners	= new Vector();
-	private boolean			m_console	= false;
+	private boolean			m_console	= false; // Debugging
 	private Vector			m_filters	= new Vector();
 	private BoundedList		m_list		= null;
-
+    private boolean         m_changedNumLines = false;
 	
 	public TextFileWatcher(String filename, int interval, int numLines) 
 			throws FileNotFoundException
@@ -66,6 +65,10 @@ public class TextFileWatcher extends Thread
 		m_listeners.add(listener);
 	}
 	
+    /**
+     * Runs the thread that watches for changes
+     * to the file.
+     */
 	public void run()
 	{
 		m_active = true;
@@ -103,6 +106,18 @@ public class TextFileWatcher extends Thread
 					m_active = false;
 				}
 				else {
+                    
+                    if (m_changedNumLines) {
+                        // User has updated the number of lines
+                        // we should display. Refresh the reader
+                        //
+                        m_changedNumLines = false;
+                        m_reader.close();
+                        //m_list.clear(); // clear whatever was already stored
+                        m_reader = new BufferedReader(new FileReader(m_file));
+                    }
+                    
+                    // Read through the lines of the files
 					while ((line = m_reader.readLine()) != null) {
 						
 						if (line.length() > 0) {
@@ -122,7 +137,7 @@ public class TextFileWatcher extends Thread
 								m_list.put(line);
 								
 								if (m_console) {
-									// Dump the latest line to the console
+									// Dump the latest line to the console if debugging
 									System.out.println(line);
 								}
 							}
@@ -139,6 +154,7 @@ public class TextFileWatcher extends Thread
 				sleep(m_interval * 1000);
 			}
 			catch (IOException e) {
+                // TODO: Should we handle this differently?
 				e.printStackTrace();
 			}
 			catch (InterruptedException e) {
@@ -183,8 +199,15 @@ public class TextFileWatcher extends Thread
 		notifyListeners();
 	}
 
+    /**
+     * Sets the number of lines to show.
+     */
 	public void setNumLines(int numLines)
 	{
+        // Number has changed.
+        if (m_numLines != numLines)
+            m_changedNumLines = true;
+            
 	    m_numLines = numLines;
 	    m_list.setMaxItems(numLines);
 	}
@@ -200,5 +223,4 @@ public class TextFileWatcher extends Thread
         	m_filters = filters;
         }
     }
-
 }
