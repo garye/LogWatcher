@@ -23,7 +23,7 @@ public class TextFileWatcher extends Thread
 	private File			m_file		= null;
 	private BufferedReader	m_reader	= null;
 	private int				m_interval	= 1; // Seconds
-	private int				m_numLines	= 10;
+	private int				m_numLines	= 100;
 	private boolean			m_active	= false;
 	private Vector			m_listeners	= new Vector();
 	private boolean			m_console	= false;
@@ -154,6 +154,16 @@ public class TextFileWatcher extends Thread
 			WatcherUpdateListener l = (WatcherUpdateListener) i.next();
 			l.update(m_list);
 		}
+	}
+
+	public String getFilename()
+	{
+		return m_file.getAbsolutePath();	
+	}
+
+	public int getInterval()
+	{
+		return m_interval;	
 	}
 
 	public void clear()

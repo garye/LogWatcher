@@ -2,11 +2,20 @@ package org.graysky.eclipse.logwatcher.views;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -29,24 +38,26 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.graysky.eclipse.logwatcher.FindDialog;
 import org.graysky.eclipse.logwatcher.LogwatcherPlugin;
 import org.graysky.eclipse.logwatcher.NewWatcherDialog;
 import org.graysky.eclipse.logwatcher.filters.Filter;
+import org.graysky.eclipse.logwatcher.filters.FilterLoader;
 import org.graysky.eclipse.logwatcher.watchers.TextFileWatcher;
 import org.graysky.eclipse.logwatcher.watchers.WatcherUpdateListener;
 import org.graysky.eclipse.util.BoundedList;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 /** 
  * The main view for LogWatcher. Still has lots of code generated from the PDE
  * wizard that is not used.
  */
-public class LogWatcherView extends ViewPart {
-	
+public class LogWatcherView extends ViewPart
+{
 	private Action 		m_closeAction = null;
 	private Action 		m_newAction = null;
 	private Action			m_clearAction = null;
@@ -81,8 +92,6 @@ public class LogWatcherView extends ViewPart {
 	    } catch (MalformedURLException e) {
 	    	e.printStackTrace();
 	    }
-	 	
-	 	
 	}
   			
 	/**
@@ -116,10 +125,32 @@ public class LogWatcherView extends ViewPart {
 			}
 		});
 
+		FilterLoader l = new FilterLoader();
+    	try {
+            l.loadFilters(new FileReader("c:\\temp\\test.xml"));
+        }
+        catch (FileNotFoundException e) {
+        }
+        catch (Exception e) {
+        }
+
 		makeActions();
 		contributeToActionBars();
 		
 		setGlobalActionHandlers();
+		
+		WatcherLoader loader = new WatcherLoader();
+		IPath path = LogwatcherPlugin.getDefault().getStateLocation();
+		path = path.addTrailingSeparator();
+		path = path.append("watcherState.xml");
+		try {
+            loader.loadWatchers(new FileReader(path.toFile()));
+        }
+        catch (Exception e) {
+        	System.out.println(e.getMessage());
+        	e.printStackTrace();
+        }
+        
 	}
 
 	private void setGlobalActionHandlers()
@@ -200,7 +231,7 @@ public class LogWatcherView extends ViewPart {
 			public void run() {
 				NewWatcherDialog d = new NewWatcherDialog(m_folder.getShell());
 				if (d.open() == Window.OK) {
-					addWatcher(d.getFile(),d.getInterval(), d.getNumLines(), d.getFilters());
+					addWatcher(d.getFile(),d.getInterval(), d.getNumLines(), d.getFilters(), true);
 				}
 			}
 		};
@@ -250,7 +281,7 @@ public class LogWatcherView extends ViewPart {
 		};
 	}
 	
-	private void addWatcher(File file, int interval, int numLines, Vector filters)
+	private void addWatcher(File file, int interval, int numLines, Vector filters, boolean saveState)
 	{	
 		// Add the new tab
 		CTabItem newItem = new CTabItem(m_folder, 0);
@@ -328,6 +359,36 @@ public class LogWatcherView extends ViewPart {
 	
 		m_closeAction.setEnabled(true);
 		m_clearAction.setEnabled(true);
+		
+		if (saveState) {
+			saveWatcherState();
+		}
+	}
+
+	/**
+	 * Write the current set of watchers to a config file.
+	 */
+	private void saveWatcherState()
+	{
+		IPath path = LogwatcherPlugin.getDefault().getStateLocation();
+		path = path.addTrailingSeparator();
+		path = path.append("watcherState.xml");
+		try {
+            FileWriter writer = new FileWriter(path.toFile());
+            writer.write("<watchers>\n");
+            for (Iterator iter = m_watchers.iterator(); iter.hasNext();) {
+                WatcherEntry element = (WatcherEntry) iter.next();
+                element.toXML(writer);
+                System.out.println("wrote watcher");
+            }
+            writer.write("</watchers>");
+            writer.flush();
+        }
+        catch (IOException e) {
+        	// TODO: Log an error
+        	System.out.println(e.getMessage());
+        }
+		
 	}
 
 	private void showMessage(String message)
@@ -366,6 +427,9 @@ public class LogWatcherView extends ViewPart {
 		return null;
 	}
 	
+	/**
+	 * In-memory representation of one log file being watched.
+	 */
 	class WatcherEntry
 	{
 		TextViewer 		viewer 		= null;
@@ -379,6 +443,20 @@ public class LogWatcherView extends ViewPart {
 			watcher = w;
 			tab = t;
 			filters = f;
+		}
+		
+		public void toXML(Writer w) throws IOException
+		{
+			w.write("<watcher>\n");
+			w.write("<file>" + watcher.getFilename() + "</file>");
+			w.write("<numLines>" + watcher.getNumLines() + "</numLines>");
+			w.write("<interval>" + watcher.getInterval() + "</interval>");
+			for (Iterator iter = filters.iterator(); iter.hasNext();) {
+                Filter filter = (Filter) iter.next();
+                filter.toXML(w);
+            }
+			w.write("\n</watcher>");
+			
 		}
 		
 		public void dispose()
@@ -398,6 +476,77 @@ public class LogWatcherView extends ViewPart {
 				System.out.println("error: " + t.getMessage());
 				t.printStackTrace();	
 			}
+		}
+	}
+
+	/**
+	 * Loader for watchers stored in XML. Also starts each watcher in the view.
+	 */
+	class WatcherLoader
+	{
+		FilterLoader filterLoader = new FilterLoader();
+		
+		public void loadWatchers(Reader r) throws Exception
+		{
+			org.w3c.dom.Document doc = getDocument(r);
+			loadWatchers(doc);
+		}
+	   
+	   	protected void loadWatchers(org.w3c.dom.Document doc)
+	   	{
+	   		NodeList watcherNodes = doc.getElementsByTagName("watcher");
+	   		System.out.println(watcherNodes.getLength());
+	   		for (int i = 0; i < watcherNodes.getLength(); i++) {
+	   			Node node = watcherNodes.item(i);
+	   			loadWatcher(node);
+	   			System.out.println("loaded watcher");
+	   		}	
+	   	}
+		
+		protected void loadWatcher(Node watcherNode)
+		{
+			File file = null;
+			int interval = 0;
+			int numLines = 0;;
+			Vector filters = new Vector();
+			
+			NodeList children = watcherNode.getChildNodes();
+	   		
+	   		for (int i = 0; i < children.getLength(); i++) {
+	   			Node node = children.item(i);
+	   			String name = node.getNodeName();
+	   			
+	   			if (name.equals("file")) {
+	   				file = new File(node.getFirstChild().getNodeValue());	
+	   			}
+	   			else if (name.equals("numLines")) {
+	   				numLines = Integer.parseInt(node.getFirstChild().getNodeValue());
+	   			}
+	   			else if (name.equals("interval")) {
+	   				interval = Integer.parseInt(node.getFirstChild().getNodeValue());	
+	   			}
+	   			else if (name.equals("filter")) {
+	   				filters.add(filterLoader.loadFilter(node));	
+	   			}
+			}
+			
+			addWatcher(file, interval, numLines, filters, false);
+		}
+		
+		protected org.w3c.dom.Document getDocument(Reader r) throws Exception
+		{
+			org.w3c.dom.Document document;
+	        try {
+	            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	            DocumentBuilder parser = factory.newDocumentBuilder();
+	            document = parser.parse(new InputSource(r));
+	            
+	            return document;
+	        }
+	        catch (Exception e) {
+	        	e.printStackTrace();
+	        	throw e;
+	        }
 		}
 	}
 

@@ -1,5 +1,8 @@
 package org.graysky.eclipse.logwatcher.filters;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import org.eclipse.swt.custom.LineStyleEvent;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -44,6 +47,15 @@ public class HighlightAction implements FilterAction
     public String doWatcherAction(String line)
     {
         return line;
+    }
+
+    public void toXML(Writer writer) throws IOException
+    {
+    	writer.write("<action type=\"highlight\">");
+    	writer.write("<red>" + getColor().getRGB().red + "</red>");
+    	writer.write("<green>" + getColor().getRGB().green + "</green>");
+    	writer.write("<blue>" + getColor().getRGB().blue + "</blue>");
+    	writer.write("</action>");
     }
 
 }

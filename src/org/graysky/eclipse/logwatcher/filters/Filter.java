@@ -1,5 +1,7 @@
 package org.graysky.eclipse.logwatcher.filters;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -113,5 +115,18 @@ public class Filter
 	public boolean isCaseSensitive()
 	{
 		return m_caseSensitive;
+	}
+	
+	public void toXML(Writer w) throws IOException
+	{
+		w.write("<filter>");
+		w.write("<pattern>" + getPattern() + "</pattern>");
+		w.write("<caseSensitive>" + isCaseSensitive() + "</caseSensitive>");
+		w.write("<contains>" + getContains() + "</contains>");
+		for (Iterator iter = m_actions.iterator(); iter.hasNext();) {
+            FilterAction action = (FilterAction) iter.next();
+            action.toXML(w);
+        }	
+        w.write("</filter>");
 	}
 }

@@ -1,11 +1,13 @@
 package org.graysky.eclipse.logwatcher.filters;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import org.eclipse.swt.custom.LineStyleEvent;
 import org.eclipse.swt.custom.StyledText;
 
 public class IgnoreAction implements FilterAction
 {
-
     public IgnoreAction()
     {
         super();
@@ -28,5 +30,10 @@ public class IgnoreAction implements FilterAction
     public String doWatcherAction(String line)
     {
     	return null;	
+    }
+    
+    public void toXML(Writer writer) throws IOException
+    {
+    	writer.write("<action type=\"ignore\"/>");
     }
 }
