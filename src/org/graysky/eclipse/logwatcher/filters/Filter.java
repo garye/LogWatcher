@@ -7,9 +7,11 @@ import org.eclipse.swt.custom.LineStyleEvent;
 
 public class Filter 
 {
-	private String	m_pattern	= null;
-	private Vector	m_actions	= new Vector();
-	private	boolean	m_contains	= true;
+	private String		m_pattern	= null;
+	
+	// Today, only one action is supported per filter by the GUI.
+	private Vector		m_actions	= new Vector();
+	private boolean	m_contains	= true;
 	
 	/**
 	 * Test if the given string is matched by this filter.
@@ -38,6 +40,24 @@ public class Filter
 
 	public String getDescription()
 	{
-		return "";
+		FilterAction a = (FilterAction) m_actions.get(0);
+		String contains = (m_contains ? "contains" : "does not contain");
+		if (a != null) {
+			return a.getDescription() + " when text "  + contains + " " + m_pattern;
+		}
+		else {
+			return "No action specified for filter";
+		}
 	}	
+	
+	public String getPattern()
+	{
+		return m_pattern;
+	}
+
+	public void setPattern(String pattern)
+	{
+		m_pattern = pattern;
+	}
+
 }

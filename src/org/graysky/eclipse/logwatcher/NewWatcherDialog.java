@@ -1,6 +1,7 @@
 package org.graysky.eclipse.logwatcher;
 
 import java.io.File;
+import java.util.Vector;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -30,13 +31,14 @@ public class NewWatcherDialog extends Dialog
 	private Text				m_intervalText;
 	private String				m_errorMsg;
 	private File				m_file;
-	private int					m_interval;
-	private int					m_numLines;
-	private IDialogSettings		m_settings;
+	private int				m_interval;
+	private int				m_numLines;
+	private IDialogSettings	m_settings;
 	private List				m_filterList;
+	private Vector				m_filters		= new Vector();
 	
-	private static int			DEFAULT_INTERVAL	= 1;
-	private static int			DEFAULT_NUMLINES	= 10;
+	private static int		DEFAULT_INTERVAL	= 1;
+	private static int		DEFAULT_NUMLINES	= 10;
 	
 	/**
 	 * Constructor for NewWatcherDialog.
@@ -58,6 +60,16 @@ public class NewWatcherDialog extends Dialog
 	}
 
 	/**
+	 * Returns the filters for this watcher.
+	 * @return Vector
+	 */
+	public Vector getFilters()
+	{
+		return m_filters;
+		}
+
+
+	/**
 	 * Create and layout the SWT controls for the dialog
 	 */
 	protected Control createDialogArea(Composite parent)
@@ -70,7 +82,9 @@ public class NewWatcherDialog extends Dialog
 		layout.horizontalSpacing = 10;
 		composite.setLayout(layout);
 		
+		//
 		// File row
+		//
 		new Label(composite, SWT.NONE).setText("Select a file to watch:");
 		m_fileText = new Text(composite, SWT.BORDER);
 		m_fileText.setTextLimit(200);
@@ -80,7 +94,9 @@ public class NewWatcherDialog extends Dialog
 		Button chooserButton = new Button(composite, SWT.PUSH);
 		chooserButton.setText("Browse...");
 		
+		//
 		// Number of lines row
+		//
 		new Label(composite, SWT.NONE).setText("Number of lines to show:");
 		m_numLinesText = new Text(composite, SWT.BORDER);
 		m_numLinesText.setTextLimit(4);
@@ -88,7 +104,9 @@ public class NewWatcherDialog extends Dialog
 		gridData.horizontalSpan = 2;
 	    m_numLinesText.setLayoutData(gridData);
 
+		//
 		// Refresh interval row
+		//
 		new Label(composite, SWT.NONE).setText("Refresh interval (in seconds):");
 		m_intervalText = new Text(composite, SWT.BORDER);
 		m_intervalText.setTextLimit(4);
@@ -126,7 +144,19 @@ public class NewWatcherDialog extends Dialog
 			}
 		});
 		
-		Group filterGroup = new Group(composite, SWT.NONE);
+		//
+		// Filters
+		//
+		createFilterGUI(composite);
+		
+		return composite;
+	}
+
+	protected void createFilterGUI(Composite parent)
+	{
+		GridData gridData;
+	
+		Group filterGroup = new Group(parent, SWT.NONE);
 		filterGroup.setText("Filters");
 		GridLayout glayout = new GridLayout(2, false);
 		filterGroup.setLayout(glayout);
@@ -140,6 +170,7 @@ public class NewWatcherDialog extends Dialog
 		gridData.verticalSpan = 2;
 		m_filterList.setLayoutData(gridData);
 		
+		
 		Button newButton = new Button(filterGroup, SWT.PUSH);
 		newButton.setText("New Filter...");
 		newButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
@@ -148,14 +179,45 @@ public class NewWatcherDialog extends Dialog
 			{
 				NewFilterDialog dialog = new NewFilterDialog(getShell());
 				dialog.open();
+				
+				if (dialog.getFilter() != null) {
+					m_filters.add(dialog.getFilter());
+					m_filterList.add(dialog.getFilter().getDescription());
+				}
 			}
 		});
 		
-		Button removeButton = new Button(filterGroup, SWT.PUSH);
+		final Button removeButton = new Button(filterGroup, SWT.PUSH);
 		removeButton.setText("Remove Filter");
 		removeButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+		removeButton.setEnabled(false);
+		removeButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt)
+			{
+				int[] selections = m_filterList.getSelectionIndices();
+				for (int i = 0; i < selections.length; i++) {
+					m_filterList.remove(selections[i]);
+					m_filters.remove(selections[i]);
+					if (m_filterList.getSelectionCount() == 0) {
+						removeButton.setEnabled(false);
+					}
+				}
+			}
+		});
 		
-		return composite;
+		// Now that the remove button has been created, add the selection listener
+		// to the filter list.
+		m_filterList.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt)
+			{
+				if (m_filterList.getSelectionCount() > 0) {
+					removeButton.setEnabled(true);
+				}
+				else {
+					removeButton.setEnabled(false);
+				}
+			}
+		});
 	}
 
 	/**
@@ -259,4 +321,5 @@ public class NewWatcherDialog extends Dialog
 		}	
 	}
 
+	
 }

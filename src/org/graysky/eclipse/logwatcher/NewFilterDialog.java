@@ -17,6 +17,9 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.graysky.eclipse.logwatcher.filters.Filter;
+import org.graysky.eclipse.logwatcher.filters.FilterAction;
+import org.graysky.eclipse.logwatcher.filters.HighlightAction;
 
 public class NewFilterDialog extends Dialog
 {
@@ -24,6 +27,8 @@ public class NewFilterDialog extends Dialog
 	private Text		m_filterText;
 	private Composite	m_actionOptions;
 	private Color		m_color;
+	private Combo		m_actionsCombo;
+	private Filter		m_filter;
 	
     public NewFilterDialog(Shell parent)
     {
@@ -75,13 +80,13 @@ public class NewFilterDialog extends Dialog
 		//
 		new Label(m_dialogArea, SWT.NONE).setText("Take this action:");
 		
-		Combo actionsCombo = new Combo(m_dialogArea, SWT.DROP_DOWN | SWT.READ_ONLY);
-		actionsCombo.add("Highlight Line");
-		actionsCombo.add("Skip Line");
-		actionsCombo.select(0);
+		m_actionsCombo = new Combo(m_dialogArea, SWT.DROP_DOWN | SWT.READ_ONLY);
+		m_actionsCombo.add("Highlight Line");
+		m_actionsCombo.add("Skip Line");
+		m_actionsCombo.select(0);
 		gridData = new GridData();
 		gridData.horizontalSpan = 2;
-		actionsCombo.setLayoutData(gridData);
+		m_actionsCombo.setLayoutData(gridData);
 		
 		//
 		// Filter actions		
@@ -124,11 +129,40 @@ public class NewFilterDialog extends Dialog
 				}
 			}
 		});
-		
 	}
 	
 	private Composite createHideOptions(Composite parent)
 	{
 		return new Composite(parent, SWT.NONE);	
 	}
+	
+	/**
+	 * Returns the filter created by this dialog.
+	 * @return Filter
+	 */
+	public Filter getFilter() 
+	{
+		return m_filter;
+	}
+	
+	protected void okPressed()
+	{
+		// validate();
+		switch (m_actionsCombo.getSelectionIndex()) {
+			case 0:
+				m_filter = new Filter();
+				m_filter.addAction(new HighlightAction(m_color));
+				m_filter.setPattern(m_filterText.getText());
+				break;
+				
+			default:
+				m_filter = null;
+				break;
+		}
+		
+		super.okPressed();
+	}
+
+	
+
 }
