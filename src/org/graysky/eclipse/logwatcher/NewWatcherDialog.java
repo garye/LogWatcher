@@ -26,7 +26,8 @@ import org.eclipse.swt.widgets.Text;
 import org.graysky.eclipse.logwatcher.filters.Filter;
 
 /**
- * The dialog that contains options for creating a new watcher.
+ * The dialog that contains options for creating 
+ * and editing a watcher.
  */
 public class NewWatcherDialog extends Dialog
 {
@@ -123,10 +124,14 @@ public class NewWatcherDialog extends Dialog
         gridData.widthHint = 40;
         m_intervalText.setLayoutData(gridData);
         
-        
         // Number of lines to show
         //
         createNumLinesGUI(composite);
+        
+        //
+        // Filters
+        //
+        createFilterGUI(composite);
         
 		// Register the browse button callback, now that all widgets have been created.
 		chooserButton.addSelectionListener(new SelectionAdapter() {
@@ -175,11 +180,6 @@ public class NewWatcherDialog extends Dialog
 				}
 			}
 		});
-		
-		//
-		// Filters
-		//
-		createFilterGUI(composite);
 		
 		// Edit mode handling
         //
@@ -299,13 +299,29 @@ public class NewWatcherDialog extends Dialog
 		m_filterList = new List(filterGroup, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		gridData = new GridData(GridData.GRAB_HORIZONTAL);
 		gridData.widthHint = 300;
-		gridData.heightHint = 60;
-		gridData.verticalSpan = 2;
+		gridData.heightHint = 70;
+		gridData.verticalSpan = 3;
 		m_filterList.setLayoutData(gridData);
 		
+        // New filter button
 		Button newButton = new Button(filterGroup, SWT.PUSH);
 		newButton.setText("New Filter...");
 		newButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+        
+        // Remove filter button
+        final Button removeButton = new Button(filterGroup, SWT.PUSH);
+        removeButton.setText("Remove Filter");
+        removeButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+        removeButton.setEnabled(false);
+        
+        // Remove All filters button
+        final Button removeAllButton = new Button(filterGroup, SWT.PUSH);
+        removeAllButton.setText("Remove All");
+        removeAllButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+        removeAllButton.setEnabled(m_filterList.getItemCount() > 0);
+        
+        // Event listeners
+        //
 		newButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt)
 			{
@@ -318,13 +334,11 @@ public class NewWatcherDialog extends Dialog
 					m_filters.add(wizard.getFilter());
 					m_filterList.add(wizard.getFilter().getDescription());
 				}
+                
+                removeAllButton.setEnabled(m_filterList.getItemCount() > 0);
 			}
 		});
-		
-		final Button removeButton = new Button(filterGroup, SWT.PUSH);
-		removeButton.setText("Remove Filter");
-		removeButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-		removeButton.setEnabled(false);
+        
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt)
 			{
@@ -335,9 +349,23 @@ public class NewWatcherDialog extends Dialog
 					if (m_filterList.getSelectionCount() == 0) {
 						removeButton.setEnabled(false);
 					}
+                    // Do enabling of remove all button
+                    removeAllButton.setEnabled(m_filterList.getItemCount() > 0);
 				}
 			}
 		});
+        
+        removeAllButton.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent evt)
+            {
+                m_filterList.removeAll();
+                m_filters.clear();
+                
+                // Disable buttons
+                removeButton.setEnabled(false);
+                removeAllButton.setEnabled(false);
+            }
+        });
 		
 		// Now that the remove button has been created, add the selection listener
 		// to the filter list.
@@ -480,7 +508,5 @@ public class NewWatcherDialog extends Dialog
 			// Show error msg
 			MessageDialog.openError(getShell(), "LogWatcher", m_errorMsg);
 		}	
-	}
-
-	
+	}	
 }
