@@ -10,7 +10,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -22,6 +26,8 @@ public class LogwatcherPlugin extends AbstractUIPlugin
 	private static LogwatcherPlugin plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
+	
+	private FontRegistry	m_fontRegistry = new FontRegistry();
    
 	/**
 	 * The constructor.
@@ -74,6 +80,33 @@ public class LogwatcherPlugin extends AbstractUIPlugin
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
 		super.initializeDefaultPreferences(store);
 		store.setDefault("saveWatchers", true);
+	}
+
+	/**
+	 * Get a font from the plugin's font registry.
+	 * 
+	 * @param name Symbolic name of the font
+	 * @return Font The requested font, or the default font if not found.
+	 */
+	public Font getFont(String name)
+	{
+		return m_fontRegistry.get(name);
+	}
+
+	public void putFont(String name, FontData[] data)
+	{
+		m_fontRegistry.put(name, data);
+	}
+
+	public void startup() throws CoreException
+	{
+		super.startup();
+		
+		// Store the preferred font in the registry
+		if (getPreferenceStore().contains("logwatcherFont")) {
+			m_fontRegistry.put("logwatcherFont", 
+				PreferenceConverter.getFontDataArray(getPreferenceStore(), "logwatcherFont"));
+		}
 	}
 
 }

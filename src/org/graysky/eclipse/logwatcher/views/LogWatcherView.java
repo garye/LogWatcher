@@ -1,5 +1,7 @@
 package org.graysky.eclipse.logwatcher.views;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -24,9 +26,11 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -35,11 +39,14 @@ import org.eclipse.swt.custom.LineStyleEvent;
 import org.eclipse.swt.custom.LineStyleListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 import org.graysky.eclipse.logwatcher.FindDialog;
 import org.graysky.eclipse.logwatcher.LogwatcherPlugin;
@@ -73,6 +80,27 @@ public class LogWatcherView extends ViewPart
 	private static ImageDescriptor newImage;
 	private static ImageDescriptor findImage;
 	
+	/**
+	 * Listen for changes to Logwatcher preferences. Currently, only changes to
+	 * the font are noticed.
+	 */
+	private IPropertyChangeListener m_propListener = new IPropertyChangeListener () {
+		public void propertyChange(org.eclipse.jface.util.PropertyChangeEvent event)
+		{
+			if (event.getProperty().equals("logwatcherFont")) {
+				LogwatcherPlugin plugin = LogwatcherPlugin.getDefault();
+				plugin.putFont("logwatcherFont", 
+					PreferenceConverter.getFontDataArray(plugin.getPreferenceStore(), "logwatcherFont"));
+					
+
+				for (Iterator iter = m_watchers.iterator(); iter.hasNext();) {
+					WatcherEntry entry = (WatcherEntry) iter.next();
+					entry.viewer.getTextWidget().setFont(plugin.getFont("logwatcherFont"));	
+				}		
+			}
+		}
+	};
+	
  	static {
 	    URL url = null;
 	    try {
@@ -101,6 +129,14 @@ public class LogWatcherView extends ViewPart
 	 */
 	public LogWatcherView() 
 	{
+	}
+
+	public void init(IViewSite site) throws PartInitException
+	{
+		super.init(site);
+		
+		// Register a property change listener for the preferences page.
+		LogwatcherPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(m_propListener);
 	}
 
 	/**
@@ -354,6 +390,11 @@ public class LogWatcherView extends ViewPart
                 }
             }
         });
+        
+        // Set the font.
+        Font f = LogwatcherPlugin.getDefault().getFont("logwatcherFont");
+        viewer.getTextWidget().setFont(f);
+        
 		
 		watcher.start();
 	
@@ -402,7 +443,7 @@ public class LogWatcherView extends ViewPart
 	}
 		
 	/**
-	 * Clean up after ourselves - Stop all watchers.
+	 * Clean up after ourselves.
 	 */
 	public void dispose() {
 		super.dispose();
@@ -411,6 +452,8 @@ public class LogWatcherView extends ViewPart
 			WatcherEntry entry = (WatcherEntry) iter.next();
 			entry.dispose();
 		} 
+		
+		LogwatcherPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(m_propListener);
 	}
 	
 	public WatcherEntry findEntry(CTabItem item)
