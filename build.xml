@@ -82,6 +82,11 @@
 		<copy file="${build.result.folder}/plugin.xml" todir="${destination.temp.folder}/${full.name}"/>
 	</target>
 	
+	<target name="gather.about.html" depends="init" if="destination.temp.folder">
+		<mkdir dir="${destination.temp.folder}/${full.name}"/>
+		<copy file="${build.result.folder}/about.html" todir="${destination.temp.folder}/${full.name}"/>
+	</target>
+	
 	<target name="gather.icons" depends="init" if="destination.temp.folder">
 		<mkdir dir="${destination.temp.folder}/${full.name}"/>
 		<copy todir="${destination.temp.folder}/${full.name}/icons">
@@ -118,6 +123,9 @@
 			<param name="destination.temp.folder" value="${temp.folder}/"/>
 		</antcall>
 		<antcall target="gather.plugin.xml">
+			<param name="destination.temp.folder" value="${temp.folder}/"/>
+		</antcall>
+		<antcall target="gather.about.html">
 			<param name="destination.temp.folder" value="${temp.folder}/"/>
 		</antcall>
 		<antcall target="gather.icons">
