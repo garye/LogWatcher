@@ -2,6 +2,7 @@ package org.graysky.eclipse.logwatcher;
 
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.Color;
+import org.graysky.eclipse.logwatcher.filters.AddTaskAction;
 import org.graysky.eclipse.logwatcher.filters.Filter;
 import org.graysky.eclipse.logwatcher.filters.FilterAction;
 import org.graysky.eclipse.logwatcher.filters.HighlightAction;
@@ -37,6 +38,11 @@ public class NewFilterWizard extends Wizard
 				
 			case 1:
 				addFilterAction(new IgnoreAction());
+				break;
+				
+			case 2:
+				AddTaskAction ta = new AddTaskAction("test", 0, LogwatcherPlugin.getWorkspace().getRoot());
+				addFilterAction(ta);
 				break;
 					
 		}
