@@ -300,7 +300,7 @@ public class LogWatcherView extends ViewPart
 			}
 		};
 		m_clearAction.setText("Clear");
-		m_clearAction.setToolTipText("Clear log watcher display");
+		m_clearAction.setToolTipText("Clear logwatcher display");
 		m_clearAction.setImageDescriptor(eraseImage);
 		m_clearAction.setEnabled(false);	
 		
@@ -344,7 +344,7 @@ public class LogWatcherView extends ViewPart
 			}
 		};
 		m_scrollAction.setText("Toggle Scrolling");
-		m_scrollAction.setToolTipText("Toggle Scrolling");
+		m_scrollAction.setToolTipText("Toggle automatic scrolling");
 		m_scrollAction.setImageDescriptor(scrollImage);
 		m_scrollAction.setChecked(false);
 		m_scrollAction.setEnabled(false);
