@@ -66,6 +66,7 @@ public class LogWatcherView extends ViewPart
 	private Action			m_copyAction = null;
 	private Vector 		m_watchers = new Vector();
 
+	private static final String WATCHER_STATE_FILENAME	= "watcherState.xml";
 	private static ImageDescriptor eraseImage;
 	private static ImageDescriptor closeImage;
 	private static ImageDescriptor newImage;
@@ -125,32 +126,26 @@ public class LogWatcherView extends ViewPart
 			}
 		});
 
-		FilterLoader l = new FilterLoader();
-    	try {
-            l.loadFilters(new FileReader("c:\\temp\\test.xml"));
-        }
-        catch (FileNotFoundException e) {
-        }
-        catch (Exception e) {
-        }
-
 		makeActions();
 		contributeToActionBars();
 		
 		setGlobalActionHandlers();
-		
+		loadWatcherState();
+	}
+
+	private void loadWatcherState()
+	{
 		WatcherLoader loader = new WatcherLoader();
 		IPath path = LogwatcherPlugin.getDefault().getStateLocation();
 		path = path.addTrailingSeparator();
-		path = path.append("watcherState.xml");
+		path = path.append(WATCHER_STATE_FILENAME);
 		try {
-            loader.loadWatchers(new FileReader(path.toFile()));
-        }
-        catch (Exception e) {
-        	System.out.println(e.getMessage());
-        	e.printStackTrace();
-        }
-        
+			loader.loadWatchers(new FileReader(path.toFile()));
+		}
+		catch (Exception e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 	private void setGlobalActionHandlers()
@@ -218,6 +213,8 @@ public class LogWatcherView extends ViewPart
 						m_closeAction.setEnabled(false);
 						m_clearAction.setEnabled(false);
 					}
+					
+					saveWatcherState();
 				}
 			}
 		};
@@ -372,14 +369,13 @@ public class LogWatcherView extends ViewPart
 	{
 		IPath path = LogwatcherPlugin.getDefault().getStateLocation();
 		path = path.addTrailingSeparator();
-		path = path.append("watcherState.xml");
+		path = path.append(WATCHER_STATE_FILENAME);
 		try {
             FileWriter writer = new FileWriter(path.toFile());
             writer.write("<watchers>\n");
             for (Iterator iter = m_watchers.iterator(); iter.hasNext();) {
                 WatcherEntry element = (WatcherEntry) iter.next();
                 element.toXML(writer);
-                System.out.println("wrote watcher");
             }
             writer.write("</watchers>");
             writer.flush();
@@ -495,11 +491,9 @@ public class LogWatcherView extends ViewPart
 	   	protected void loadWatchers(org.w3c.dom.Document doc)
 	   	{
 	   		NodeList watcherNodes = doc.getElementsByTagName("watcher");
-	   		System.out.println(watcherNodes.getLength());
 	   		for (int i = 0; i < watcherNodes.getLength(); i++) {
 	   			Node node = watcherNodes.item(i);
 	   			loadWatcher(node);
-	   			System.out.println("loaded watcher");
 	   		}	
 	   	}
 		
