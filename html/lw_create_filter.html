@@ -8,8 +8,75 @@
 
 <h1>Defining a Filter</h1>
 
-<p>
+<p>To create a filter for a watcher, press <b>"New Filter"</b> on the "Create New Watcher" window.
+Multiple filters can be created for the same watcher, and can be configured to perform different
+actions.
 
+<h2>Matching Options</h2>
+
+<p>For all types of filters, you may choose whether the filter action should be 
+performed when the text <em>does</em> match the line or when it <em>does not</em>. This can
+be configured through the drop down box next to the search field.
+
+<p>Each filter can be created to be case sensitive or case insensitive. The default is
+case insensitive, which means that differences in capitalization are ignored.
+
+<h2>Simple Text Matching</h2>
+
+<p>The simplest way to construct a filter is to type in the text that you want to match. The filter
+will then search for that text in any part of the line.
+
+<h2>Regular Expressions</h2>
+
+<p>Filters support regular expressions that follow the Perl5 syntax.
+If you wish to make more complicated expression matching, you
+may want to look at the online
+<a href="http://www.perldoc.com/perl5.6/pod/perlre.html">Perl 5 Regular Expression documentation</a>.
+
+
+<h2>Examples of Regular Expressions</h2>
+
+<p>To match a simple string, just type it in the search field:
+<br><b><code>Error</code></b>
+
+<br>would match all lines that contains that text at any point within it.
+
+<p>To match a simple string that appears at the beginning of a line:
+<br><b><code>^Error</code></b>
+
+<p>To match a simple string that appears at the end of a line:
+<br><b><code>Error$</code></b>
+
+<p>To match a repeatition of digits that appears at exactly 4 in a row, such as a year:
+<br><b><code>(\d){4}</code></b>
+
+
+<h2>Filter Actions</h2>
+
+<p>Each filter has an associated action with it. This action is performed
+for every line in the file that satisfies the matching options.
+
+
+<h3>Highlight Line</h3>
+
+<p>When the filter is matched, the line will be highlighted in the color
+chosen through the wizard. This can be helpful to flag unusual log messages
+such as warnings or error messages.
+
+<h3>Skip Line</h3>
+
+<p>When the filter is matched, the line will not be displayed in the LogWatcher 
+window. This can be helpful for ignoring unimportant text.
+
+<h3>Add Todo Task</h3>
+
+<p>When the filter is matched, a <b>Todo item</b> is added to the Tasks list. The name
+and priority are configured through the new filter wizard.
+
+
+<p><center><img src="img/lw_filter_1.jpg"></center>
+
+<p>
 
 </body>
 </html>
