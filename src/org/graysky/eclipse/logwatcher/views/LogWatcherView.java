@@ -2,6 +2,8 @@ package org.graysky.eclipse.logwatcher.views;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -12,6 +14,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.window.Window;
@@ -20,10 +23,8 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.LineStyleEvent;
 import org.eclipse.swt.custom.LineStyleListener;
-import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
@@ -31,6 +32,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.graysky.eclipse.logwatcher.LogwatcherPlugin;
 import org.graysky.eclipse.logwatcher.NewWatcherDialog;
 import org.graysky.eclipse.logwatcher.filters.Filter;
 import org.graysky.eclipse.logwatcher.watchers.TextFileWatcher;
@@ -45,9 +47,35 @@ public class LogWatcherView extends ViewPart {
 	
 	private Action 		m_closeAction = null;
 	private Action 		m_newAction = null;
+	private Action		m_clearAction = null;
 	private CTabFolder 	m_folder = null;
 	private Vector 		m_watchers = new Vector();
 
+	private static ImageDescriptor eraseImage;
+	private static ImageDescriptor closeImage;
+	private static ImageDescriptor newImage;
+	
+ 	static {
+	    URL url = null;
+	    try {
+		    url = new URL(LogwatcherPlugin.getDefault().getDescriptor().getInstallURL(),
+		                  "icons/clear.gif");
+		    eraseImage = ImageDescriptor.createFromURL(url);
+		    
+		    url = new URL(LogwatcherPlugin.getDefault().getDescriptor().getInstallURL(),
+		                  "icons/close.gif");
+		    closeImage = ImageDescriptor.createFromURL(url);  
+		    
+		    url = new URL(LogwatcherPlugin.getDefault().getDescriptor().getInstallURL(),
+		                  "icons/new.gif");
+		    newImage = ImageDescriptor.createFromURL(url);  
+	    } catch (MalformedURLException e) {
+	    	e.printStackTrace();
+	    }
+	 	
+	 	
+	}
+  			
 	/**
 	 * The constructor.
 	 */
@@ -96,21 +124,22 @@ public class LogWatcherView extends ViewPart {
 	private void contributeToActionBars()
 	{
 		IActionBars bars = getViewSite().getActionBars();
-		fillLocalPullDown(bars.getMenuManager());
+		//fillLocalPullDown(bars.getMenuManager());
 		fillLocalToolBar(bars.getToolBarManager());
 	}
 
 	private void fillLocalPullDown(IMenuManager manager)
 	{
-		manager.add(m_closeAction);
-		manager.add(new Separator());
-		manager.add(m_newAction);
+		//manager.add(m_closeAction);
+		//manager.add(new Separator());
+		//manager.add(m_newAction);
 	}
 
 	private void fillContextMenu(IMenuManager manager) 
 	{
 		manager.add(m_closeAction);
 		manager.add(m_newAction);
+		manager.add(m_clearAction);
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator("Additions"));
 	}
@@ -119,6 +148,7 @@ public class LogWatcherView extends ViewPart {
 	{
 		manager.add(m_closeAction);
 		manager.add(m_newAction);
+		manager.add(m_clearAction);
 	}
 
 	private void makeActions() 
@@ -133,14 +163,14 @@ public class LogWatcherView extends ViewPart {
 					if (m_folder.getItemCount() == 0) {
 						setViewTitle(null);
 						m_closeAction.setEnabled(false);
+						m_clearAction.setEnabled(false);
 					}
 				}
 			}
 		};
 		m_closeAction.setText("Close");
 		m_closeAction.setToolTipText("Close this watcher");
-		m_closeAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-			getImageDescriptor(ISharedImages.IMG_OBJS_ERROR_TSK));
+		m_closeAction.setImageDescriptor(closeImage);
 		m_closeAction.setEnabled(false);
 		
 		// Create a new watcher
@@ -154,8 +184,22 @@ public class LogWatcherView extends ViewPart {
 		};
 		m_newAction.setText("New Watcher");
 		m_newAction.setToolTipText("Create a new watcher");
-		m_newAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-			getImageDescriptor(ISharedImages.IMG_OBJS_TASK_TSK));
+		m_newAction.setImageDescriptor(newImage);
+		
+		// Clear the display	
+		m_clearAction = new Action() {
+			
+			public void run() {
+				WatcherEntry entry = findEntry(m_folder.getSelection());
+				if (entry != null) {
+					entry.watcher.clear();
+				}	
+			}
+		};
+		m_clearAction.setText("Clear");
+		m_clearAction.setToolTipText("Clear log watcher display");
+		m_clearAction.setImageDescriptor(eraseImage);
+		m_clearAction.setEnabled(false);	
 	}
 	
 	private void addWatcher(File file, int interval, int numLines, Vector filters)
@@ -235,6 +279,7 @@ public class LogWatcherView extends ViewPart {
 		watcher.start();
 	
 		m_closeAction.setEnabled(true);
+		m_clearAction.setEnabled(true);
 	}
 
 	private void showMessage(String message)

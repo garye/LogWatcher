@@ -1,11 +1,14 @@
 package org.graysky.eclipse.logwatcher;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -16,7 +19,7 @@ public class LogwatcherPlugin extends AbstractUIPlugin {
 	private static LogwatcherPlugin plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
-	
+   
 	/**
 	 * The constructor.
 	 */

@@ -30,7 +30,7 @@ public class BoundedList
 		m_maxItems = maxItems;
 	}
 	
-	public Object get(int i)
+	public synchronized Object get(int i)
 	{
 		if (isEmpty()) {
 			return null;	
@@ -39,7 +39,13 @@ public class BoundedList
 		return m_list.get(i);
 	}
 	
-	public void put(Object o)
+	public synchronized void clear()
+	{
+		m_list.clear();
+		m_count = 0;	
+	}
+	
+	public synchronized void put(Object o)
 	{	
 		if (isFull()) {
 			m_list.removeFirst();

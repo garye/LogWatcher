@@ -28,6 +28,7 @@ public class TextFileWatcher extends Thread
 	private Vector			m_listeners	= new Vector();
 	private boolean			m_console	= false;
 	private Vector			m_filters	= new Vector();
+	private BoundedList		m_list		= null;
 
 	
 	public TextFileWatcher(String filename, int interval, int numLines) 
@@ -69,7 +70,7 @@ public class TextFileWatcher extends Thread
 	{
 		m_active = true;
 		
-		BoundedList list = new BoundedList(m_numLines);
+		m_list = new BoundedList(m_numLines);
 		String line = null;
 		long size = 0;
 		
@@ -87,7 +88,7 @@ public class TextFileWatcher extends Thread
 			
 			try {
 				if (truncated) {
-					list.put("*** File truncated ***");
+					m_list.put("*** File truncated ***");
 					updated = true;
 					m_reader.close();
 					m_reader = new BufferedReader(new FileReader(m_file));
@@ -96,7 +97,7 @@ public class TextFileWatcher extends Thread
 					while ((line = m_reader.readLine()) != null) {}	
 				}
 				else if (!m_file.exists()) {
-					list.put("*** File deleted ***");
+					m_list.put("*** File deleted ***");
 					updated = true;
 					m_active = false;
 				}
@@ -114,7 +115,7 @@ public class TextFileWatcher extends Thread
 							// Make sure the filter didn't set the line to null...
 							if (line != null) {
 								updated = true;
-								list.put(line);
+								m_list.put(line);
 								
 								if (m_console) {
 									// Dump the latest line to the console
@@ -126,11 +127,7 @@ public class TextFileWatcher extends Thread
 				}
 				
 				if (updated) {
-					// Notify listeners
-					for (Iterator i = m_listeners.iterator(); i.hasNext();) {
-						WatcherUpdateListener l = (WatcherUpdateListener) i.next();
-						l.update(list);
-					}
+					notifyListeners();
 				}
 				
 				sleep(m_interval * 1000);
@@ -149,6 +146,20 @@ public class TextFileWatcher extends Thread
 		catch (Exception e) {
 			// ignore	
 		}
+	}
+
+	protected synchronized void notifyListeners()
+	{
+		for (Iterator i = m_listeners.iterator(); i.hasNext();) {
+			WatcherUpdateListener l = (WatcherUpdateListener) i.next();
+			l.update(m_list);
+		}
+	}
+
+	public void clear()
+	{
+		m_list.clear();
+		notifyListeners();
 	}
 
     public int getNumLines()
