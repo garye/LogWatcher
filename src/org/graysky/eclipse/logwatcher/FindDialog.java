@@ -23,6 +23,7 @@ public class FindDialog extends Dialog
 	private Button				m_wrap			= null;
 	private Button				m_wholeWord		= null;
 	private Button				m_incremental	= null;
+	private Label				m_statusLabel	= null;
 	private int				m_offset		= 0;
 	
 	public FindDialog(Shell parentShell, IFindReplaceTarget target)
@@ -52,6 +53,7 @@ public class FindDialog extends Dialog
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.horizontalSpacing = 10;
+		layout.verticalSpacing = 10;
 		composite.setLayout(layout);
 	
 		//
@@ -61,7 +63,7 @@ public class FindDialog extends Dialog
 		m_findText = new Text(composite, SWT.BORDER);
 		m_findText.setTextLimit(200);
 		gridData = new GridData();
-		gridData.widthHint = 200;
+		gridData.widthHint = 160;
 		m_findText.setLayoutData(gridData);
 		
 		
@@ -75,7 +77,7 @@ public class FindDialog extends Dialog
 		gridData = new GridData();
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.horizontalSpan = 2;
-		gridData.horizontalAlignment = GridData.CENTER;
+		gridData.horizontalAlignment = GridData.FILL;
 		optionsGroup.setLayoutData(gridData);
 		
 		m_caseSensitive = new Button(optionsGroup, SWT.CHECK);
@@ -90,19 +92,74 @@ public class FindDialog extends Dialog
 		m_incremental = new Button(optionsGroup, SWT.CHECK);
 		m_incremental.setText("Incremental");
 		
+		
+		
+		
+		return composite;
+	}
+
+	protected void createButtonsForButtonBar(Composite parent)
+	{
 		//
 		// Find button
 		//
-		Button findButton = new Button(composite, SWT.PUSH);
+		Button findButton = new Button(parent, SWT.PUSH);
 		findButton.setText("Find");
+		findButton.setFocus();
 		findButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt)
 			{
 				m_offset = m_target.findAndSelect(m_offset, m_findText.getText(), true, 
 										m_caseSensitive.getSelection(), m_wholeWord.getSelection());
+				if (m_offset == -1) {
+					m_statusLabel.setText("String not found");
+					m_statusLabel.redraw();
+				}
+				
 				m_offset++;
+				
 			}
 		});
+		
+		GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gridData.horizontalSpan = 2;
+		gridData.grabExcessHorizontalSpace = true;
+		findButton.setLayoutData(gridData);
+		
+		// Status label
+		m_statusLabel = new Label(parent, SWT.NONE);
+		
+		// This doesn't seem right, but we seem to need to set the initial width
+		// of the label text to at least as long as the text we will be setting
+		// it to later... 
+		m_statusLabel.setText("                                       ");
+		
+		// Close button
+		Button closeButton = new Button(parent, SWT.PUSH);
+		closeButton.setText("Close");
+		gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
+		closeButton.setLayoutData(gridData);
+		closeButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt)
+			{
+				close();
+			}
+		});
+	}
+
+	protected Control createButtonBar(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.horizontalSpacing = 10;
+		layout.verticalSpacing = 10;
+		composite.setLayout(layout);
+		GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gridData.horizontalSpan = 2;
+		composite.setLayoutData(gridData);
+		
+		createButtonsForButtonBar(composite);
+		
 		return composite;
 	}
 
