@@ -77,7 +77,7 @@ public class FilterLoader
         }
         catch (MalformedPatternException ignore) {
         }
-   		System.out.println(f.getDescription());
+   		
    		return f;	
    	}
    

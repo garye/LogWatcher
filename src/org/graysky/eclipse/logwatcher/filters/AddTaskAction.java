@@ -85,7 +85,7 @@ public class AddTaskAction implements FilterAction
     public void toXML(Writer writer) throws IOException
     {
     	writer.write("<action type=\"task\">");
-    	writer.write("<taskDescription>" + getDescription() + "</taskDecription>");
+    	writer.write("<taskDescription>" + getTaskDescription() + "</taskDescription>");
     	writer.write("<priority>" + getPriority() + "</priority>");
     	writer.write("</action>");
     }
