@@ -19,12 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * @author gelliott
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
+ * The dialog that contains options for creating a new watcher.
  */
 public class NewWatcherDialog extends Dialog {
 
@@ -42,7 +37,7 @@ public class NewWatcherDialog extends Dialog {
 	
 	/**
 	 * Constructor for NewWatcherDialog.
-	 * @param arg0
+	 * @param shell
 	 */
 	public NewWatcherDialog(Shell shell)
 	{
@@ -90,8 +85,6 @@ public class NewWatcherDialog extends Dialog {
 		gridData.horizontalSpan = 2;
 	    m_numLinesText.setLayoutData(gridData);
 
-
-		
 		// Refresh interval row
 		new Label(composite, SWT.NONE).setText("Refresh interval (in seconds):");
 		m_intervalText = new Text(composite, SWT.BORDER);

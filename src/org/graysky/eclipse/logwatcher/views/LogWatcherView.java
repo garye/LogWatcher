@@ -34,7 +34,10 @@ import org.graysky.eclipse.logwatcher.watchers.TextFileWatcher;
 import org.graysky.eclipse.logwatcher.watchers.WatcherUpdateListener;
 import org.graysky.eclipse.util.BoundedList;
 
-
+/** 
+ * The main view for LogWatcher. Still has lots of code generated from the PDE
+ * wizard that is not used.
+ */
 public class LogWatcherView extends ViewPart {
 	
 	private Action 		m_closeAction = null;

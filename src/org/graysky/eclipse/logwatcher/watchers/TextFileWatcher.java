@@ -11,7 +11,11 @@ import java.util.Vector;
 
 import org.graysky.eclipse.util.BoundedList;
 
-
+/**
+ * Watches a text file for any changes, and keeps a list of the most recent
+ * lines to have been added to the file. Notifies WatcherListeners when
+ * a change to the file being watched is detected.
+ */
 public class TextFileWatcher extends Thread 
 {
 
@@ -46,6 +50,9 @@ public class TextFileWatcher extends Thread
 		interrupt();
 	}
 	
+	/**
+	 * Determines if the watcher should output each updated line to the console.
+	 */
 	public void setConsole(boolean b)
 	{
 		m_console = b;

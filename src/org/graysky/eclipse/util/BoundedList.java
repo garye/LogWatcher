@@ -3,6 +3,11 @@ package org.graysky.eclipse.util;
 import java.util.LinkedList;
 import java.util.Vector;
 
+/**
+ * A fixed-size list of Objects. If an item is inserted into a full list the oldest
+ * item will be removed, and the list will stay full. Insertion into the list is a 
+ * constant-time operation.
+ */
 public class BoundedList 
 {
 	private LinkedList	m_list		= new LinkedList();
@@ -51,6 +56,12 @@ public class BoundedList
 		return m_count;
 	}
 
+	/**
+	 * Return the contents of the list formatted as a string. Each item in the list
+	 * contributes one line to the string by calling it's toString() method.
+	 * 
+	 * @return String
+	 */
 	public String getFormattedText()
 	{
 		StringBuffer sb = new StringBuffer();
@@ -61,6 +72,9 @@ public class BoundedList
 		return sb.toString();
 	}
 
+	/**
+	 * Debugging method.
+	 */
 	public void dump()
 	{
 		System.out.println("List contents");
