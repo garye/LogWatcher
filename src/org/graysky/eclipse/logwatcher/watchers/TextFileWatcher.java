@@ -21,27 +21,33 @@ public class TextFileWatcher extends Thread
 
 	private File			m_file		= null;
 	private BufferedReader	m_reader	= null;
-	private int				m_interval	= 1; // Seconds
+	private int			m_interval	= 1; // Seconds
+	
     /**
      * Number of lines to show at start. Zero indicates
      * showing the entire file.
      */
 	private int				m_numLines	= 100;
 	private boolean			m_active	= false;
-	private Vector			m_listeners	= new Vector();
+	private Vector				m_listeners	= new Vector();
 	private boolean			m_console	= false; // Debugging
-	private Vector			m_filters	= new Vector();
+	private Vector				m_filters	= new Vector();
 	private BoundedList		m_list		= null;
-    private boolean         m_changedNumLines = false;
 	
+	/**
+	 * Create a TextFileWatcher with a String containing the filename to watch.
+	 */
 	public TextFileWatcher(String filename, int interval, int numLines) 
-			throws FileNotFoundException
+			throws FileNotFoundException, IOException
 	{
 		this(new File(filename), interval, numLines);	
 	}
 	
+	/**
+	 * Create a TextFileWatcher.
+	 */
 	public TextFileWatcher(File file, int interval, int numLines) 
-		throws FileNotFoundException
+		throws FileNotFoundException, IOException
 	{
 		m_file = file;
 		m_interval = interval;
@@ -50,6 +56,9 @@ public class TextFileWatcher extends Thread
 		m_reader = new BufferedReader(new FileReader(m_file));
 	}
 	
+	/**
+	 * Halt the execution of the Watcher.
+	 */
 	public void halt()
 	{
 		m_active = false;
@@ -70,14 +79,13 @@ public class TextFileWatcher extends Thread
 	}
 	
     /**
-     * Runs the thread that watches for changes
-     * to the file.
+     * Runs the thread that watches for changes to the file.
      */
 	public void run()
 	{
 		m_active = true;
 		
-		m_list = new BoundedList(Integer.MAX_VALUE);
+		m_list = new BoundedList(m_numLines);
 		String line = null;
 		long size = 0;
 		boolean firstUpdate = false;
@@ -110,15 +118,6 @@ public class TextFileWatcher extends Thread
 					m_active = false;
 				}
 				else {
-                    
-                    if (m_changedNumLines) {
-                        // User has updated the number of lines
-                        // we should display. Refresh the reader
-                        //
-                        m_changedNumLines = false;
-                        m_reader.close();
-                        m_reader = new BufferedReader(new FileReader(m_file));
-                    }
                     
                     // Read through the lines of the files
 					while ((line = m_reader.readLine()) != null) {
@@ -212,11 +211,7 @@ public class TextFileWatcher extends Thread
      * Zero indicates whole file.
      */
 	public void setNumLines(int numLines)
-	{
-        // Number has changed.
-        if (m_numLines != numLines)
-            m_changedNumLines = true;
-        
+	{ 
         if (numLines == 0)
         {
             // Transform to biggest possible int.

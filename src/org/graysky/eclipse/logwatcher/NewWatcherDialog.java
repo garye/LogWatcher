@@ -31,19 +31,19 @@ import org.graysky.eclipse.logwatcher.filters.Filter;
  */
 public class NewWatcherDialog extends Dialog
 {
-    private boolean				m_editMode 		= false;
+    private boolean			m_editMode 		= false;
 	private Text				m_fileText;
 	private Text				m_numLinesText;
 	private Text				m_intervalText;
 	private String				m_errorMsg;
 	private File				m_file;
-	private int					m_interval;
-	private int					m_numLines;
-	private IDialogSettings		m_settings;
+	private int				m_interval;
+	private int				m_numLines;
+	private IDialogSettings	m_settings;
 	private List				m_filterList;
 	private Vector				m_filters		= new Vector();
-    private Button              m_wholeFileButton;
-    private Label               m_numLinesLabel;
+    private Button             m_wholeFileButton;
+    private Label              m_numLinesLabel;
     
 	private static int		DEFAULT_INTERVAL	= 1;
 	private static int		DEFAULT_NUMLINES	= 100;
@@ -97,40 +97,10 @@ public class NewWatcherDialog extends Dialog
 		layout.horizontalSpacing = 10;
 		composite.setLayout(layout);
 		
-		//
-		// File row
-		//
-		new Label(composite, SWT.NONE).setText("Select a file to watch:");
-		m_fileText = new Text(composite, SWT.BORDER);
-		m_fileText.setTextLimit(200);
-		gridData = new GridData();
-		gridData.widthHint = 200;
-		m_fileText.setLayoutData(gridData);
-		Button chooserButton = new Button(composite, SWT.PUSH);
-		chooserButton.setText("Browse...");
-		if (m_editMode) {
-		    m_fileText.setEnabled(false);
-		    chooserButton.setEnabled(false);
-		}
-		
-        //
-        // Refresh interval row
-        //
-        new Label(composite, SWT.NONE).setText("Refresh interval (in seconds):");
-        m_intervalText = new Text(composite, SWT.BORDER);
-        m_intervalText.setTextLimit(4);
-        gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-        gridData.horizontalSpan = 2;
-        gridData.widthHint = 40;
-        m_intervalText.setLayoutData(gridData);
-        
-        // Number of lines to show
-        //
+		// Create the widgets
+		Button chooserButton = createFileSelectionRow(composite);
+        createRefreshIntervalRow(composite);
         createNumLinesGUI(composite);
-        
-        //
-        // Filters
-        //
         createFilterGUI(composite);
         
 		// Register the browse button callback, now that all widgets have been created.
@@ -181,32 +151,73 @@ public class NewWatcherDialog extends Dialog
 			}
 		});
 		
-		// Edit mode handling
-        //
-		if (m_editMode) {
-            m_fileText.setText(m_file.getAbsolutePath());
-            m_intervalText.setText(Integer.toString(m_interval));
-            
-            if (m_numLines == 0)
-            {
-                m_wholeFileButton.setSelection(true);
-                m_numLinesText.setText(Integer.toString(DEFAULT_NUMLINES));
-                // Disable fields
-                m_numLinesLabel.setEnabled(false);
-                m_numLinesText.setEnabled(false);
-            }
-            else
-            {
-                m_wholeFileButton.setSelection(false);
-                m_numLinesText.setText(Integer.toString(m_numLines));
-                // Enable fields
-                m_numLinesLabel.setEnabled(true);
-                m_numLinesText.setEnabled(true);
-            }
-              
-		}
+		handleEditMode();
 		
 		return composite;
+	}
+
+	/**
+	 * Modify the UI we just created to deal with being in Edit Watcher mode
+	 * instead of Create Watcher mode.
+	 */
+	private void handleEditMode()
+	{
+		//
+		// Edit mode handling
+		//
+		if (m_editMode) {
+		    m_fileText.setText(m_file.getAbsolutePath());
+		    m_intervalText.setText(Integer.toString(m_interval));
+		    
+		    if (m_numLines == 0)
+		    {
+		        m_numLinesText.setText(Integer.toString(DEFAULT_NUMLINES));
+		    }
+		    else
+		    {
+		        m_numLinesText.setText(Integer.toString(m_numLines));
+		    }
+		     
+		    m_numLinesLabel.setEnabled(false);
+		    m_numLinesText.setEnabled(false);
+		    m_wholeFileButton.setEnabled(false);  
+		}
+	}
+
+	/**
+	 * Create refresh interval UI
+	 */
+	private void createRefreshIntervalRow(Composite composite)
+	{
+		GridData gridData;
+		new Label(composite, SWT.NONE).setText("Refresh interval (in seconds):");
+		m_intervalText = new Text(composite, SWT.BORDER);
+		m_intervalText.setTextLimit(4);
+		gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gridData.horizontalSpan = 2;
+		gridData.widthHint = 40;
+		m_intervalText.setLayoutData(gridData);
+	}
+
+	/**
+	 * Create the file selection UI
+	 */
+	private Button createFileSelectionRow(Composite composite)
+	{
+		GridData gridData;
+		new Label(composite, SWT.NONE).setText("Select a file to watch:");
+		m_fileText = new Text(composite, SWT.BORDER);
+		m_fileText.setTextLimit(200);
+		gridData = new GridData();
+		gridData.widthHint = 200;
+		m_fileText.setLayoutData(gridData);
+		Button chooserButton = new Button(composite, SWT.PUSH);
+		chooserButton.setText("Browse...");
+		if (m_editMode) {
+		    m_fileText.setEnabled(false);
+		    chooserButton.setEnabled(false);
+		}
+		return chooserButton;
 	}
     
     /**
@@ -224,7 +235,7 @@ public class NewWatcherDialog extends Dialog
     
         // Grouping control
         Group numLinesGroup = new Group(parent, SWT.NONE);
-        numLinesGroup.setText("Amount to show");
+        numLinesGroup.setText("What to show at start");
         GridLayout glayout = new GridLayout(2, false);
         numLinesGroup.setLayout(glayout);
         gridData = new GridData();
@@ -240,7 +251,7 @@ public class NewWatcherDialog extends Dialog
         
         // Label show num of lines
         m_numLinesLabel = new Label(numLinesGroup, SWT.NONE);
-        m_numLinesLabel.setText("Number of lines to show:");
+        m_numLinesLabel.setText("Number of lines:");
         gridData = new GridData(GridData.GRAB_HORIZONTAL);
         gridData.horizontalSpan = 1;
         gridData.widthHint = 140;
@@ -450,6 +461,10 @@ public class NewWatcherDialog extends Dialog
 		m_file = new File(m_fileText.getText());
 		if (!m_file.exists() || !m_file.isFile()) {
 			m_errorMsg = "File not found:\n" + m_fileText.getText();
+			return false;
+		}
+		if (!m_file.canRead()) {
+			m_errorMsg = "Cannot read file:\n" + m_fileText.getText();
 			return false;
 		}
 		

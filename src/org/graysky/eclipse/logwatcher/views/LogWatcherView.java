@@ -1,7 +1,6 @@
 package org.graysky.eclipse.logwatcher.views;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,7 +16,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -225,17 +223,9 @@ public class LogWatcherView extends ViewPart
 	private void contributeToActionBars()
 	{
 		IActionBars bars = getViewSite().getActionBars();
-		//fillLocalPullDown(bars.getMenuManager());
 		fillLocalToolBar(bars.getToolBarManager());
 	}
 
-//	private void fillLocalPullDown(IMenuManager manager)
-//	{
-//		manager.add(m_closeAction);
-//		manager.add(m_newAction);
-//		manager.add(m_clearAction);
-//		manager.add(m_findAction);
-//	}
 
 	private void fillContextMenu(IMenuManager manager) 
 	{
@@ -274,6 +264,7 @@ public class LogWatcherView extends ViewPart
 						m_closeAction.setEnabled(false);
 						m_clearAction.setEnabled(false);
 						m_scrollAction.setEnabled(false);
+						m_editAction.setEnabled(false);
 					}
 					
 					saveWatcherState();
@@ -420,7 +411,7 @@ public class LogWatcherView extends ViewPart
 			watcher = new TextFileWatcher(file, interval, numLines);
 			watcher.setFilters(filters);
 		}
-		catch (FileNotFoundException e) {
+		catch (Exception e) {
 			// Shouldn't happen!
 			e.printStackTrace();
 			return;
@@ -439,18 +430,11 @@ public class LogWatcherView extends ViewPart
 				display.asyncExec(new Runnable() {
 					public void run()
 					{
-						int topIndex = viewer.getTopIndex();
-						int caret = viewer.getTextWidget().getCaretOffset();
-                        
 						entry.viewer.getTextWidget().append(flist.getFormattedText());
 		
 						if (entry.scroll) {
 							// Scroll to the bottom
 							viewer.setTopIndex(newDoc.getNumberOfLines());
-						}
-						else {
-							viewer.setTopIndex(topIndex);
-							viewer.getTextWidget().setCaretOffset(caret);	
 						}
 					}
 				});
