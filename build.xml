@@ -102,6 +102,13 @@
 			<fileset dir="${plugin.destination}/icons"/>
 		</copy>
 	</target>
+	
+	<target name="gather.libs" depends="init" if="destination.temp.folder">
+		<mkdir dir="${destination.temp.folder}/${full.name}"/>
+		<copy todir="${destination.temp.folder}/${full.name}/lib">
+			<fileset dir="${plugin.destination}/lib"/>
+		</copy>
+	</target>
 
 	<target name="gather.logs" depends="init" if="destination.temp.folder">
 		<mkdir dir="${destination.temp.folder}/${full.name}"/>
@@ -141,6 +148,9 @@
 			<param name="destination.temp.folder" value="${temp.folder}/"/>
 		</antcall>
 		<antcall target="gather.icons">
+			<param name="destination.temp.folder" value="${temp.folder}/"/>
+		</antcall>
+		<antcall target="gather.libs">
 			<param name="destination.temp.folder" value="${temp.folder}/"/>
 		</antcall>
 		<delete>
