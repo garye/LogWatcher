@@ -15,9 +15,9 @@ public class AddTaskAction implements FilterAction
 	private int			m_priority			= -1;
 	private IResource	m_resource			= null;
 	
-	public static final int LOW 	= 0;
-	public static final int NORMAL	= 1;
-	public static final int HIGH	= 2;	
+	public static final int LOW 	= IMarker.PRIORITY_LOW;
+	public static final int NORMAL	= IMarker.PRIORITY_NORMAL;
+	public static final int HIGH	= IMarker.PRIORITY_HIGH;	
 	
     public AddTaskAction()
     {
@@ -45,13 +45,33 @@ public class AddTaskAction implements FilterAction
         return "Add a Todo Task";
     }
     
+    public int getPriority()
+    {
+        return m_priority;
+    }
+
+    public void setPriority(int priority)
+    {
+        m_priority = priority;
+    }
+    
+    public String getTaskDescription()
+    {
+        return m_taskDescription;
+    }
+
+    public void setTaskDescription(String taskDescription)
+    {
+        m_taskDescription = taskDescription;
+    }
+
     public String doWatcherAction(String line, boolean firstMatch)
     {
     	
     	if (firstMatch) {
 	    	try {
 	            IMarker marker = m_resource.createMarker(IMarker.TASK);
-	            marker.setAttribute(IMarker.SEVERITY, IMarker.PRIORITY_LOW);
+	            marker.setAttribute(IMarker.PRIORITY, m_priority);
 	            marker.setAttribute(IMarker.MESSAGE, m_taskDescription);
 	        }
 	        catch (CoreException e) {
@@ -64,6 +84,9 @@ public class AddTaskAction implements FilterAction
     
     public void toXML(Writer writer) throws IOException
     {
-    	writer.write("<action type=\"task\"/>");
+    	writer.write("<action type=\"task\">");
+    	writer.write("<taskDescription>" + getDescription() + "</taskDecription>");
+    	writer.write("<priority>" + getPriority() + "</priority>");
+    	writer.write("</action>");
     }
 }

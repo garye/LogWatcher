@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.graysky.eclipse.logwatcher.filters.AddTaskAction;
 
 public class AddTaskOptionsPage extends WizardPage
 {
@@ -35,6 +36,25 @@ public class AddTaskOptionsPage extends WizardPage
 	public AddTaskOptionsPage(String pageName, String title, ImageDescriptor titleImage)
 	{
 		super(pageName, title, titleImage);
+	}
+
+	public String getDescription()
+	{
+		return m_descText.getText();	
+	}
+
+	public int getPriority()
+	{
+		switch (m_priorityCombo.getSelectionIndex()) {
+			case 0:
+				return AddTaskAction.HIGH;
+			case 1:
+				return AddTaskAction.NORMAL;
+			case 2:
+				return AddTaskAction.LOW;
+			default:
+				return AddTaskAction.NORMAL;
+		}
 	}
 
 	public void createControl(Composite parent) 

@@ -17,6 +17,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -67,6 +68,7 @@ public class LogWatcherView extends ViewPart
 	private Action 		m_newAction = null;
 	private Action			m_clearAction = null;
 	private Action			m_findAction = null;
+	private Action		m_scrollAction = null;
 	private CTabFolder 	m_folder = null;
 	private Action			m_copyAction = null;
 	private Vector 		m_watchers = new Vector();
@@ -76,6 +78,8 @@ public class LogWatcherView extends ViewPart
 	private static ImageDescriptor closeImage;
 	private static ImageDescriptor newImage;
 	private static ImageDescriptor findImage;
+	private static ImageDescriptor scrollImage;
+	private static ImageDescriptor copyImage;
 	
 	/**
 	 * Listen for changes to Logwatcher preferences. Currently, only changes to
@@ -115,7 +119,15 @@ public class LogWatcherView extends ViewPart
 		    
 			url = new URL(LogwatcherPlugin.getDefault().getDescriptor().getInstallURL(),
 						  "icons/search.gif");
-			findImage = ImageDescriptor.createFromURL(url);  
+			findImage = ImageDescriptor.createFromURL(url); 
+			
+			url = new URL(LogwatcherPlugin.getDefault().getDescriptor().getInstallURL(),
+						  "icons/toggle_scroll.gif");
+			scrollImage = ImageDescriptor.createFromURL(url); 
+			
+			url = new URL(LogwatcherPlugin.getDefault().getDescriptor().getInstallURL(),
+						  "icons/copy_edit.gif");
+			copyImage = ImageDescriptor.createFromURL(url); 
 	    } catch (MalformedURLException e) {
 	    	e.printStackTrace();
 	    }
@@ -191,7 +203,6 @@ public class LogWatcherView extends ViewPart
 			
 		getViewSite().getActionBars().setGlobalActionHandler(
 			IWorkbenchActionConstants.COPY, m_copyAction);
-
 	}
 
 	private void setViewTitle(String name)
@@ -211,28 +222,33 @@ public class LogWatcherView extends ViewPart
 		fillLocalToolBar(bars.getToolBarManager());
 	}
 
-	private void fillLocalPullDown(IMenuManager manager)
-	{
-		//manager.add(m_closeAction);
-		//manager.add(new Separator());
-		//manager.add(m_newAction);
-	}
+//	private void fillLocalPullDown(IMenuManager manager)
+//	{
+//		manager.add(m_closeAction);
+//		manager.add(m_newAction);
+//		manager.add(m_clearAction);
+//		manager.add(m_findAction);
+//	}
 
 	private void fillContextMenu(IMenuManager manager) 
 	{
-		manager.add(m_closeAction);
 		manager.add(m_newAction);
+		manager.add(new Separator("new"));
+		manager.add(m_copyAction);
+		manager.add(m_findAction);
 		manager.add(m_clearAction);
-		// Other plug-ins can contribute there actions here
+		manager.add(new Separator("other"));
+		manager.add(m_scrollAction);
+		manager.add(m_closeAction);
 		manager.add(new Separator("Additions"));
 	}
 	
 	private void fillLocalToolBar(IToolBarManager manager)
 	{
-		manager.add(m_closeAction);
 		manager.add(m_newAction);
 		manager.add(m_clearAction);
-		manager.add(m_findAction);
+		manager.add(m_scrollAction);
+		manager.add(m_closeAction);
 	}
 
 	private void makeActions() 
@@ -248,6 +264,7 @@ public class LogWatcherView extends ViewPart
 						setViewTitle(null);
 						m_closeAction.setEnabled(false);
 						m_clearAction.setEnabled(false);
+						m_scrollAction.setEnabled(false);
 					}
 					
 					saveWatcherState();
@@ -312,6 +329,25 @@ public class LogWatcherView extends ViewPart
 				}
 			}
 		};
+		m_copyAction.setText("Copy");
+		m_copyAction.setToolTipText("Copy selected text to the clipboard");
+		m_copyAction.setImageDescriptor(copyImage);
+		
+		
+		// Toggle scrolling
+		m_scrollAction = new Action() {
+			public void run() {
+				WatcherEntry entry = findEntry(m_folder.getSelection());
+				if (entry != null) {
+					entry.scroll = !isChecked();
+				}
+			}
+		};
+		m_scrollAction.setText("Toggle Scrolling");
+		m_scrollAction.setToolTipText("Toggle Scrolling");
+		m_scrollAction.setImageDescriptor(scrollImage);
+		m_scrollAction.setChecked(false);
+		m_scrollAction.setEnabled(false);
 	}
 	
 	private void addWatcher(File file, int interval, int numLines, Vector filters, boolean saveState)
@@ -367,10 +403,18 @@ public class LogWatcherView extends ViewPart
 				display.asyncExec(new Runnable() {
 					public void run()
 					{
+						int topIndex = viewer.getTopIndex();
+						int caret = viewer.getTextWidget().getCaretOffset();
 						newDoc.set(flist.getFormattedText());
 		
-						// Scroll to the bottom
-						viewer.setTopIndex(newDoc.getNumberOfLines());
+						if (entry.scroll) {
+							// Scroll to the bottom
+							viewer.setTopIndex(newDoc.getNumberOfLines());
+						}
+						else {
+							viewer.setTopIndex(topIndex);
+							viewer.getTextWidget().setCaretOffset(caret);	
+						}
 					}
 				});
 			}
@@ -397,6 +441,7 @@ public class LogWatcherView extends ViewPart
 	
 		m_closeAction.setEnabled(true);
 		m_clearAction.setEnabled(true);
+		m_scrollAction.setEnabled(true);
 		
 		if (saveState) {
 			saveWatcherState();
@@ -475,6 +520,7 @@ public class LogWatcherView extends ViewPart
 		TextFileWatcher watcher 	= null;
 		CTabItem 		tab 		= null;
 		Vector			filters		= null;
+		boolean 		scroll		= true;
 		
 		public WatcherEntry(TextViewer v, TextFileWatcher w, CTabItem t, Vector f)
 		{

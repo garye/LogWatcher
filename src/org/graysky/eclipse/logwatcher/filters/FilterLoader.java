@@ -116,6 +116,25 @@ public class FilterLoader
    		else if (type.getNodeValue().equals("ignore")) {
    			return new IgnoreAction();		
    		}
+   		else if (type.getNodeValue().equals("task")) {
+   			NodeList children = node.getChildNodes();
+   			String desc = "";
+   			int priority = 0;
+   			
+	   		for (int i = 0; i < children.getLength(); i++) {
+	   			Node n = children.item(i);
+	   			String name = n.getNodeName();
+	   			
+	   			if (name.equals("taskDescription")) {
+	   				desc = n.getFirstChild().getNodeValue();	
+	   			}
+	   			else if (name.equals("priority")) {
+	   				priority = Integer.parseInt(n.getFirstChild().getNodeValue());
+	   			}
+	   		}
+	   			
+	   		return new AddTaskAction(desc, priority, LogwatcherPlugin.getWorkspace().getRoot());
+   		}
    		else {
    			System.out.println("Invalid action type: " + type.getNodeValue());	
    			return null;
