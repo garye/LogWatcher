@@ -10,13 +10,13 @@ import org.w3c.dom.Node;
  */
 public interface FilterAction
 {
-	public void doViewerAction(LineStyleEvent event);
+    public void doViewerAction(LineStyleEvent event);
 
-	public String getDescription();
+    public String getDescription();
 
-	public void dispose();
+    public void dispose();
 
-	public String doWatcherAction(String line, boolean firstMatch);
+    public String doWatcherAction(String line, boolean firstMatch);
 
-	public void toXML(Document doc, Node node);
+    public void toXML(Document doc, Node node);
 }

@@ -13,162 +13,190 @@ import java.util.ListIterator;
  */
 public class BoundedList implements List
 {
-	public int lastIndexOf(Object o) {
-		return m_list.lastIndexOf(o);
-	}
+    public int lastIndexOf(Object o)
+    {
+        return m_list.lastIndexOf(o);
+    }
 
-	public Object[] toArray() {
-		return m_list.toArray();
-	}
+    public Object[] toArray()
+    {
+        return m_list.toArray();
+    }
 
-	public Object[] toArray(Object[] a) {
-		return m_list.toArray(a);
-	}
+    public Object[] toArray(Object[] a)
+    {
+        return m_list.toArray(a);
+    }
 
-	private LinkedList m_list = new LinkedList();
-	private int m_maxItems = 0;
-	private int m_count = 0;
-	private int m_index = 0;
+    private LinkedList m_list = new LinkedList();
+    private int m_maxItems = 0;
+    private int m_count = 0;
+    private int m_index = 0;
 
-	/**
-	 * Used to allocate string buffer.
-	 */
-	private static final int LINE_WIDTH = 80;
+    /**
+     * Used to allocate string buffer.
+     */
+    private static final int LINE_WIDTH = 80;
 
-	public boolean isFull() {
-		return (m_count >= m_maxItems);
-	}
+    public boolean isFull()
+    {
+        return (m_count >= m_maxItems);
+    }
 
-	public boolean isEmpty() {
-		return (m_count == 0);
-	}
+    public boolean isEmpty()
+    {
+        return (m_count == 0);
+    }
 
-	public BoundedList(int maxItems) {
-		m_maxItems = maxItems;
-	}
+    public BoundedList(int maxItems)
+    {
+        m_maxItems = maxItems;
+    }
 
-	public synchronized void setMaxItems(int max) {
-		m_maxItems = max;
-	}
+    public synchronized void setMaxItems(int max)
+    {
+        m_maxItems = max;
+    }
 
-	public synchronized Object get(int i) {
-		return m_list.get(i);
-	}
+    public synchronized Object get(int i)
+    {
+        return m_list.get(i);
+    }
 
-	public synchronized void clear() {
-		m_list.clear();
-		m_count = 0;
-	}
+    public synchronized void clear()
+    {
+        m_list.clear();
+        m_count = 0;
+    }
 
-	public synchronized boolean add(Object o) {
-		if (isFull()) {
-			while (isFull()) {
-				m_list.removeFirst();
-				m_count--;
-			}
-			m_list.addLast(o);
-			m_count++;
-		}
-		else {
-			m_list.add(o);
-			m_count++;
-		}
+    public synchronized boolean add(Object o)
+    {
+        if (isFull()) {
+            while (isFull()) {
+                m_list.removeFirst();
+                m_count--;
+            }
+            m_list.addLast(o);
+            m_count++;
+        }
+        else {
+            m_list.add(o);
+            m_count++;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	public int size() {
-		return m_count;
-	}
+    public int size()
+    {
+        return m_count;
+    }
 
-	/**
-	 * Return the contents of the list formatted as a string. Each item in the
-	 * list contributes one line to the string by calling it's toString()
-	 * method.
-	 * 
-	 * @return String
-	 */
-	public String getFormattedText() {
-		StringBuffer sb = new StringBuffer(m_count * LINE_WIDTH);
-		for (int i = 0; i < m_count; i++) {
-			sb.append(m_list.get(i) + "\n");
-		}
-		
-		return sb.toString();
-	}
+    /**
+     * Return the contents of the list formatted as a string. Each item in the
+     * list contributes one line to the string by calling it's toString()
+     * method.
+     * 
+     * @return String
+     */
+    public String getFormattedText()
+    {
+        StringBuffer sb = new StringBuffer(m_count * LINE_WIDTH);
+        for (int i = 0; i < m_count; i++) {
+            sb.append(m_list.get(i) + "\n");
+        }
 
-	/**
-	 * Debugging method.
-	 */
-	public void dump() {
-		System.out.println("List contents");
-		for (int i = 0; i < m_count; i++) {
-			System.out.println(i + ": " + m_list.get(i));
-		}
-	}
+        return sb.toString();
+    }
 
-	public void add(int index, Object element) {
-		throw new UnsupportedOperationException();
-	}
+    /**
+     * Debugging method.
+     */
+    public void dump()
+    {
+        System.out.println("List contents");
+        for (int i = 0; i < m_count; i++) {
+            System.out.println(i + ": " + m_list.get(i));
+        }
+    }
 
-	public boolean addAll(int index, Collection c) {
-		throw new UnsupportedOperationException();
-	}
+    public void add(int index, Object element)
+    {
+        throw new UnsupportedOperationException();
+    }
 
-	public boolean addAll(Collection c) {
-		throw new UnsupportedOperationException();
-	}
+    public boolean addAll(int index, Collection c)
+    {
+        throw new UnsupportedOperationException();
+    }
 
-	public boolean contains(Object o) {
-		return m_list.contains(o);
-	}
+    public boolean addAll(Collection c)
+    {
+        throw new UnsupportedOperationException();
+    }
 
-	public boolean containsAll(Collection c) {
-		return m_list.containsAll(c);
-	}
+    public boolean contains(Object o)
+    {
+        return m_list.contains(o);
+    }
 
-	public int indexOf(Object o) {
-		return m_list.indexOf(o);
-	}
+    public boolean containsAll(Collection c)
+    {
+        return m_list.containsAll(c);
+    }
 
-	public Iterator iterator() {
-		return m_list.iterator();
-	}
+    public int indexOf(Object o)
+    {
+        return m_list.indexOf(o);
+    }
 
-	public ListIterator listIterator() {
-		return m_list.listIterator();
-	}
+    public Iterator iterator()
+    {
+        return m_list.iterator();
+    }
 
-	public ListIterator listIterator(int index) {
-		return m_list.listIterator(index);
-	}
+    public ListIterator listIterator()
+    {
+        return m_list.listIterator();
+    }
 
-	public Object remove(int index) {
-		throw new UnsupportedOperationException();
-	}
+    public ListIterator listIterator(int index)
+    {
+        return m_list.listIterator(index);
+    }
 
-	public boolean remove(Object o) {
-		boolean result = m_list.remove(o);
-		if (result) {
-			m_count--;
-		}
+    public Object remove(int index)
+    {
+        throw new UnsupportedOperationException();
+    }
 
-		return result;
-	}
+    public boolean remove(Object o)
+    {
+        boolean result = m_list.remove(o);
+        if (result) {
+            m_count--;
+        }
 
-	public boolean removeAll(Collection c) {
-		throw new UnsupportedOperationException();
-	}
+        return result;
+    }
 
-	public boolean retainAll(Collection c) {
-		throw new UnsupportedOperationException();
-	}
+    public boolean removeAll(Collection c)
+    {
+        throw new UnsupportedOperationException();
+    }
 
-	public Object set(int index, Object element) {
-		throw new UnsupportedOperationException();
-	}
+    public boolean retainAll(Collection c)
+    {
+        throw new UnsupportedOperationException();
+    }
 
-	public List subList(int fromIndex, int toIndex) {
-		return m_list.subList(fromIndex, toIndex);
-	}
+    public Object set(int index, Object element)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public List subList(int fromIndex, int toIndex)
+    {
+        return m_list.subList(fromIndex, toIndex);
+    }
 }

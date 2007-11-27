@@ -12,16 +12,18 @@ import org.w3c.dom.Element;
  */
 public class XmlUtils
 {
-	public static Element createElementWithText(Document doc, String tagName, String text) {
-		Element elem = doc.createElement(tagName);
-		elem.appendChild(doc.createTextNode(text));
-		return elem;
-	}
+    public static Element createElementWithText(Document doc, String tagName, String text)
+    {
+        Element elem = doc.createElement(tagName);
+        elem.appendChild(doc.createTextNode(text));
+        return elem;
+    }
 
-	public static Document createDocument() throws ParserConfigurationException {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    public static Document createDocument() throws ParserConfigurationException
+    {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		return builder.newDocument();
-	}
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        return builder.newDocument();
+    }
 }

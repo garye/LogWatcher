@@ -12,27 +12,29 @@ import org.graysky.eclipse.util.ImageUtils;
  */
 public class FindAction extends Action
 {
-	private LogWatcherView m_view = null;
-	private static ImageDescriptor IMAGE_DESC = null;
+    private LogWatcherView m_view = null;
+    private static ImageDescriptor IMAGE_DESC = null;
 
-	public FindAction(LogWatcherView p) {
-		m_view = p;
+    public FindAction(LogWatcherView p)
+    {
+        m_view = p;
 
-		setText("Find...");
-		setToolTipText("Find in log file");
-		setImageDescriptor(IMAGE_DESC);
-	}
+        setText("Find...");
+        setToolTipText("Find in log file");
+        setImageDescriptor(IMAGE_DESC);
+    }
 
-	public void run() {
-		WatcherData entry = m_view.getSelectedEntry();
-		if (entry != null) {
+    public void run()
+    {
+        WatcherData entry = m_view.getSelectedEntry();
+        if (entry != null) {
 
-			FindDialog d = new FindDialog(m_view.getFolder().getShell(), entry.getViewer().getFindReplaceTarget());
-			d.open();
-		}
-	}
+            FindDialog d = new FindDialog(m_view.getFolder().getShell(), entry.getViewer().getFindReplaceTarget());
+            d.open();
+        }
+    }
 
-	static {
-		IMAGE_DESC = ImageUtils.createImageDescriptor("icons/search.gif");
-	}
+    static {
+        IMAGE_DESC = ImageUtils.createImageDescriptor("icons/search.gif");
+    }
 }

@@ -12,26 +12,28 @@ import org.graysky.eclipse.util.ImageUtils;
  */
 public class ClearDisplayAction extends Action
 {
-	private LogWatcherView m_view = null;
-	private static ImageDescriptor IMAGE_DESC = null;
+    private LogWatcherView m_view = null;
+    private static ImageDescriptor IMAGE_DESC = null;
 
-	public ClearDisplayAction(LogWatcherView p) {
-		m_view = p;
+    public ClearDisplayAction(LogWatcherView p)
+    {
+        m_view = p;
 
-		setText("Clear");
-		setToolTipText("Clear logwatcher display");
-		setImageDescriptor(IMAGE_DESC);
-	}
+        setText("Clear");
+        setToolTipText("Clear logwatcher display");
+        setImageDescriptor(IMAGE_DESC);
+    }
 
-	public void run() {
-		WatcherData entry = m_view.getSelectedEntry();
-		if (entry != null) {
-			entry.getWatcher().clear();
-			entry.getViewer().setDocument(new Document(""));
-		}
-	}
+    public void run()
+    {
+        WatcherData entry = m_view.getSelectedEntry();
+        if (entry != null) {
+            entry.getWatcher().clear();
+            entry.getViewer().setDocument(new Document(""));
+        }
+    }
 
-	static {
-		IMAGE_DESC = ImageUtils.createImageDescriptor("icons/clear.gif");
-	}
+    static {
+        IMAGE_DESC = ImageUtils.createImageDescriptor("icons/clear.gif");
+    }
 }

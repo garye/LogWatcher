@@ -10,28 +10,34 @@ import org.w3c.dom.Node;
  */
 public class IgnoreAction implements FilterAction
 {
-	public IgnoreAction() {
-		super();
-	}
+    public IgnoreAction()
+    {
+        super();
+    }
 
-	public void dispose() {
-	}
+    public void dispose()
+    {
+    }
 
-	public void doViewerAction(LineStyleEvent event) {
-		return;
-	}
+    public void doViewerAction(LineStyleEvent event)
+    {
+        return;
+    }
 
-	public String getDescription() {
-		return "Don't show the line";
-	}
+    public String getDescription()
+    {
+        return "Don't show the line";
+    }
 
-	public String doWatcherAction(String line, boolean firstMatch) {
-		return null;
-	}
+    public String doWatcherAction(String line, boolean firstMatch)
+    {
+        return null;
+    }
 
-	public void toXML(Document doc, Node node) {
-		Element action = doc.createElement("action");
-		action.setAttribute("type", "ignore");
-		node.appendChild(action);
-	}
+    public void toXML(Document doc, Node node)
+    {
+        Element action = doc.createElement("action");
+        action.setAttribute("type", "ignore");
+        node.appendChild(action);
+    }
 }
