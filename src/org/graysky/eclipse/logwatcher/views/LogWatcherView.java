@@ -79,12 +79,11 @@ public class LogWatcherView extends ViewPart
 	 */
 	private IPropertyChangeListener m_propListener = new IPropertyChangeListener()
 	{
-		public void propertyChange(org.eclipse.jface.util.PropertyChangeEvent event)
-		{
+		public void propertyChange(org.eclipse.jface.util.PropertyChangeEvent event) {
 			if (event.getProperty().equals("logwatcherFont")) {
 				LogwatcherPlugin plugin = LogwatcherPlugin.getDefault();
-				plugin.putFont("logwatcherFont", 
-				PreferenceConverter.getFontDataArray(plugin.getPreferenceStore(), "logwatcherFont"));
+				plugin.putFont("logwatcherFont", PreferenceConverter.getFontDataArray(plugin.getPreferenceStore(),
+						"logwatcherFont"));
 				for (Iterator iter = m_watchers.iterator(); iter.hasNext();) {
 					WatcherData entry = (WatcherData) iter.next();
 					entry.getViewer().getTextWidget().setFont(plugin.getFont("logwatcherFont"));
@@ -93,8 +92,7 @@ public class LogWatcherView extends ViewPart
 		}
 	};
 
-	public void init(IViewSite site) throws PartInitException
-	{
+	public void init(IViewSite site) throws PartInitException {
 		super.init(site);
 
 		// Register a property change listener for the preferences page.
@@ -102,24 +100,21 @@ public class LogWatcherView extends ViewPart
 	}
 
 	/**
-	 * This is a callback that will allow us to create the viewer and
-	 * initialize it.
+	 * This is a callback that will allow us to create the viewer and initialize
+	 * it.
 	 */
-	public void createPartControl(Composite parent)
-	{
+	public void createPartControl(Composite parent) {
 		m_folder = new CTabFolder(parent, SWT.NONE);
 
 		// Add listeners so the title of the view is always accurate
 		m_folder.addSelectionListener(new SelectionListener()
 		{
-			public void widgetSelected(SelectionEvent e)
-			{
+			public void widgetSelected(SelectionEvent e) {
 				CTabItem item = (CTabItem) e.item;
 				setViewTitle(item.getText());
 			}
 
-			public void widgetDefaultSelected(SelectionEvent e)
-			{
+			public void widgetDefaultSelected(SelectionEvent e) {
 				CTabItem item = (CTabItem) e.item;
 				setViewTitle(item.getText());
 			}
@@ -133,8 +128,7 @@ public class LogWatcherView extends ViewPart
 	/**
 	 * Load the watcher state from a previous instance.
 	 */
-	private void loadWatcherState()
-	{
+	private void loadWatcherState() {
 		if (LogwatcherPlugin.getDefault().getPreferenceStore().getBoolean("saveWatchers")) {
 			WatcherLoader loader = new WatcherLoader(this);
 			IPath path = LogwatcherPlugin.getDefault().getStateLocation();
@@ -149,37 +143,30 @@ public class LogWatcherView extends ViewPart
 		}
 	}
 
-	private void setGlobalActionHandlers()
-	{
-		getViewSite().getActionBars().setGlobalActionHandler(
-			ActionFactory.FIND.getId(), m_findAction);
+	private void setGlobalActionHandlers() {
+		getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.FIND.getId(), m_findAction);
 
-			
-		getViewSite().getActionBars().setGlobalActionHandler(
-                ActionFactory.COPY.getId(), m_copyAction);
+		getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.COPY.getId(), m_copyAction);
 	}
 
-	private void setViewTitle(String name)
-	{
+	private void setViewTitle(String name) {
 		String title = "LogWatcher";
 		if (name != null) {
 			title += " - " + name;
 		}
-        // Set the inner title name.
+		// Set the inner title name.
 		setContentDescription(title);
-		
-        // Set the title of the entire view.
+
+		// Set the title of the entire view.
 		setPartName(title);
 	}
 
-	private void contributeToActionBars()
-	{
+	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
 		fillLocalToolBar(bars.getToolBarManager());
 	}
 
-	private void fillContextMenu(IMenuManager manager)
-	{
+	private void fillContextMenu(IMenuManager manager) {
 		manager.add(m_newAction);
 		manager.add(new Separator("new"));
 		manager.add(m_copyAction);
@@ -192,8 +179,7 @@ public class LogWatcherView extends ViewPart
 		manager.add(new Separator("Additions"));
 	}
 
-	private void fillLocalToolBar(IToolBarManager manager)
-	{
+	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(m_newAction);
 		manager.add(m_editAction);
 		manager.add(m_clearAction);
@@ -204,12 +190,12 @@ public class LogWatcherView extends ViewPart
 	/**
 	 * Close and dispose of the currently selected watcher
 	 */
-	public void closeSelectedWatcher()
-	{
+	public void closeSelectedWatcher() {
 		WatcherData entry = getSelectedEntry();
 		if (entry != null) {
 			entry.dispose();
 			m_watchers.remove(entry);
+			
 			if (m_folder.getItemCount() == 0) {
 				setViewTitle(null);
 				m_closeAction.setEnabled(false);
@@ -224,8 +210,7 @@ public class LogWatcherView extends ViewPart
 	/**
 	 * Create the actions and set their default states.
 	 */
-	private void makeActions()
-	{
+	private void makeActions() {
 		// Close the currently selected watcher
 		m_closeAction = new CloseWatcherAction(this);
 		m_closeAction.setEnabled(false);
@@ -255,8 +240,7 @@ public class LogWatcherView extends ViewPart
 	 * Add a Watcher for the specified File. Will set up the UI components as
 	 * well as the actual TextFileWatcher.
 	 */
-	public void addWatcher(File file, int interval, int numLines, Vector filters, boolean saveState)
-	{
+	public void addWatcher(File file, int interval, int numLines, Vector filters, boolean saveState) {
 		// Add the new tab
 		CTabItem newItem = new CTabItem(m_folder, 0);
 		newItem.setToolTipText(file.getAbsolutePath());
@@ -276,8 +260,7 @@ public class LogWatcherView extends ViewPart
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener()
 		{
-			public void menuAboutToShow(IMenuManager manager)
-			{
+			public void menuAboutToShow(IMenuManager manager) {
 				LogWatcherView.this.fillContextMenu(manager);
 			}
 		});
@@ -303,8 +286,7 @@ public class LogWatcherView extends ViewPart
 		// Allow filters to set line styles.
 		viewer.getTextWidget().addLineStyleListener(new LineStyleListener()
 		{
-			public void lineGetStyle(LineStyleEvent event)
-			{
+			public void lineGetStyle(LineStyleEvent event) {
 				for (Iterator iter = entry.getFilters().iterator(); iter.hasNext();) {
 					Filter f = (Filter) iter.next();
 					if (f.matches(event.lineText)) {
@@ -317,13 +299,14 @@ public class LogWatcherView extends ViewPart
 		// Set the font.
 		Font f = LogwatcherPlugin.getDefault().getFont("logwatcherFont");
 		viewer.getTextWidget().setFont(f);
-		
+
 		// Start the watcher and enable all actions.
 		watcher.start();
 		m_closeAction.setEnabled(true);
 		m_clearAction.setEnabled(true);
 		m_scrollAction.setEnabled(true);
 		m_editAction.setEnabled(true);
+		
 		if (saveState) {
 			saveWatcherState();
 		}
@@ -332,19 +315,16 @@ public class LogWatcherView extends ViewPart
 	/**
 	 * Add a WatcherUpdateListener to the given watcher.
 	 */
-	private void addWatcherListener(final Document doc, TextFileWatcher watcher, final WatcherData entry)
-	{
+	private void addWatcherListener(final Document doc, TextFileWatcher watcher, final WatcherData entry) {
 		final Display display = Display.getCurrent();
 		watcher.addListener(new WatcherUpdateListener()
 		{
 			// On every update, add the updated content to the text viewer.
-			public void update(BoundedList list)
-			{
+			public void update(BoundedList list) {
 				final BoundedList flist = list;
 				display.asyncExec(new Runnable()
 				{
-					public void run()
-					{
+					public void run() {
 						entry.getViewer().getTextWidget().append(flist.getFormattedText());
 						if (entry.isScroll()) {
 							// Scroll to the bottom
@@ -359,8 +339,7 @@ public class LogWatcherView extends ViewPart
 	/**
 	 * Change the properties of an active active watcher.
 	 */
-	public void editWatcher(WatcherData entry, int interval, int numLines, Vector filters)
-	{
+	public void editWatcher(WatcherData entry, int interval, int numLines, Vector filters) {
 		entry.getWatcher().setInterval(interval);
 		entry.getWatcher().setNumLines(numLines);
 		entry.getWatcher().setFilters(filters);
@@ -371,8 +350,7 @@ public class LogWatcherView extends ViewPart
 	/**
 	 * Write the current set of watchers to a config file.
 	 */
-	private void saveWatcherState()
-	{
+	private void saveWatcherState() {
 		IPath path = LogwatcherPlugin.getDefault().getStateLocation();
 		path = path.addTrailingSeparator();
 		path = path.append(WATCHER_STATE_FILENAME);
@@ -384,44 +362,38 @@ public class LogWatcherView extends ViewPart
 				WatcherData element = (WatcherData) iter.next();
 				element.toXML(doc, watcher);
 			}
-			
+
 			// Write to a file
-			Source source = new DOMSource(doc); 
-            Result result = new StreamResult(path.toFile());
-            Transformer xformer = TransformerFactory.newInstance().newTransformer();
-            xformer.transform(source, result);
+			Source source = new DOMSource(doc);
+			Result result = new StreamResult(path.toFile());
+			Transformer xformer = TransformerFactory.newInstance().newTransformer();
+			xformer.transform(source, result);
 		}
 		catch (Exception e) {
 			LogwatcherPlugin.getDefault().logError("Error saving watcher state", e);
 		}
 	}
 
-	public CTabFolder getFolder()
-	{
+	public CTabFolder getFolder() {
 		return m_folder;
 	}
 
-	public void setFolder(CTabFolder folder)
-	{
+	public void setFolder(CTabFolder folder) {
 		m_folder = folder;
 	}
 
-	private void showMessage(String message)
-	{
-		MessageDialog.openInformation(
-		m_folder.getShell(), "LogWatcher", message);
+	private void showMessage(String message) {
+		MessageDialog.openInformation(m_folder.getShell(), "LogWatcher", message);
 	}
 
-	public void setFocus()
-	{
+	public void setFocus() {
 		m_folder.setFocus();
 	}
 
 	/**
 	 * Clean up after ourselves.
 	 */
-	public void dispose()
-	{
+	public void dispose() {
 		super.dispose();
 		for (Iterator iter = m_watchers.iterator(); iter.hasNext();) {
 			WatcherData entry = (WatcherData) iter.next();
@@ -433,8 +405,7 @@ public class LogWatcherView extends ViewPart
 	/**
 	 * Find the WatcherEntry associated with the given CTabItem.
 	 */
-	private WatcherData findEntry(CTabItem item)
-	{
+	private WatcherData findEntry(CTabItem item) {
 		for (Iterator iter = m_watchers.iterator(); iter.hasNext();) {
 			WatcherData entry = (WatcherData) iter.next();
 			if (entry.getTab() == item) {
@@ -446,12 +417,10 @@ public class LogWatcherView extends ViewPart
 		return null;
 	}
 
-
 	/**
 	 * Returns the WatcherEntry for the currently selected watcher
 	 */
-	public WatcherData getSelectedEntry()
-	{
+	public WatcherData getSelectedEntry() {
 		return findEntry(m_folder.getSelection());
 	}
 }

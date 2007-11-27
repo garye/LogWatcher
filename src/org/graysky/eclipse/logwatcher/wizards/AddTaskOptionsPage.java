@@ -15,61 +15,58 @@ import org.graysky.eclipse.logwatcher.filters.AddTaskAction;
 
 public class AddTaskOptionsPage extends WizardPage
 {
-	private Text		m_descText		= null;
-	private Combo		m_priorityCombo	= null;
+	private Text m_descText = null;
+	private Combo m_priorityCombo = null;
 
 	/**
 	 * Constructor for AddTaskOptionsPage.
+	 * 
 	 * @param pageName
 	 */
-	public AddTaskOptionsPage(String pageName)
-	{
+	public AddTaskOptionsPage(String pageName) {
 		super(pageName);
 	}
 
 	/**
 	 * Constructor for AddTaskOptionsPage.
+	 * 
 	 * @param pageName
 	 * @param title
 	 * @param titleImage
 	 */
-	public AddTaskOptionsPage(String pageName, String title, ImageDescriptor titleImage)
-	{
+	public AddTaskOptionsPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
 	}
 
-	public String getDescription()
-	{
-		return m_descText.getText();	
+	public String getDescription() {
+		return m_descText.getText();
 	}
 
-	public int getPriority()
-	{
+	public int getPriority() {
 		switch (m_priorityCombo.getSelectionIndex()) {
-			case 0:
-				return AddTaskAction.HIGH;
-			case 1:
-				return AddTaskAction.NORMAL;
-			case 2:
-				return AddTaskAction.LOW;
-			default:
-				return AddTaskAction.NORMAL;
+		case 0:
+			return AddTaskAction.HIGH;
+		case 1:
+			return AddTaskAction.NORMAL;
+		case 2:
+			return AddTaskAction.LOW;
+		default:
+			return AddTaskAction.NORMAL;
 		}
 	}
 
-	public void createControl(Composite parent) 
-	{
+	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		setControl(composite);
-		
+
 		GridData gridData;
-		
+
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.horizontalSpacing = 10;
 		layout.verticalSpacing = 20;
 		composite.setLayout(layout);
-	
+
 		//
 		// First row
 		//
@@ -79,13 +76,13 @@ public class AddTaskOptionsPage extends WizardPage
 		gridData = new GridData();
 		gridData.widthHint = 200;
 		m_descText.setLayoutData(gridData);
-		m_descText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e)
-			{
+		m_descText.addModifyListener(new ModifyListener()
+		{
+			public void modifyText(ModifyEvent e) {
 				setPageComplete(validatePage());
 			}
 		});
-		
+
 		//
 		// Second row
 		//
@@ -95,23 +92,19 @@ public class AddTaskOptionsPage extends WizardPage
 		m_priorityCombo.add("Normal");
 		m_priorityCombo.add("Low");
 		m_priorityCombo.select(1);
-		
-		
+
 		setDescription("Choose the description and priority of the todo task to be created.");
 		setPageComplete(false);
 	}
 
-
-	protected boolean validatePage()
-	{
+	protected boolean validatePage() {
 		return (m_descText.getText().length() > 0);
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.dialogs.IDialogPage#getTitle()
 	 */
-	public String getTitle()
-	{
+	public String getTitle() {
 		return "Add Todo Task";
 	}
 

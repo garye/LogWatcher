@@ -21,15 +21,13 @@ import org.xml.sax.InputSource;
  */
 public class FilterLoader
 {
-	public Vector loadFilters(Reader r) throws Exception
-	{
+	public Vector loadFilters(Reader r) throws Exception {
 		Document doc = getDocument(r);
 		Vector filters = loadFilters(doc);
 		return filters;
 	}
 
-	public Vector loadFilters(Document doc)
-	{
+	public Vector loadFilters(Document doc) {
 		Vector filters = new Vector();
 		NodeList filterNodes = doc.getElementsByTagName("filter");
 		for (int i = 0; i < filterNodes.getLength(); i++) {
@@ -39,8 +37,7 @@ public class FilterLoader
 		return filters;
 	}
 
-	public Filter loadFilter(Node filterNode)
-	{
+	public Filter loadFilter(Node filterNode) {
 		Filter f = new Filter();
 		NodeList children = filterNode.getChildNodes();
 		String pattern = "";
@@ -54,9 +51,9 @@ public class FilterLoader
 			else if (name.equals("caseSensitive")) {
 				caseSensitive = new Boolean(node.getFirstChild().getNodeValue()).booleanValue();
 			}
-            else if (name.equals("description")) {
-                f.setDescription(node.getFirstChild().getNodeValue());
-            }
+			else if (name.equals("description")) {
+				f.setDescription(node.getFirstChild().getNodeValue());
+			}
 			else if (name.equals("contains")) {
 				f.setContains(new Boolean(node.getFirstChild().getNodeValue()).booleanValue());
 			}
@@ -72,8 +69,7 @@ public class FilterLoader
 		return f;
 	}
 
-	protected FilterAction loadAction(Node node)
-	{
+	protected FilterAction loadAction(Node node) {
 		NamedNodeMap attrs = node.getAttributes();
 		Node type = attrs.getNamedItem("type");
 		if (type.getNodeValue().equals("highlight")) {
@@ -125,8 +121,7 @@ public class FilterLoader
 		}
 	}
 
-	protected Document getDocument(Reader r) throws Exception
-	{
+	protected Document getDocument(Reader r) throws Exception {
 		Document document;
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

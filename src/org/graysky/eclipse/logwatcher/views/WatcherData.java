@@ -24,29 +24,28 @@ public class WatcherData
 	private Vector m_filters = null;
 	private boolean m_scroll = true;
 
-	public WatcherData(TextViewer v, TextFileWatcher w, CTabItem t, Vector f)
-	{
+	public WatcherData(TextViewer v, TextFileWatcher w, CTabItem t, Vector f) {
 		setViewer(v);
 		setWatcher(w);
 		setTab(t);
 		setFilters(f);
 	}
 
-	public void toXML(Document doc, Node node)
-	{
-	    Element watcher = doc.createElement("watcher");
-	    watcher.appendChild(XmlUtils.createElementWithText(doc, "file", getWatcher().getFilename()));
-	    watcher.appendChild(XmlUtils.createElementWithText(doc, "numLines", Integer.toString(getWatcher().getNumLines())));
-	    watcher.appendChild(XmlUtils.createElementWithText(doc, "interval", Integer.toString(getWatcher().getInterval())));
-	    for (Iterator iter = getFilters().iterator(); iter.hasNext();) {
+	public void toXML(Document doc, Node node) {
+		Element watcher = doc.createElement("watcher");
+		watcher.appendChild(XmlUtils.createElementWithText(doc, "file", getWatcher().getFilename()));
+		watcher.appendChild(XmlUtils.createElementWithText(doc, "numLines", Integer
+				.toString(getWatcher().getNumLines())));
+		watcher.appendChild(XmlUtils.createElementWithText(doc, "interval", Integer
+				.toString(getWatcher().getInterval())));
+		for (Iterator iter = getFilters().iterator(); iter.hasNext();) {
 			Filter filter = (Filter) iter.next();
 			filter.toXML(doc, watcher);
 		}
-	    node.appendChild(watcher);
+		node.appendChild(watcher);
 	}
-	
-	public void dispose()
-	{
+
+	public void dispose() {
 		try {
 			getWatcher().halt();
 			if (getViewer().getControl() != null) {
@@ -63,53 +62,43 @@ public class WatcherData
 		}
 	}
 
-	public void setViewer(TextViewer v)
-	{
+	public void setViewer(TextViewer v) {
 		m_viewer = v;
 	}
 
-	public TextViewer getViewer()
-	{
+	public TextViewer getViewer() {
 		return m_viewer;
 	}
 
-	public void setWatcher(TextFileWatcher watcher)
-	{
+	public void setWatcher(TextFileWatcher watcher) {
 		m_watcher = watcher;
 	}
 
-	public TextFileWatcher getWatcher()
-	{
+	public TextFileWatcher getWatcher() {
 		return m_watcher;
 	}
 
-	public void setTab(CTabItem tab)
-	{
+	public void setTab(CTabItem tab) {
 		m_tab = tab;
 	}
 
-	public CTabItem getTab()
-	{
+	public CTabItem getTab() {
 		return m_tab;
 	}
 
-	public void setFilters(Vector filters)
-	{
+	public void setFilters(Vector filters) {
 		m_filters = filters;
 	}
 
-	public Vector getFilters()
-	{
+	public Vector getFilters() {
 		return m_filters;
 	}
 
-	public void setScroll(boolean scroll)
-	{
+	public void setScroll(boolean scroll) {
 		m_scroll = scroll;
 	}
 
-	public boolean isScroll()
-	{
+	public boolean isScroll() {
 		return m_scroll;
 	}
 }

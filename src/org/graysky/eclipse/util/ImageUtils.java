@@ -11,13 +11,12 @@ import org.graysky.eclipse.logwatcher.LogwatcherPlugin;
  */
 public class ImageUtils
 {
-   
+
 	/**
-	 * Create an image descriptor for the given filename (relative to the
-	 * plugin install directory)
+	 * Create an image descriptor for the given filename (relative to the plugin
+	 * install directory)
 	 */
-	public static ImageDescriptor createImageDescriptor(String filename)
-	{
+	public static ImageDescriptor createImageDescriptor(String filename) {
 		try {
 			URL url = new URL(LogwatcherPlugin.getDefault().getDescriptor().getInstallURL(), filename);
 			return ImageDescriptor.createFromURL(url);

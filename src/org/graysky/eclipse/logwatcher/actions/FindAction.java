@@ -12,18 +12,17 @@ import org.graysky.eclipse.util.ImageUtils;
  */
 public class FindAction extends Action
 {
-	private LogWatcherView	m_view = null;
-	private static ImageDescriptor IMAGE_DESC = null; 
-	
-	public FindAction(LogWatcherView p)
-	{
+	private LogWatcherView m_view = null;
+	private static ImageDescriptor IMAGE_DESC = null;
+
+	public FindAction(LogWatcherView p) {
 		m_view = p;
-		
+
 		setText("Find...");
 		setToolTipText("Find in log file");
 		setImageDescriptor(IMAGE_DESC);
 	}
-	
+
 	public void run() {
 		WatcherData entry = m_view.getSelectedEntry();
 		if (entry != null) {
@@ -32,7 +31,7 @@ public class FindAction extends Action
 			d.open();
 		}
 	}
-	
+
 	static {
 		IMAGE_DESC = ImageUtils.createImageDescriptor("icons/search.gif");
 	}

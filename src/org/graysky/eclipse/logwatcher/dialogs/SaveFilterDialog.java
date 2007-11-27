@@ -16,39 +16,36 @@ import org.graysky.eclipse.logwatcher.filters.Filter;
  */
 public class SaveFilterDialog extends Dialog
 {
-    Filter m_filter;
-    Text m_text;
-    
-    public SaveFilterDialog(Shell parentShell, Filter filter)
-    {
-        super(parentShell);
-        m_filter = filter;
-    }
-    
-    /**
+	Filter m_filter;
+	Text m_text;
+
+	public SaveFilterDialog(Shell parentShell, Filter filter) {
+		super(parentShell);
+		m_filter = filter;
+	}
+
+	/**
 	 * Override to set the title of the dialog.
 	 */
-	protected void configureShell(Shell shell)
-	{
+	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		shell.setText("Save Filter");
 	}
-	
+
 	/**
 	 * Create and layout the SWT controls for the dialog
 	 */
-	protected Control createDialogArea(Composite parent)
-	{
+	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
 		GridData gridData;
-	
+
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 		layout.horizontalSpacing = 10;
 		layout.verticalSpacing = 10;
 		layout.marginWidth = 10;
 		composite.setLayout(layout);
-	
+
 		//
 		// Find text row
 		//
@@ -58,17 +55,16 @@ public class SaveFilterDialog extends Dialog
 		gridData.widthHint = 200;
 		m_text.setLayoutData(gridData);
 		m_text.setText(m_filter.getDescription());
-		
+
 		return composite;
 	}
-	
+
 	/**
 	 * Add the filters
 	 */
-	protected void okPressed()
-	{
-	    m_filter.setDescription(m_text.getText());
-	    super.okPressed();
+	protected void okPressed() {
+		m_filter.setDescription(m_text.getText());
+		super.okPressed();
 	}
-   
+
 }

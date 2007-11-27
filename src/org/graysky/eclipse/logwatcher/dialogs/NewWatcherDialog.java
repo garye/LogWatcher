@@ -50,14 +50,12 @@ public class NewWatcherDialog extends Dialog
 	private static int DEFAULT_INTERVAL = 1;
 	private static int DEFAULT_NUMLINES = 100;
 
-
 	/**
 	 * Constructor for NewWatcherDialog.
 	 * 
 	 * @param shell
 	 */
-	public NewWatcherDialog(Shell shell, boolean editMode)
-	{
+	public NewWatcherDialog(Shell shell, boolean editMode) {
 		super(shell);
 		m_settings = LogwatcherPlugin.getDefault().getDialogSettings();
 		m_editMode = editMode;
@@ -66,8 +64,7 @@ public class NewWatcherDialog extends Dialog
 	/**
 	 * Override to set the title of the dialog.
 	 */
-	protected void configureShell(Shell shell)
-	{
+	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		if (m_editMode) {
 			shell.setText("Edit Watcher");
@@ -82,52 +79,47 @@ public class NewWatcherDialog extends Dialog
 	 * 
 	 * @return Vector
 	 */
-	public Vector getFilters()
-	{
+	public Vector getFilters() {
 		return m_filters;
 	}
 
-	private void initControlsForFileSelection(String filename)
-    {
-        int defaultInterval = DEFAULT_INTERVAL;
-        int defaultNumLines = DEFAULT_NUMLINES;
+	private void initControlsForFileSelection(String filename) {
+		int defaultInterval = DEFAULT_INTERVAL;
+		int defaultNumLines = DEFAULT_NUMLINES;
 
-        // Pre-fill the interval and num lines
-        try {
-        	defaultInterval = m_settings.getInt("interval-" + filename);
-        	defaultNumLines = m_settings.getInt("numLines-" + filename);
-        }
-        catch (NumberFormatException ignore) {
-        	// There are no settings for this file. Use the
-        	// defaults.
-        }
-        m_intervalText.setText(Integer.toString(defaultInterval));
-        m_intervalText.setSelection(0);
-        if (defaultNumLines == Integer.MAX_VALUE)
-        {
-        	m_wholeFileButton.setSelection(true);
-        	m_numLinesText.setText(Integer.toString(DEFAULT_NUMLINES));
-        	// Disable the fields
-        	m_numLinesLabel.setEnabled(false);
-        	m_numLinesText.setEnabled(false);
-        }
-        else
-        {
-        	m_wholeFileButton.setSelection(false);
-        	// Enable fields
-        	m_numLinesLabel.setEnabled(true);
-        	m_numLinesText.setEnabled(true);
-        	// Set text
-        	m_numLinesText.setText(Integer.toString(defaultNumLines));
-        	m_numLinesText.setSelection(0);
-        }
-    }
+		// Pre-fill the interval and num lines
+		try {
+			defaultInterval = m_settings.getInt("interval-" + filename);
+			defaultNumLines = m_settings.getInt("numLines-" + filename);
+		}
+		catch (NumberFormatException ignore) {
+			// There are no settings for this file. Use the
+			// defaults.
+		}
+		m_intervalText.setText(Integer.toString(defaultInterval));
+		m_intervalText.setSelection(0);
+		if (defaultNumLines == Integer.MAX_VALUE) {
+			m_wholeFileButton.setSelection(true);
+			m_numLinesText.setText(Integer.toString(DEFAULT_NUMLINES));
+			// Disable the fields
+			m_numLinesLabel.setEnabled(false);
+			m_numLinesText.setEnabled(false);
+		}
+		else {
+			m_wholeFileButton.setSelection(false);
+			// Enable fields
+			m_numLinesLabel.setEnabled(true);
+			m_numLinesText.setEnabled(true);
+			// Set text
+			m_numLinesText.setText(Integer.toString(defaultNumLines));
+			m_numLinesText.setSelection(0);
+		}
+	}
 
 	/**
 	 * Create and layout the SWT controls for the dialog
 	 */
-	protected Control createDialogArea(Composite parent)
-	{
+	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
 		GridData gridData;
 		GridLayout layout = new GridLayout();
@@ -145,8 +137,7 @@ public class NewWatcherDialog extends Dialog
 		// created.
 		chooserButton.addSelectionListener(new SelectionAdapter()
 		{
-			public void widgetSelected(SelectionEvent evt)
-			{
+			public void widgetSelected(SelectionEvent evt) {
 				FileDialog dialog = new FileDialog(getShell(), SWT.SINGLE);
 				dialog.open();
 				if (dialog.getFileName().length() > 0) {
@@ -163,20 +154,17 @@ public class NewWatcherDialog extends Dialog
 	 * Modify the UI we just created to deal with being in Edit Watcher mode
 	 * instead of Create Watcher mode.
 	 */
-	private void handleEditMode()
-	{
+	private void handleEditMode() {
 		//
 		// Edit mode handling
 		//
 		if (m_editMode) {
-		    m_fileCombo.setText(m_file.getAbsolutePath());
+			m_fileCombo.setText(m_file.getAbsolutePath());
 			m_intervalText.setText(Integer.toString(m_interval));
-			if (m_numLines == 0)
-			{
+			if (m_numLines == 0) {
 				m_numLinesText.setText(Integer.toString(DEFAULT_NUMLINES));
 			}
-			else
-			{
+			else {
 				m_numLinesText.setText(Integer.toString(m_numLines));
 			}
 			m_numLinesLabel.setEnabled(false);
@@ -188,8 +176,7 @@ public class NewWatcherDialog extends Dialog
 	/**
 	 * Create refresh interval UI
 	 */
-	private void createRefreshIntervalRow(Composite composite)
-	{
+	private void createRefreshIntervalRow(Composite composite) {
 		GridData gridData;
 		new Label(composite, SWT.NONE).setText("Refresh interval (in seconds):");
 		m_intervalText = new Text(composite, SWT.BORDER);
@@ -203,50 +190,47 @@ public class NewWatcherDialog extends Dialog
 	/**
 	 * Create the file selection UI
 	 */
-	private Button createFileSelectionRow(Composite composite)
-	{
+	private Button createFileSelectionRow(Composite composite) {
 		GridData gridData;
 		new Label(composite, SWT.NONE).setText("Select a file to watch:");
 		m_fileCombo = new Combo(composite, SWT.DROP_DOWN);
 		initFileCombo();
-		
+
 		gridData = new GridData();
 		gridData.widthHint = 200;
 		m_fileCombo.setLayoutData(gridData);
 		Button chooserButton = new Button(composite, SWT.PUSH);
 		chooserButton.setText("Browse...");
 		if (m_editMode) {
-		    m_fileCombo.setEnabled(false);
+			m_fileCombo.setEnabled(false);
 			chooserButton.setEnabled(false);
 		}
 		return chooserButton;
 	}
 
-	private void initFileCombo()
-    {
-	    java.util.List watches = LogwatcherPlugin.getDefault().getRecentWatches();
-        ListIterator iter = watches.listIterator(watches.size());
-        while (iter.hasPrevious()) {
-		    String item = (String) iter.previous();
-		    m_fileCombo.add(item);
+	private void initFileCombo() {
+		java.util.List watches = LogwatcherPlugin.getDefault().getRecentWatches();
+		ListIterator iter = watches.listIterator(watches.size());
+		while (iter.hasPrevious()) {
+			String item = (String) iter.previous();
+			m_fileCombo.add(item);
 		}
-        
-        m_fileCombo.addSelectionListener(new SelectionAdapter()
-        {
-            public void widgetSelected(SelectionEvent e)
-            {
-                initControlsForFileSelection(m_fileCombo.getText());
-            }
-        });
-    }
 
-    /**
+		m_fileCombo.addSelectionListener(new SelectionAdapter()
+		{
+			public void widgetSelected(SelectionEvent e) {
+				initControlsForFileSelection(m_fileCombo.getText());
+			}
+		});
+	}
+
+	/**
 	 * Creates the UI elements to configure the filters.
 	 * 
-	 * @param parent The parent composite.
+	 * @param parent
+	 *            The parent composite.
 	 */
-	protected void createNumLinesGUI(Composite parent)
-	{
+	protected void createNumLinesGUI(Composite parent) {
 		//
 		// Number of lines grouping
 		//
@@ -288,17 +272,14 @@ public class NewWatcherDialog extends Dialog
 		//
 		m_wholeFileButton.addSelectionListener(new SelectionAdapter()
 		{
-			public void widgetSelected(SelectionEvent evt)
-			{
-				if (m_wholeFileButton.getSelection())
-				{
+			public void widgetSelected(SelectionEvent evt) {
+				if (m_wholeFileButton.getSelection()) {
 					// Button is selected, disable number of lines.
 					//
 					m_numLinesLabel.setEnabled(false);
 					m_numLinesText.setEnabled(false);
 				}
-				else
-				{
+				else {
 					// Button is disabled, enable number of lines.
 					//
 					m_numLinesLabel.setEnabled(true);
@@ -311,10 +292,10 @@ public class NewWatcherDialog extends Dialog
 	/**
 	 * Creates the UI elements to configure the filters.
 	 * 
-	 * @param parent The parent composite.
+	 * @param parent
+	 *            The parent composite.
 	 */
-	protected void createFilterGUI(Composite parent)
-	{
+	protected void createFilterGUI(Composite parent) {
 		GridData gridData;
 		Group filterGroup = new Group(parent, SWT.NONE);
 		filterGroup.setText("Filters");
@@ -334,12 +315,12 @@ public class NewWatcherDialog extends Dialog
 		Button newButton = new Button(filterGroup, SWT.PUSH);
 		newButton.setText("New Filter...");
 		newButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-		
+
 		// New filter button
 		Button addButton = new Button(filterGroup, SWT.PUSH);
 		addButton.setText("Add Saved Filter...");
 		addButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-		
+
 		// Save filter button
 		final Button saveButton = new Button(filterGroup, SWT.PUSH);
 		saveButton.setText("Save Filter...");
@@ -362,8 +343,7 @@ public class NewWatcherDialog extends Dialog
 		//
 		newButton.addSelectionListener(new SelectionAdapter()
 		{
-			public void widgetSelected(SelectionEvent evt)
-			{
+			public void widgetSelected(SelectionEvent evt) {
 				// Launch the wizard
 				NewFilterWizard wizard = new NewFilterWizard(m_editMode);
 				WizardDialog dialog = new WizardDialog(m_filterList.getShell(), wizard);
@@ -376,37 +356,34 @@ public class NewWatcherDialog extends Dialog
 			}
 		});
 		addButton.addSelectionListener(new SelectionAdapter()
-        {
-            public void widgetSelected(SelectionEvent e)
-            {
-                // Launch the add saved dialog
-                AddSavedFilterDialog dialog = new AddSavedFilterDialog(getShell());
-                dialog.open();
-                m_filters.addAll(dialog.getFiltersToAdd());
-                for (Iterator iter = dialog.getFiltersToAdd().iterator(); iter.hasNext();) {
-                    Filter filter = (Filter) iter.next();
-                    m_filterList.add(filter.getDescription());
-                }
-            }
-        });
+		{
+			public void widgetSelected(SelectionEvent e) {
+				// Launch the add saved dialog
+				AddSavedFilterDialog dialog = new AddSavedFilterDialog(getShell());
+				dialog.open();
+				m_filters.addAll(dialog.getFiltersToAdd());
+				for (Iterator iter = dialog.getFiltersToAdd().iterator(); iter.hasNext();) {
+					Filter filter = (Filter) iter.next();
+					m_filterList.add(filter.getDescription());
+				}
+			}
+		});
 		saveButton.addSelectionListener(new SelectionAdapter()
-        {
-            public void widgetSelected(SelectionEvent e)
-            {
-                // Launch the add saved dialog
-                int filterIndex = m_filterList.getSelectionIndex();
-                Filter filter = (Filter) m_filters.get(filterIndex);
-                SaveFilterDialog dialog = new SaveFilterDialog(getShell(), filter);
-               
-                if (dialog.open() == Window.OK) {
-                    LogwatcherPlugin.getDefault().addSavedFilter(filter);
-                }   
-            }
-        });
+		{
+			public void widgetSelected(SelectionEvent e) {
+				// Launch the add saved dialog
+				int filterIndex = m_filterList.getSelectionIndex();
+				Filter filter = (Filter) m_filters.get(filterIndex);
+				SaveFilterDialog dialog = new SaveFilterDialog(getShell(), filter);
+
+				if (dialog.open() == Window.OK) {
+					LogwatcherPlugin.getDefault().addSavedFilter(filter);
+				}
+			}
+		});
 		removeButton.addSelectionListener(new SelectionAdapter()
 		{
-			public void widgetSelected(SelectionEvent evt)
-			{
+			public void widgetSelected(SelectionEvent evt) {
 				int[] selections = m_filterList.getSelectionIndices();
 				for (int i = 0; i < selections.length; i++) {
 					m_filterList.remove(selections[i]);
@@ -422,8 +399,7 @@ public class NewWatcherDialog extends Dialog
 		});
 		removeAllButton.addSelectionListener(new SelectionAdapter()
 		{
-			public void widgetSelected(SelectionEvent evt)
-			{
+			public void widgetSelected(SelectionEvent evt) {
 				m_filterList.removeAll();
 				m_filters.clear();
 
@@ -439,15 +415,14 @@ public class NewWatcherDialog extends Dialog
 		// to the filter list.
 		m_filterList.addSelectionListener(new SelectionAdapter()
 		{
-			public void widgetSelected(SelectionEvent evt)
-			{
-			    if (m_filterList.getSelectionCount() == 1) {
-				    saveButton.setEnabled(true);
+			public void widgetSelected(SelectionEvent evt) {
+				if (m_filterList.getSelectionCount() == 1) {
+					saveButton.setEnabled(true);
 				}
-			    else {
-			        saveButton.setEnabled(false);
-			    }
-			    
+				else {
+					saveButton.setEnabled(false);
+				}
+
 				if (m_filterList.getSelectionCount() > 0) {
 					removeButton.setEnabled(true);
 				}
@@ -469,13 +444,11 @@ public class NewWatcherDialog extends Dialog
 	 * 
 	 * @return File
 	 */
-	public File getFile()
-	{
+	public File getFile() {
 		return m_file;
 	}
 
-	public void setFile(File f)
-	{
+	public void setFile(File f) {
 		m_file = f;
 	}
 
@@ -484,8 +457,7 @@ public class NewWatcherDialog extends Dialog
 	 * 
 	 * @return int
 	 */
-	public int getInterval()
-	{
+	public int getInterval() {
 		return m_interval;
 	}
 
@@ -494,41 +466,38 @@ public class NewWatcherDialog extends Dialog
 	 * 
 	 * @return int
 	 */
-	public int getNumLines()
-	{
+	public int getNumLines() {
 		return m_numLines;
 	}
 
 	/**
 	 * Sets the interval.
 	 * 
-	 * @param interval The interval to set
+	 * @param interval
+	 *            The interval to set
 	 */
-	public void setInterval(int interval)
-	{
+	public void setInterval(int interval) {
 		m_interval = interval;
 	}
 
 	/**
 	 * Sets the numLines.
 	 * 
-	 * @param numLines The numLines to set
+	 * @param numLines
+	 *            The numLines to set
 	 */
-	public void setNumLines(int numLines)
-	{
+	public void setNumLines(int numLines) {
 		m_numLines = numLines;
 	}
 
-	public void setFilters(Vector filters)
-	{
+	public void setFilters(Vector filters) {
 		m_filters = filters;
 	}
 
 	/**
 	 * Validate the user input
 	 */
-	protected boolean validate()
-	{
+	protected boolean validate() {
 		m_file = new File(m_fileCombo.getText());
 		if (!m_file.exists() || !m_file.isFile()) {
 			m_errorMsg = "File not found:\n" + m_fileCombo.getText();
@@ -539,13 +508,11 @@ public class NewWatcherDialog extends Dialog
 			return false;
 		}
 		try {
-			if (m_wholeFileButton.getSelection())
-			{
+			if (m_wholeFileButton.getSelection()) {
 				// They want whole file.
 				m_numLines = Integer.MAX_VALUE;
 			}
-			else
-			{
+			else {
 				Integer i = new Integer(m_numLinesText.getText());
 				if (i.intValue() < 0) {
 					throw new NumberFormatException();
@@ -574,8 +541,7 @@ public class NewWatcherDialog extends Dialog
 	/**
 	 * Validate user input, set return values.
 	 */
-	protected void okPressed()
-	{
+	protected void okPressed() {
 		if (validate()) {
 			// Input was valid
 			m_settings.put("interval-" + m_file.getAbsolutePath(), m_interval);

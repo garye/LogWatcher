@@ -10,22 +10,21 @@ import org.graysky.eclipse.util.ImageUtils;
  */
 public class CloseWatcherAction extends Action
 {
-	private LogWatcherView	m_view = null;
-	private static ImageDescriptor IMAGE_DESC = null; 
-	
-	public CloseWatcherAction(LogWatcherView p)
-	{
+	private LogWatcherView m_view = null;
+	private static ImageDescriptor IMAGE_DESC = null;
+
+	public CloseWatcherAction(LogWatcherView p) {
 		m_view = p;
-		
+
 		setText("Close");
 		setToolTipText("Close this watcher");
 		setImageDescriptor(IMAGE_DESC);
 	}
-	
+
 	public void run() {
 		m_view.closeSelectedWatcher();
 	}
-	
+
 	static {
 		IMAGE_DESC = ImageUtils.createImageDescriptor("icons/close.gif");
 	}

@@ -19,7 +19,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-
 /**
  * Loader for watchers stored in XML. Also starts each watcher in the view.
  */
@@ -27,20 +26,17 @@ public class WatcherLoader
 {
 	FilterLoader filterLoader = new FilterLoader();
 	private LogWatcherView m_view;
-	
-	public WatcherLoader(LogWatcherView view)
-	{
-	    m_view = view;
+
+	public WatcherLoader(LogWatcherView view) {
+		m_view = view;
 	}
-	
-	public void loadWatchers(Reader r) throws Exception
-	{
+
+	public void loadWatchers(Reader r) throws Exception {
 		org.w3c.dom.Document doc = createDocument(r);
 		loadWatchers(doc);
 	}
 
-	public void loadWatchers(org.w3c.dom.Document doc)
-	{
+	public void loadWatchers(org.w3c.dom.Document doc) {
 		NodeList watcherNodes = doc.getElementsByTagName("watcher");
 		for (int i = 0; i < watcherNodes.getLength(); i++) {
 			Node node = watcherNodes.item(i);
@@ -48,12 +44,11 @@ public class WatcherLoader
 		}
 	}
 
-	protected void loadWatcher(Node watcherNode)
-	{
+	protected void loadWatcher(Node watcherNode) {
 		File file = null;
 		int interval = 0;
 		int numLines = 0;
-		
+
 		Vector filters = new Vector();
 		NodeList children = watcherNode.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
@@ -72,15 +67,14 @@ public class WatcherLoader
 				filters.add(filterLoader.loadFilter(node));
 			}
 		}
-		
+
 		m_view.addWatcher(file, interval, numLines, filters, false);
 	}
 
 	/**
 	 * Create a Document with content based on the content of the given Reader.
 	 */
-	protected org.w3c.dom.Document createDocument(Reader r) throws Exception
-	{
+	protected org.w3c.dom.Document createDocument(Reader r) throws Exception {
 		org.w3c.dom.Document document;
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

@@ -13,7 +13,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-
 public class Filter
 {
 	private String m_pattern = null;
@@ -29,8 +28,7 @@ public class Filter
 	/**
 	 * Test if the given string is matched by this filter.
 	 */
-	public boolean matches(String str)
-	{
+	public boolean matches(String str) {
 		boolean match = m_matcher.contains(str, m_regexp);
 		if (m_contains) {
 			return match;
@@ -41,19 +39,17 @@ public class Filter
 	}
 
 	/**
-	 * Take the specified actions for the given string, which is assumed to
-	 * have matched the filter.
+	 * Take the specified actions for the given string, which is assumed to have
+	 * matched the filter.
 	 */
-	public void handleViewerMatch(LineStyleEvent event)
-	{
+	public void handleViewerMatch(LineStyleEvent event) {
 		for (Iterator iter = m_actions.iterator(); iter.hasNext();) {
 			FilterAction action = (FilterAction) iter.next();
 			action.doViewerAction(event);
 		}
 	}
 
-	public String handleWatcherMatch(String line, boolean firstUpdate)
-	{
+	public String handleWatcherMatch(String line, boolean firstUpdate) {
 		// TODO: Support more than one action
 		for (Iterator iter = m_actions.iterator(); iter.hasNext();) {
 			FilterAction action = (FilterAction) iter.next();
@@ -62,17 +58,15 @@ public class Filter
 		return line;
 	}
 
-	public void addAction(FilterAction action)
-	{
+	public void addAction(FilterAction action) {
 		m_actions.add(action);
 	}
 
-	public String getDescription()
-	{
-	    if (m_description != null) {
-	        return m_description;
-	    }
-	    else {
+	public String getDescription() {
+		if (m_description != null) {
+			return m_description;
+		}
+		else {
 			FilterAction a = (FilterAction) m_actions.get(0);
 			String contains = (m_contains ? "contains" : "does not contain");
 			if (a != null) {
@@ -81,16 +75,14 @@ public class Filter
 			else {
 				return "No action specified for filter";
 			}
-	    }
+		}
 	}
 
-	public String getPattern()
-	{
+	public String getPattern() {
 		return m_pattern;
 	}
 
-	public void setPattern(String pattern, boolean caseSensitive) throws MalformedPatternException
-	{
+	public void setPattern(String pattern, boolean caseSensitive) throws MalformedPatternException {
 		m_pattern = pattern;
 		m_caseSensitive = caseSensitive;
 		Perl5Compiler compiler = new Perl5Compiler();
@@ -102,45 +94,40 @@ public class Filter
 		}
 	}
 
-	public boolean getContains()
-	{
+	public boolean getContains() {
 		return m_contains;
 	}
 
-	public void dispose()
-	{
+	public void dispose() {
 		for (Iterator iter = m_actions.iterator(); iter.hasNext();) {
 			FilterAction element = (FilterAction) iter.next();
 			element.dispose();
 		}
 	}
 
-	public void setContains(boolean contains)
-	{
+	public void setContains(boolean contains) {
 		m_contains = contains;
 	}
 
-	public boolean isCaseSensitive()
-	{
+	public boolean isCaseSensitive() {
 		return m_caseSensitive;
 	}
 
-	public void toXML(Document doc, Node node)
-	{
-	    Element filter = doc.createElement("filter");
-	    filter.appendChild(XmlUtils.createElementWithText(doc, "pattern", getPattern()));
-	    filter.appendChild(XmlUtils.createElementWithText(doc, "caseSensitive", Boolean.toString(isCaseSensitive())));
-	    filter.appendChild(XmlUtils.createElementWithText(doc, "contains", Boolean.toString(getContains())));
-        filter.appendChild(XmlUtils.createElementWithText(doc, "description", getDescription()));
-	    for (Iterator iter = m_actions.iterator(); iter.hasNext();) {
+	public void toXML(Document doc, Node node) {
+		Element filter = doc.createElement("filter");
+		filter.appendChild(XmlUtils.createElementWithText(doc, "pattern", getPattern()));
+		filter.appendChild(XmlUtils.createElementWithText(doc, "caseSensitive", Boolean.toString(isCaseSensitive())));
+		filter.appendChild(XmlUtils.createElementWithText(doc, "contains", Boolean.toString(getContains())));
+		filter.appendChild(XmlUtils.createElementWithText(doc, "description", getDescription()));
+		for (Iterator iter = m_actions.iterator(); iter.hasNext();) {
 			FilterAction action = (FilterAction) iter.next();
 			action.toXML(doc, filter);
 		}
-	    
-	    node.appendChild(filter);
+
+		node.appendChild(filter);
 	}
-    public void setDescription(String description)
-    {
-        m_description = description;
-    }
+
+	public void setDescription(String description) {
+		m_description = description;
+	}
 }
