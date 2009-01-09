@@ -347,7 +347,7 @@ public class LogWatcherView extends ViewPart
                         entry.getViewer().getTextWidget().append(flist.getFormattedText());
                         if (entry.isScroll()) {
                             // Scroll to the bottom
-                            entry.getViewer().setTopIndex(doc.getNumberOfLines());
+                            entry.getViewer().setTopIndex(entry.getViewer().getTextWidget().getLineCount());
                         }
                     }
                 });
