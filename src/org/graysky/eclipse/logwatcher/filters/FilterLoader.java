@@ -72,33 +72,51 @@ public class FilterLoader
 		return f;
 	}
 
+	protected Color createColorFromNode(Display d, Node node)
+	{
+		int red = 0;
+		int green = 0;
+		int blue = 0;
+		NodeList children = node.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			Node colorNode = children.item(i);
+			String name = colorNode.getNodeName();
+			if (name.equals("red")) {
+				red = Integer.parseInt(colorNode.getFirstChild().getNodeValue());
+			}
+			else if (name.equals("green")) {
+				green = Integer.parseInt(colorNode.getFirstChild().getNodeValue());
+			}
+			else if (name.equals("blue")) {
+				blue = Integer.parseInt(colorNode.getFirstChild().getNodeValue());
+			}
+		}
+		return new Color(d, red, green, blue);
+	}
+	
 	protected FilterAction loadAction(Node node)
 	{
 		NamedNodeMap attrs = node.getAttributes();
 		Node type = attrs.getNamedItem("type");
 		if (type.getNodeValue().equals("highlight")) {
+			// Is this the best way to get a Display?
+			Display d = LogwatcherPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell().getDisplay();
+
 			NodeList children = node.getChildNodes();
-			int red = 0;
-			int green = 0;
-			int blue = 0;
+			Color fgColor = null;
+			Color bgColor = null;
 			for (int i = 0; i < children.getLength(); i++) {
 				Node colorNode = children.item(i);
 				String name = colorNode.getNodeName();
-				if (name.equals("red")) {
-					red = Integer.parseInt(colorNode.getFirstChild().getNodeValue());
+				if (name.equals("fgColor")) {
+					fgColor = createColorFromNode(d, colorNode);
 				}
-				else if (name.equals("green")) {
-					green = Integer.parseInt(colorNode.getFirstChild().getNodeValue());
-				}
-				else if (name.equals("blue")) {
-					blue = Integer.parseInt(colorNode.getFirstChild().getNodeValue());
+				else if (name.equals("bgColor")) {
+					bgColor = createColorFromNode(d, colorNode);
 				}
 			}
 
-			// Is this the best way to get a Display?
-			Display d = LogwatcherPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell().getDisplay();
-			Color c = new Color(d, red, green, blue);
-			return new HighlightAction(c);
+			return new HighlightAction(fgColor, bgColor);
 		}
 		else if (type.getNodeValue().equals("ignore")) {
 			return new IgnoreAction();

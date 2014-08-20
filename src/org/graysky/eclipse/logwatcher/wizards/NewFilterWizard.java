@@ -13,7 +13,7 @@ public class NewFilterWizard extends Wizard
 {
     private boolean	m_editMode = false;
 	private Filter					m_filter;
-	private boolean				m_canFinish 	= false;
+	private boolean					m_canFinish 	= false;
 	private NewFilterWizardStart	m_startPage		= new NewFilterWizardStart("start");
 	private HighlightOptionsPage	m_highlightPage	= new HighlightOptionsPage("highlight_options");
 	private IgnoreOptionsPage		m_ignorePage	= new IgnoreOptionsPage("ignore_options");
@@ -35,7 +35,7 @@ public class NewFilterWizard extends Wizard
 		m_filter = m_startPage.getFilter();
 		switch (m_startPage.getActionType()) {
 			case 0:
-				HighlightAction a = new HighlightAction(m_highlightPage.getColor());
+				HighlightAction a = new HighlightAction(m_highlightPage.getFgColor(), m_highlightPage.getBgColor());
 				addFilterAction(a);
 				break;
 				
@@ -56,9 +56,14 @@ public class NewFilterWizard extends Wizard
 	
 	public boolean performCancel()
 	{
-		Color c = m_highlightPage.getColor();
-		if (c != null) {
-			c.dispose();
+		Color cfg = m_highlightPage.getFgColor();
+		if (cfg != null) {
+			cfg.dispose();
+		}
+		
+		Color cbg = m_highlightPage.getBgColor();
+		if (cbg != null) {
+			cbg.dispose();
 		}
 			
 		return super.performCancel();
