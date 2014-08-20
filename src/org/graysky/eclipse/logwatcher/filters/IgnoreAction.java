@@ -21,19 +21,19 @@ public class IgnoreAction implements FilterAction
 
     public void doViewerAction(LineStyleEvent event)
     {
-        return;
+    	return;
     }
 
     public String getDescription()
     {
         return "Don't show the line";
     }
-
+    
     public String doWatcherAction(String line, boolean firstMatch)
     {
-        return null;
+    	return null;	
     }
-
+    
     public void toXML(Document doc, Node node)
     {
         Element action = doc.createElement("action");

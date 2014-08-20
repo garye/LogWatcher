@@ -11,27 +11,26 @@ import org.graysky.eclipse.util.ImageUtils;
  */
 public class ToggleScrollingAction extends Action
 {
-    private LogWatcherView m_view = null;
-    private static ImageDescriptor IMAGE_DESC = null;
-
-    public ToggleScrollingAction(LogWatcherView p)
-    {
-        m_view = p;
-
-        setText("Scroll Lock");
-        setToolTipText("Scroll Lock");
-        setImageDescriptor(IMAGE_DESC);
-    }
-
-    public void run()
-    {
-        WatcherData entry = m_view.getSelectedEntry();
-        if (entry != null) {
-            entry.setScroll(!isChecked());
-        }
-    }
-
-    static {
-        IMAGE_DESC = ImageUtils.createImageDescriptor("icons/toggle_scroll.gif");
-    }
+	private LogWatcherView	m_view = null;
+	private static ImageDescriptor IMAGE_DESC = null; 
+	
+	public ToggleScrollingAction(LogWatcherView p)
+	{
+		m_view = p;
+		
+		setText("Scroll Lock");
+		setToolTipText("Scroll Lock");
+		setImageDescriptor(IMAGE_DESC);
+	}
+	
+	public void run() {
+		WatcherData entry = m_view.getSelectedEntry();
+		if (entry != null) {
+			entry.setScroll(!isChecked());
+		}
+	}
+	
+	static {
+		IMAGE_DESC = ImageUtils.createImageDescriptor("icons/toggle_scroll.gif");
+	}
 }
