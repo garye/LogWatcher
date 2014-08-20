@@ -11,25 +11,25 @@ import org.w3c.dom.Node;
 
 public class AddTaskAction implements FilterAction
 {
-    private String m_taskDescription = "";
-    private int m_priority = -1;
-    private IResource m_resource = null;
-
-    public static final int LOW = IMarker.PRIORITY_LOW;
-    public static final int NORMAL = IMarker.PRIORITY_NORMAL;
-    public static final int HIGH = IMarker.PRIORITY_HIGH;
-
+	private String 		m_taskDescription 	= "";
+	private int			m_priority			= -1;
+	private IResource	m_resource			= null;
+	
+	public static final int LOW 	= IMarker.PRIORITY_LOW;
+	public static final int NORMAL	= IMarker.PRIORITY_NORMAL;
+	public static final int HIGH	= IMarker.PRIORITY_HIGH;	
+	
     public AddTaskAction()
     {
         super();
     }
 
-    public AddTaskAction(String desc, int pri, IResource res)
-    {
-        m_taskDescription = desc;
-        m_priority = pri;
-        m_resource = res;
-    }
+	public AddTaskAction(String desc, int pri, IResource res)
+	{
+		m_taskDescription = desc;
+		m_priority = pri;	
+		m_resource = res;
+	}
 
     public void dispose()
     {
@@ -37,14 +37,14 @@ public class AddTaskAction implements FilterAction
 
     public void doViewerAction(LineStyleEvent event)
     {
-        return;
+    	return;
     }
 
     public String getDescription()
     {
         return "Add a Todo Task";
     }
-
+    
     public int getPriority()
     {
         return m_priority;
@@ -54,7 +54,7 @@ public class AddTaskAction implements FilterAction
     {
         m_priority = priority;
     }
-
+    
     public String getTaskDescription()
     {
         return m_taskDescription;
@@ -67,21 +67,21 @@ public class AddTaskAction implements FilterAction
 
     public String doWatcherAction(String line, boolean firstMatch)
     {
-
-        if (firstMatch) {
-            try {
-                IMarker marker = m_resource.createMarker(IMarker.TASK);
-                marker.setAttribute(IMarker.PRIORITY, m_priority);
-                marker.setAttribute(IMarker.MESSAGE, m_taskDescription);
-            }
-            catch (CoreException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return line;
+    	
+    	if (firstMatch) {
+	    	try {
+	            IMarker marker = m_resource.createMarker(IMarker.TASK);
+	            marker.setAttribute(IMarker.PRIORITY, m_priority);
+	            marker.setAttribute(IMarker.MESSAGE, m_taskDescription);
+	        }
+	        catch (CoreException e) {
+	        	e.printStackTrace();
+	        }
+    	}
+       
+    	return line;	
     }
-
+    
     public void toXML(Document doc, Node node)
     {
         Element action = doc.createElement("action");

@@ -11,27 +11,26 @@ import org.graysky.eclipse.util.ImageUtils;
  */
 public class CopyAction extends Action
 {
-    private LogWatcherView m_view = null;
-    private static ImageDescriptor IMAGE_DESC = null;
-
-    public CopyAction(LogWatcherView p)
-    {
-        m_view = p;
-
-        setText("Copy");
-        setToolTipText("Copy selected text to the clipboard");
-        setImageDescriptor(IMAGE_DESC);
-    }
-
-    public void run()
-    {
-        WatcherData entry = m_view.getSelectedEntry();
-        if (entry != null) {
-            entry.getViewer().getTextWidget().copy();
-        }
-    }
-
-    static {
-        IMAGE_DESC = ImageUtils.createImageDescriptor("icons/copy_edit.gif");
-    }
+	private LogWatcherView	m_view = null;
+	private static ImageDescriptor IMAGE_DESC = null; 
+	
+	public CopyAction(LogWatcherView p)
+	{
+		m_view = p;
+		
+		setText("Copy");
+		setToolTipText("Copy selected text to the clipboard");
+		setImageDescriptor(IMAGE_DESC);
+	}
+	
+	public void run() {
+		WatcherData entry = m_view.getSelectedEntry();
+		if (entry != null) {
+			entry.getViewer().getTextWidget().copy();
+		}
+	}
+	
+	static {
+		IMAGE_DESC = ImageUtils.createImageDescriptor("icons/copy_edit.gif");
+	}
 }

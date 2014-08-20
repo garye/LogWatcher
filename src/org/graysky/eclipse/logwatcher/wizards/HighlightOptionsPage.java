@@ -22,93 +22,91 @@ import org.eclipse.swt.widgets.Text;
  */
 public class HighlightOptionsPage extends WizardPage
 {
-    private Text m_filterText;
-    private Composite m_actionOptions;
-    private Color m_color = null;
-    private Color m_startingColor = null;
-    private Combo m_actionsCombo;
+	private Text		m_filterText;
+	private Composite	m_actionOptions;
+	private Color		m_color 			= null;
+	private Color		m_startingColor		= null;
+	private Combo		m_actionsCombo;
 
-    /**
-     * Constructor for HighlightOptionsPage.
-     * 
-     * @param pageName
-     */
-    public HighlightOptionsPage(String pageName)
-    {
-        super(pageName);
-    }
+	/**
+	 * Constructor for HighlightOptionsPage.
+	 * @param pageName
+	 */
+	public HighlightOptionsPage(String pageName)
+	{
+		super(pageName);
+	}
 
-    /**
-     * Constructor for HighlightOptionsPage.
-     */
-    public HighlightOptionsPage(String pageName, String title, ImageDescriptor titleImage)
-    {
-        super(pageName, title, titleImage);
-    }
+	/**
+	 * Constructor for HighlightOptionsPage.
+	 */
+	public HighlightOptionsPage(String pageName, String title, ImageDescriptor titleImage)
+	{
+		super(pageName, title, titleImage);
+	}
 
-    public void createControl(Composite parent)
-    {
-        Composite composite = new Composite(parent, SWT.NONE);
-        setControl(composite);
-
-        // Get red as default starting color.
-        // Note: We didn't allocate this color, so don't dispose it.
-        //
-        m_startingColor = getShell().getDisplay().getSystemColor(SWT.COLOR_RED);
-
+	public void createControl(Composite parent) 
+	{
+		Composite composite = new Composite(parent, SWT.NONE);
+		setControl(composite);
+	
+		// Get red as default starting color. 
+		// Note: We didn't allocate this color, so don't dispose it.
+		//
+		m_startingColor = getShell().getDisplay().getSystemColor(SWT.COLOR_RED);
+		
         // Initialize choice to the default
-        m_color = new Color(getShell().getDisplay(), m_startingColor.getRGB());
-
-        GridData gridData;
-
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 3;
-        layout.horizontalSpacing = 10;
-        layout.verticalSpacing = 20;
-        composite.setLayout(layout);
-
-        new Label(composite, SWT.NONE).setText("Highlight color:");
-
-        final Canvas c = new Canvas(composite, SWT.NONE);
-        gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        gridData.heightHint = 20;
-        gridData.widthHint = 20;
-        c.setLayoutData(gridData);
-        c.setBackground(m_startingColor);
-
-        Button colorButton = new Button(composite, SWT.PUSH);
-        colorButton.setText("Select...");
-        colorButton.addSelectionListener(new SelectionAdapter()
-        {
-            public void widgetSelected(SelectionEvent evt)
-            {
-                ColorDialog dialog = new ColorDialog(getShell());
-                dialog.open();
-
-                if (dialog.getRGB() != null) {
-                    if (m_color != null) {
+        m_color = new Color(getShell().getDisplay(), m_startingColor.getRGB() );
+        
+		GridData gridData;
+		
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 3;
+		layout.horizontalSpacing = 10;
+		layout.verticalSpacing = 20;
+		composite.setLayout(layout);
+	
+		new Label(composite, SWT.NONE).setText("Highlight color:");
+		
+		final Canvas c = new Canvas(composite, SWT.NONE);
+		gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gridData.heightHint = 20;
+		gridData.widthHint = 20;
+		c.setLayoutData(gridData);
+		c.setBackground(m_startingColor);
+		
+		Button colorButton = new Button(composite, SWT.PUSH);
+		colorButton.setText("Select...");
+		colorButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt)
+			{
+				ColorDialog dialog = new ColorDialog(getShell());
+				dialog.open();
+				
+				if (dialog.getRGB() != null) {
+					if (m_color != null) {
                         // Clean up any previous choice
-                        m_color.dispose();
-                    }
+						m_color.dispose();	
+					}
+					
+					m_color = new Color(getShell().getDisplay(), dialog.getRGB());
+					c.setBackground(m_color);
+				}
+			}
+		});
+		
+		setPageComplete(true);
+	}
 
-                    m_color = new Color(getShell().getDisplay(), dialog.getRGB());
-                    c.setBackground(m_color);
-                }
-            }
-        });
+	public String getTitle()
+	{
+		return "Set the highlight color.";
+	}
 
-        setPageComplete(true);
-    }
-
-    public String getTitle()
-    {
-        return "Set the highlight color.";
-    }
-
-    public IWizardPage getNextPage()
-    {
-        return null;
-    }
+	public IWizardPage getNextPage()
+	{
+		return null;
+	}
 
     public void dispose()
     {
