@@ -1,7 +1,7 @@
 ## LogWatcher
 
 
-Updated To Eclipse Luna 4.4.
+Updated To Eclipse Neon 4.6.
 
 ----------------------------------------------------------------------
 
