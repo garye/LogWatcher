@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Logwatcher
 Bundle-SymbolicName: org.graysky.eclipse.logwatcher;singleton:=true
-Bundle-Version: 1.4.0.3
+Bundle-Version: 1.4.0.4
 Bundle-Activator: org.graysky.eclipse.logwatcher.LogwatcherPlugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.ide,

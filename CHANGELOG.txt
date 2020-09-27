@@ -5,6 +5,7 @@
 
 Changes since 1.4:
 ----------------------------------
+- NPE on multiple ignore filters
 - Upgrade to eclipse 4.6 Neon
 - Upgrade to eclipse 4.4 Luna
 
