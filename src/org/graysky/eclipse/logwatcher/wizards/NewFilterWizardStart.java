@@ -1,7 +1,8 @@
 package org.graysky.eclipse.logwatcher.wizards;
 
-import org.apache.oro.text.regex.MalformedPatternException;
-import org.apache.oro.text.regex.Perl5Compiler;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
@@ -28,7 +29,7 @@ public class NewFilterWizardStart extends WizardPage
 	private Combo			m_actionsCombo;
 	private Combo			m_containsCombo;
 	private Button			m_caseSensitiveBox;
-	private Perl5Compiler	m_regExpCompiler = new Perl5Compiler();
+	//private Perl5Compiler	m_regExpCompiler = new Perl5Compiler();
 
 	/**
 	 * Constructor for FilterWizardStartPage.
@@ -145,7 +146,7 @@ public class NewFilterWizardStart extends WizardPage
 			f.setContains(m_containsCombo.getSelectionIndex() == 0 ? true : false);
 			return f;
 		}
-		catch (MalformedPatternException e) {
+		catch (PatternSyntaxException e) {
 			// Shouldn't happen - we have already compiled the pattern.
 			return null;
 		}
@@ -174,11 +175,11 @@ public class NewFilterWizardStart extends WizardPage
 		if (m_filterText.getText().length() > 0) {
 		
 			try {
-				m_regExpCompiler.compile(m_filterText.getText());
+				Pattern.compile(m_filterText.getText());
 				setErrorMessage(null);
 				return true;
 			}
-			catch (MalformedPatternException e) {
+			catch (PatternSyntaxException e) {
 				setErrorMessage("Invalid regular expression: " + e.getMessage());
 				return false;
 			}

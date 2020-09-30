@@ -442,7 +442,7 @@ public class NewWatcherDialog extends Dialog
 			public void widgetSelected(SelectionEvent evt)
 			{
 			    if (m_filterList.getSelectionCount() == 1) {
-				    saveButton.setEnabled(true);
+					saveButton.setEnabled(true);
 				}
 			    else {
 			        saveButton.setEnabled(false);
@@ -450,9 +450,11 @@ public class NewWatcherDialog extends Dialog
 			    
 				if (m_filterList.getSelectionCount() > 0) {
 					removeButton.setEnabled(true);
+					removeAllButton.setEnabled(true);
 				}
 				else {
 					removeButton.setEnabled(false);
+					removeAllButton.setEnabled(false);
 				}
 			}
 		});

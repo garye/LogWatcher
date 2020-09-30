@@ -5,6 +5,9 @@
 
 Changes since 1.4:
 ----------------------------------
+- Fix enabled state for Remove All button on Edit this watcher
+- Find dialog set initial text as selected from log window
+- Replace jakata oro with java.util.regex
 - NPE on multiple ignore filters
 - Upgrade to eclipse 4.6 Neon
 - Upgrade to eclipse 4.4 Luna
