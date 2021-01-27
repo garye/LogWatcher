@@ -69,6 +69,12 @@ public class FindDialog extends Dialog
 		new Label(composite, SWT.NONE).setText("Find:");
 		m_findText = new Text(composite, SWT.BORDER);
 		m_findText.setTextLimit(200);
+		// Add text selection from log window
+		if(!m_target.getSelectionText().isEmpty()) {
+			m_findText.setText(m_target.getSelectionText());
+			// Cursor to end
+			m_findText.setSelection(m_findText.getText().length());
+		}
 		gridData = new GridData();
 		gridData.widthHint = 160;
 		m_findText.setLayoutData(gridData);
@@ -138,7 +144,13 @@ public class FindDialog extends Dialog
 				}
 			}
 		});
-		m_findButton.setEnabled(false);
+		// Set button enabled state
+		if(m_findText.getText().isEmpty()) {
+			m_findButton.setEnabled(false);
+		}
+		else {
+			m_findButton.setEnabled(true);
+		}
 		getShell().setDefaultButton(m_findButton);
 		
 		GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);

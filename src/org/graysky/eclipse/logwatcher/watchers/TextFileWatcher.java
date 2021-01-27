@@ -124,8 +124,17 @@ public class TextFileWatcher extends Thread
 								// Apply each filter
 								for (Iterator iter = m_filters.iterator(); iter.hasNext();) {
 									Filter f = (Filter) iter.next();
-									if (f.matches(line)) {
-										line = f.handleWatcherMatch(line, firstUpdate);
+									try {
+										if (f.matches(line)) {
+											line = f.handleWatcherMatch(line, firstUpdate);
+										}
+										// Skip rest of filters as for an ignore will be null
+										if (line == null) {
+											break;
+										}
+									} catch (Exception e) {
+										// just log
+										LogwatcherPlugin.getDefault().logError("Error applying filter", e);
 									}
 								}
 							}

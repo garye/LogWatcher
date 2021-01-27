@@ -2,11 +2,11 @@ package org.graysky.eclipse.logwatcher.filters;
 
 import java.io.Reader;
 import java.util.Vector;
+import java.util.regex.PatternSyntaxException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.oro.text.regex.MalformedPatternException;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 import org.graysky.eclipse.logwatcher.LogwatcherPlugin;
@@ -67,7 +67,7 @@ public class FilterLoader
 		try {
 			f.setPattern(pattern, caseSensitive);
 		}
-		catch (MalformedPatternException ignore) {
+		catch (PatternSyntaxException ignore) {
 		}
 		return f;
 	}

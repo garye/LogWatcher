@@ -2,11 +2,10 @@ package org.graysky.eclipse.logwatcher.filters;
 
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
-import org.apache.oro.text.regex.MalformedPatternException;
-import org.apache.oro.text.regex.Pattern;
-import org.apache.oro.text.regex.Perl5Compiler;
-import org.apache.oro.text.regex.Perl5Matcher;
 import org.eclipse.swt.custom.LineStyleEvent;
 import org.graysky.eclipse.util.XmlUtils;
 import org.w3c.dom.Document;
@@ -23,7 +22,6 @@ public class Filter
 	private Vector m_actions = new Vector();
 	private boolean m_contains = true;
 	private Pattern m_regexp = null;
-	private Perl5Matcher m_matcher = new Perl5Matcher();
 	private String m_description;
 
 	/**
@@ -31,12 +29,12 @@ public class Filter
 	 */
 	public boolean matches(String str)
 	{
-		boolean match = m_matcher.contains(str, m_regexp);
+		Matcher matcher = m_regexp.matcher(str);
 		if (m_contains) {
-			return match;
+			return matcher.find();
 		}
 		else {
-			return !match;
+			return !matcher.find();
 		}
 	}
 
@@ -89,16 +87,15 @@ public class Filter
 		return m_pattern;
 	}
 
-	public void setPattern(String pattern, boolean caseSensitive) throws MalformedPatternException
+	public void setPattern(String pattern, boolean caseSensitive) throws PatternSyntaxException
 	{
 		m_pattern = pattern;
 		m_caseSensitive = caseSensitive;
-		Perl5Compiler compiler = new Perl5Compiler();
 		if (!m_caseSensitive) {
-			m_regexp = compiler.compile(m_pattern, Perl5Compiler.CASE_INSENSITIVE_MASK);
+			m_regexp = Pattern.compile(m_pattern, Pattern.CASE_INSENSITIVE);
 		}
 		else {
-			m_regexp = compiler.compile(m_pattern);
+			m_regexp = Pattern.compile(m_pattern);
 		}
 	}
 

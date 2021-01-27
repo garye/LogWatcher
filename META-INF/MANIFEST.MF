@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Logwatcher
 Bundle-SymbolicName: org.graysky.eclipse.logwatcher;singleton:=true
-Bundle-Version: 1.4.0.3
+Bundle-Version: 1.4.0.5
 Bundle-Activator: org.graysky.eclipse.logwatcher.LogwatcherPlugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.ide,
@@ -14,8 +14,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.help,
  org.eclipse.jface.text
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: lib/jakarta-oro-2.0.6.jar,
- plugins/org.graysky.eclipse.logwatcher_1.4.0.3.jar
+Bundle-Vendor: Graysky.org
+Plugin-Class: org.graysky.eclipse.logwatcher.LogwatcherPlugin
+Bundle-ClassPath: plugins/org.graysky.eclipse.logwatcher_1.4.0.5.jar
 Export-Package: org.graysky.eclipse.logwatcher,
  org.graysky.eclipse.logwatcher.actions,
  org.graysky.eclipse.logwatcher.dialogs,
@@ -25,5 +26,3 @@ Export-Package: org.graysky.eclipse.logwatcher,
  org.graysky.eclipse.logwatcher.watchers,
  org.graysky.eclipse.logwatcher.wizards,
  org.graysky.eclipse.util
-Bundle-Vendor: Graysky.org
-Plugin-Class: org.graysky.eclipse.logwatcher.LogwatcherPlugin
